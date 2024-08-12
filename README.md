@@ -268,7 +268,7 @@ Este comando permite agregar el repositorio de código base mantenido por los pr
 
 ```sh
 git fetch upstream
-git merge upstream/main
+git merge upstream/main --allow-unrelated-histories
 ```
 
 ## Herramientas Requeridas para el desarrollo
