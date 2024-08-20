@@ -19,7 +19,7 @@ if Rails.env.development?
   countries = FactoryBot.create_list(:country, 5)
 
   # Crear cervecerías (breweries) con marcas (brands) y cervezas (beers)
-  breweries = countries.map do |country|
+  countries.map do |country|
     FactoryBot.create(:brewery_with_brands_with_beers, countries: [country])
   end
 
@@ -50,5 +50,5 @@ if Rails.env.development?
       FactoryBot.create(:attendance, user: user, event: event, checked_in: [true, false].sample)
     end
   end
-  
+
 end

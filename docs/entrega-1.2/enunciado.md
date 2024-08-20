@@ -36,10 +36,10 @@ En esta entrega se deben implementar la versión inicial de su aplicación de fr
 Deben desarrollar su aplicaición de frontend incluyendo:
 
 2.1. Componente principal `App` de la aplicación, junto con interfaz de inicio de la aplicación (home).
-2.2. Componente(s) para la interfaz que lista cervezas (``index'' de cervezas), incluyendo la búsqueda de cervezas.
-2.3. Componente(s) para la interfaz que lista bares (``index'' de bares), incluyendo la búsqueda de bares.
-2.4. Componente(s) para la interfaz que muestra los eventos en un bar (``index'' de bares/eventos).
-2.5. Componente(s) para la interfaz que permite buscar usuarios por su handle.
+2.2. Componente(s) para la interfaz que lista cervezas (`index` de cervezas), incluyendo la búsqueda de cervezas. Es necesario llamar a endpoint `GET api/v1/beers` de la API para obtener las cervezas a listar.
+2.3. Componente(s) para la interfaz que lista bares (`index` de bares), incluyendo la búsqueda de bares. Es necesario llamar a endpoint `GET api/v1/bars`.
+2.4. Componente(s) para la interfaz que muestra los eventos en un bar (`index` de bares/eventos). Es necesario llamar a endpoint `GET api/v1/bar/:id/events`. Es posible que tengan que implementar la(s) ruta(s) necesaria en el backend para que recursos de eventos sean anidados a los bares. Asimismo, tendrían que completar `EventsController` que fue requisito en la entrega pasada. 
+2.5. Componente(s) para la interfaz que permite buscar usuarios por su handle. Basta la interfaz para ingresar el string de búsqueda. No es encesario implementar llamadas a la API aún.
 2.6. Navegación entre la interfaz de inicio (home) y las pantallas arriba listadas. Para esto, incorporar `BrowserRouter` a la aplicación.
 
 Los laboratorios 2 y 3 sirven como base para su trabajo.
@@ -50,9 +50,9 @@ Las partes de diseño e implementación ponderan 50% c/u en la nota de la entreg
 
 Cada requisito en cada una de las partes será evaluado en escala 1-5. Estos puntos se traducen a ponderadores:
 
-* 1 -> 0.0: No entregado
+* 1 -> 0.00: No entregado
 * 2 -> 0.25: Esbozo de solucion
-* 3 -> 0.5: Logro intermedio
+* 3 -> 0.50: Logro intermedio
 * 4 -> 0.75: Alto logro con deficiencias o errores menores
 * 5 -> 1.00: Implementación completa y correcta
 
