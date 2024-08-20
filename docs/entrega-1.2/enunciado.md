@@ -23,10 +23,15 @@ Tanto para Axure como Figma, se puede obtener una licencia educacional que permi
 Se debe completar el diseño de interfaz de usuario de la entrega anterior y ampliarlo para contener las pantallas de interfaz que cumplan con la siguiente funcionalidad (correspondiente a requisitos 7 a 12 del enunciado general):
 
 1.1. Los usuarios pueden ver la evaluación global de una cerveza (rating promedio), junto con a su propia evaluación de la cerveza (si existe) y las evaluaciones de otros usuarios. 
+
 1.2. Los usuarios pueden asistir (hacer "_check-in_") en un evento (ver modelo `Attendance` y tabla en `schema.rb`), y ver todos los usuarios que también han hecho _check-in_.
+
 1.3. Los usuarios pueden subir fotografías a los eventos (ver modelo `EventPicture`). 
+
 1.4. Los usuarios pueden ver las fotos de un evento como una galería, con scrolling.
+
 1.5. Los usuarios pueden buscarse mutuamente en la aplicación usando _handle_, y agregarse como amigos (ver modelo `Friendship` y tabla en `schema.rb`), indicando el evento en donde se encontraron por primera vez opcionalmente.
+
 1.6. Los usuarios pueden etiquetarse en las fotos de un evento.
 
 ## Implementación de la Interfaz de Usuario (50%)
@@ -36,10 +41,15 @@ En esta entrega se deben implementar la versión inicial de su aplicación de fr
 Deben desarrollar su aplicaición de frontend incluyendo:
 
 2.1. Componente principal `App` de la aplicación, junto con interfaz de inicio de la aplicación (home).
+
 2.2. Componente(s) para la interfaz que lista cervezas (`index` de cervezas), incluyendo la búsqueda de cervezas. Es necesario llamar a endpoint `GET api/v1/beers` de la API para obtener las cervezas a listar.
+
 2.3. Componente(s) para la interfaz que lista bares (`index` de bares), incluyendo la búsqueda de bares. Es necesario llamar a endpoint `GET api/v1/bars`.
+
 2.4. Componente(s) para la interfaz que muestra los eventos en un bar (`index` de bares/eventos). Es necesario llamar a endpoint `GET api/v1/bar/:id/events`. Es posible que tengan que implementar la(s) ruta(s) necesaria en el backend para que recursos de eventos sean anidados a los bares. Asimismo, tendrían que completar `EventsController` que fue requisito en la entrega pasada. 
+
 2.5. Componente(s) para la interfaz que permite buscar usuarios por su handle. Basta la interfaz para ingresar el string de búsqueda. No es encesario implementar llamadas a la API aún.
+
 2.6. Navegación entre la interfaz de inicio (home) y las pantallas arriba listadas. Para esto, incorporar `BrowserRouter` a la aplicación.
 
 Los laboratorios 2 y 3 sirven como base para su trabajo.
