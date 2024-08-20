@@ -18,24 +18,37 @@ Para Figma, se puede buscar el [Material 2 Design Kit](https://www.figma.com/com
 
 Tanto para Axure como Figma, se puede obtener una licencia educacional que permite utilizar toda la funcionalidad relevante del software.
 
-## Implementación de la Interfaz de Usuario
+## Completar Diseño de la Interfaz de Usuario (50%)
 
-En esta entrega se deben implementar componentes de React con la biblioteca MUI para todas las principales pantallas contempladas en su diseño de aplicación. Es importante que los componentes incorporen los elementos de formulario necesarios, pero sin aún implementar su funcionalidad. 
+Se debe completar el diseño de interfaz de usuario de la entrega anterior y ampliarlo para contener las pantallas de interfaz que cumplan con la siguiente funcionalidad (correspondiente a requisitos 7 a 12 del enunciado general):
 
-## Evaluación del Diseño
+1.1. Los usuarios pueden ver la evaluación global de una cerveza (rating promedio), junto con a su propia evaluación de la cerveza (si existe) y las evaluaciones de otros usuarios. 
+1.2. Los usuarios pueden asistir (hacer "_check-in_") en un evento (ver modelo `Attendance` y tabla en `schema.rb`), y ver todos los usuarios que también han hecho _check-in_.
+1.3. Los usuarios pueden subir fotografías a los eventos (ver modelo `EventPicture`). 
+1.4. Los usuarios pueden ver las fotos de un evento como una galería, con scrolling.
+1.5. Los usuarios pueden buscarse mutuamente en la aplicación usando _handle_, y agregarse como amigos (ver modelo `Friendship` y tabla en `schema.rb`), indicando el evento en donde se encontraron por primera vez opcionalmente.
+1.6. Los usuarios pueden etiquetarse en las fotos de un evento.
 
-El diseño debe contener las pantallas de interfaz que cumplan con la siguiente funcionalidad:
+## Implementación de la Interfaz de Usuario (50%)
 
-1. [.5] Los usuarios (ver modelo `User` y tabla en `db/schema.rb`) pueden registrarse ingresando nombre, apellido, email, un _handle_ (similar a X o Instagram, p.ej.,@kingofbeers), y datos de dirección opcionales (ver modelo `Address` y tabla en `db/schema.rb`).
-2. [.5] Los usuarios pueden buscar bares en la aplicación por nombre.
-3. [.5] Los usuarios pueden buscar bares por ubicación (país, ciudad, calle y número), usando un mapa.
-4. [.5] Los usuarios pueden ver la lista de eventos (ver modelo `Event` en `schema.rb`) que se celebran en un Bar (modelo `Bar` y tabla en `schema.rb`).
-5. [1.0] Los usuario pueden buscar una cerveza en la aplicación (`Beer`), y ver los detalles de la cerveza, incluyendo qué cervecería la produce (`Brewery`), y qué bares la sirven.
-6. [1.0] Los usuarios pueden escribir evaluaciones (ver modelo `Review` y tabla en `schema.rb`) de las cervezas, con rating y texto.
+En esta entrega se deben implementar la versión inicial de su aplicación de frontend, la cual debe incluir sus propios componentes de React y el uso la biblioteca MUI para todas las principales pantallas contempladas en su diseño de aplicación. Es importante que los componentes incorporen los elementos de formulario necesarios, pero sin aún implementar su funcionalidad. No es necesario aún integrar mapas en la aplicación.
+
+Deben desarrollar su aplicaición de frontend incluyendo:
+
+2.1. Componente principal `App` de la aplicación, junto con interfaz de inicio de la aplicación (home).
+2.2. Componente(s) para la interfaz que lista cervezas (``index'' de cervezas), incluyendo la búsqueda de cervezas.
+2.3. Componente(s) para la interfaz que lista bares (``index'' de bares), incluyendo la búsqueda de bares.
+2.4. Componente(s) para la interfaz que muestra los eventos en un bar (``index'' de bares/eventos).
+2.5. Componente(s) para la interfaz que permite buscar usuarios por su handle.
+2.6. Navegación entre la interfaz de inicio (home) y las pantallas arriba listadas. Para esto, incorporar `BrowserRouter` a la aplicación.
+
+Los laboratorios 2 y 3 sirven como base para su trabajo.
 
 ## Evaluación
 
-Cada requisito será evaluado en escala 1-5. Estos puntos se traducen a ponderadores:
+Las partes de diseño e implementación ponderan 50% c/u en la nota de la entrega. En cada parte hay seis ítems. Cada ítem aporta un punto a la parte. A la suma de puntos de cada parte se suma el punto base para obtener una nota en escala 1-7. La nota de la entrega es el promedio de las dos partes.
+
+Cada requisito en cada una de las partes será evaluado en escala 1-5. Estos puntos se traducen a ponderadores:
 
 * 1 -> 0.0: No entregado
 * 2 -> 0.25: Esbozo de solucion

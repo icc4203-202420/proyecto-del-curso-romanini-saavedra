@@ -110,11 +110,11 @@ Los requisitos funcionales de la aplicación que deberán desarrollar son los si
 5. Los usuario pueden buscar una cerveza en la aplicación (`Beer`), y ver los detalles de la cerveza, incluyendo qué cervecería la produce (`Brewery`), y qué bares la sirven.
 6. Los usuarios pueden escribir evaluaciones (ver modelo `Review` y tabla en `schema.rb`) de las cervezas, con rating y texto.
 7. Los usuarios pueden ver la evaluación global de una cerveza (rating promedio), junto con a su propia evaluación de la cerveza (si existe) y las evaluaciones de otros usuarios. 
-7. Los usuarios pueden asistir (hacer "_check-in_") en un evento (ver modelo `Attendance` y tabla en `schema.rb`), y ver todos los usuarios que también han hecho _check-in_.
-8. Los usuarios pueden subir fotografías a los eventos (ver modelo `EventPicture`). 
-9. Los usuarios pueden ver las fotos de un evento como una galería, con scrolling.
-10. Los usuarios pueden buscarse mutuamente en la aplicación usando _handle_, y agregarse como amigos (ver modelo `Friendship` y tabla en `schema.rb`), indicando el evento en donde se encontraron por primera vez opcionalmente.
-11. Los usuarios pueden etiquetarse en las fotos de un evento.
+8. Los usuarios pueden asistir (hacer "_check-in_") en un evento (ver modelo `Attendance` y tabla en `schema.rb`), y ver todos los usuarios que también han hecho _check-in_.
+9. Los usuarios pueden subir fotografías a los eventos (ver modelo `EventPicture`). 
+10. Los usuarios pueden ver las fotos de un evento como una galería, con scrolling.
+11. Los usuarios pueden buscarse mutuamente en la aplicación usando _handle_, y agregarse como amigos (ver modelo `Friendship` y tabla en `schema.rb`), indicando el evento en donde se encontraron por primera vez opcionalmente.
+12. Los usuarios pueden etiquetarse en las fotos de un evento.
 
 En las entregas sucesivas del proyecto se les irá solicitando completar funcionalidad relativa a los requisitos anteriores, y se les dará más detalle sobre las funciones específicas a implementar.
 
@@ -162,6 +162,14 @@ devise_jwt_secret_key: [clave generada por comando anterior sin estos corchetes]
 ```
 
 Guardar el archivo y salir. Repetir cambiando la opción `--environment test` por `--environment development`. Si se va a realizar una instalación de producción, se debe también realizar este paso con el ambiente `production`.
+
+**Ejecutar las migraciones**
+
+Se debe ejecutar las migraciones y verificar que no haya errores.
+
+```sh
+rails db:migrate
+```
 
 **Ejecutar tests del backend Rails**
 
