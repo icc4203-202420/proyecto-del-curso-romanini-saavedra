@@ -21,10 +21,13 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :bars
+      resources :bars do
+        resources :friendships, only: [:index]
+      end
       resources :beers
       resources :users do
         resources :reviews, only: [:index]
+        resources :friendships, only: [:index, :create, :destroy]
       end
       
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
