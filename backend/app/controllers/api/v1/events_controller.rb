@@ -39,7 +39,7 @@ class API::V1::EventsController < ApplicationController
     end
 
     def destroy
-        @beer.destroy
+        @event.destroy
         head :no_content
     end    
 
