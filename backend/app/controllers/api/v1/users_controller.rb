@@ -42,16 +42,11 @@ class API::V1::UsersController < ApplicationController
     friend = User.find_by(id: friend_id)
     bar = Bar.find_by(id: bar_id)
 
-    if friend
-      friendship = @user.friendships.build(friend: friend, bar: bar)
-
-      if friendship.save
-        render json: {message: "Friendship created successfully"}, status: :ok
-      else
-        render json: {error: friendship.errors.full_messages}, status: :unprocessable_entity
-      end
+    friendship = @user.friendships.build(friend: friend, bar: bar)
+    if friendship.save
+      render json: {message: "Friendship created successfully"}, status: :ok
     else
-      render json: {error: "Friend not found"}, status: :not_found
+      render json: {error: friendship.errors.full_messages}, status: :unprocessable_entity
     end
   end
 
