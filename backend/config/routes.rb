@@ -25,7 +25,8 @@ Rails.application.routes.draw do
       resources :beers
       resources :users do
         resources :reviews, only: [:index]
-        resources :friendships, only: [:index, :create]
+        get 'friendships', to: 'users#index_friendships', as: :friendships
+        post 'friendships', to: 'users#create_friendship'
       end
       
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
