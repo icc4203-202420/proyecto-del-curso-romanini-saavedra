@@ -9,8 +9,7 @@ Rails.application.routes.draw do
   },
   controllers: {
     sessions: 'api/v1/sessions',
-    registrations: 'api/v1/registrations',
-    events: 'api/v1/events'
+    registrations: 'api/v1/registrations'
   }
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -26,10 +25,7 @@ Rails.application.routes.draw do
       resources :beers
       resources :users do
         resources :reviews, only: [:index]
-        get 'friendships', to: 'users#index_friendships', as: :friendships
-        post 'friendships', to: 'users#create_friendship'
       end
-      resources :events
       
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
     end
