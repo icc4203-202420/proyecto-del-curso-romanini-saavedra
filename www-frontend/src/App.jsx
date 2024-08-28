@@ -1,14 +1,16 @@
 import React, { useReducer, useState } from 'react';
 import {Routes, Route, Link} from 'react-router-dom';
-import {AppBar, ToolBar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon} from '@mui/material';
+import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon} from '@mui/material';
 import useLocalStorageState from 'use-local-storage-state';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
+import Beers from './components/Beers';
 import './App.css'
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
@@ -27,7 +29,7 @@ function App() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Weather App
+            BeerMates
           </Typography>
         </Toolbar>
       </AppBar>
@@ -46,17 +48,20 @@ function App() {
             </ListItemIcon>
             <ListItemText primary="Inicio" />
           </ListItem>
-          <ListItem button component={Link} to="/search" onClick={toggleDrawer}>
+          <ListItem button component={Link} to="/beers" onClick={toggleDrawer}>
             <ListItemIcon>
               <SearchIcon />
             </ListItemIcon>
-            <ListItemText primary="Buscar" />
+            <ListItemText primary="Beers" />
           </ListItem>
         </List>
       </Drawer>
       <Toolbar /> {/* This empty toolbar is necessary to offset the content below the AppBar */}
+      <Routes>
+        <Route path="/beers" element={<Beers/>}/>
+      </Routes>
     </>
   );
 }
 
-export default App
+export default App;
