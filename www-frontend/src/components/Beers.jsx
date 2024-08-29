@@ -1,59 +1,105 @@
 import React, { useEffect, useState } from 'react';
+import useAxios from 'axios-hooks';
+import useLocalStorageState from 'use-local-storage-state';
 import axios from 'axios';
-import { Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
+import { Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
 import beerIcon from '../assets/images/beer_bottle_icon.png'
 
 const Beers = () => {
-    const [beers, setBeers] = useState([]);
+    const [searchKeywords, setSearchKeywords] = useState('')
+    const [keywordList, setKeywordList] = useLocalStorageState('BeerMates/SearchBeer/KeywordList', {
+        defaultValue: []
+    })
 
-    useEffect(() => {
-        const fetchBeers = async () => {
-            try {
-                const apiURL = 'http://127.0.0.1:3001/api/v1/beers'
-                const apiResponse = await axios.get(apiURL);
-                
-                console.log(apiResponse)
-                setBeers(apiResponse.data.beers);
+    const [{ data: allBeersData, loading, error}, refetch] = useAxios(
+        {
+            url: 'http://127.0.0.1:3001/api/v1/beers',
+            method: 'GET'
+        }
+    );
 
-                console.log(apiResponse.data.beers)
+    const handleInputChange = (event, newInputValue) => {
+        setSearchKeywords(newInputValue);
+    };
 
-            } catch(error){
-                console.error('Failed to fetch API data:', error);
-            }
-        };
+    const handleSearch = () => {
+        if(searchKeywords && !keywordList.includes(searchKeywords)){
+            setKeywordList([...keywordList, searchKeywords])
+        }
+    };
+    
+    const handleClearHistory = () => {
+        setKeywordList([])
+        setSearchKeywords("")
+    }
 
-        fetchBeers();
-    }, []);
+    const filteredBeers = allBeersData?.beers?.filter(beer => 
+        beer.name.toLowerCase().includes(searchKeywords.toLowerCase())
+    );
 
     return (
         <div>
-            {beers.length > 0 ? (
-                beers.map((beer) => (
-                    <div style={{marginBottom: '20px'}}>
-                        <Card>
-                            <Box sx={{height: 150, display: 'flex', alignItems: 'center', backgroundColor: 'rgb(245, 222, 179)'}}>
-                                <CardMedia
-                                    component="img"
-                                    sx={{width: 100, height: 100, objectFit: 'cover'}}
-                                    image={beerIcon}
-                                    alt={beer.name}
-                                />
-                                <CardContent>
-                                    <Typography variant="h6" component="div" sx={{textAlign: 'left', color: 'rgb(78, 42, 30)'}}>
-                                        {beer.name}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary" sx={{textAlign: 'left', mt: 1, color: 'rgb(78, 42, 30)'}}>
-                                        {beer.style}
-                                    </Typography>
-                                </CardContent>
-                            </Box>
-                        </Card>
-                    </div>
-                ))
-            ) : (
-                <Typography variant="body1">
-                    <p>Cargando datos de la cerveza...</p>
+            <Autocomplete
+                freeSolo
+                options={keywordList}
+                value={searchKeywords}
+                onInputChange={handleInputChange}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Search Beer"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                    />
+                )}
+            />
+            <Button variant="contained" color="primary" onClick={handleSearch}> 
+                Search
+            </Button>
+            {
+                keywordList.length > 0 &&
+                <Button variant="outlined" color="secondary" onClick={handleClearHistory}>
+                    Clear search history
+                </Button>
+            }
+            {loading && (
+                <Typography variant="body1" margin="normal">
+                    Searching for beers...
                 </Typography>
+            )}
+            {error && (
+                <Typography variant="body1" color="error" margin="noraml">
+                    Error fetching data.
+                </Typography>
+            )}
+            {allBeersData && (
+                <List>
+                    {(searchKeywords ? filteredBeers : allBeersData.beers).map((beer, index) => (
+                        <ListItem key={index}>
+                            <div style={{marginBottom: '20px'}}>
+                                <Card>
+                                    <Box sx={{height: 150, display: 'flex', alignItems: 'center', backgroundColor: 'rgb(245, 222, 179)'}}>
+                                        <CardMedia
+                                            component="img"
+                                            sx={{width: 100, height: 100, objectFit: 'cover'}}
+                                            image={beerIcon}
+                                            alt={beer.name}
+                                        />
+                                        <CardContent>
+                                            <Typography variant="h6" component="div" sx={{textAlign: 'left', color: 'rgb(78, 42, 30)'}}>
+                                                {`${beer.name}`}
+                                            </Typography>
+                                            <Typography variant="body2" color="textSecondary" sx={{textAlign: 'left', mt: 1, color: 'rgb(78, 42, 30)'}}>
+                                                {`Style: ${beer.style}`}
+                                            </Typography>
+                                        </CardContent>
+                                    </Box>
+                                </Card>
+                            </div>
+                        </ListItem>
+                    ))}
+                </List>
             )}
         </div>
     );
