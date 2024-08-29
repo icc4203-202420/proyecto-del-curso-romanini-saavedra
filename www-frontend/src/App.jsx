@@ -4,8 +4,10 @@ import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListIte
 import useLocalStorageState from 'use-local-storage-state';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import SportsBarIcon from '@mui/icons-material/SportsBar'
+import SportsBarIcon from '@mui/icons-material/SportsBar';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import Beers from './components/Beers';
+import Bars from './components/Bars';
 import './App.css'
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
     switch (location.pathname) {
       case '/beers':
         return 'Beers';
+      case '/bars':
+        return 'Bars'
       case '/':
         return 'BeerMates';
       default:
@@ -65,11 +69,18 @@ function App() {
             </ListItemIcon>
             <ListItemText primary="Beers" />
           </ListItem>
+          <ListItem button component={Link} to="/bars" onClick={toggleDrawer}>
+            <ListItemIcon>
+              <LocalDiningIcon />
+            </ListItemIcon>
+            <ListItemText primary="Bars" />
+          </ListItem>
         </List>
       </Drawer>
       <Toolbar /> {/* This empty toolbar is necessary to offset the content below the AppBar */}
       <Routes>
         <Route path="/beers" element={<Beers/>}/>
+        <Route path="/bars" element={<Bars/>}/>
       </Routes>
     </>
   );
