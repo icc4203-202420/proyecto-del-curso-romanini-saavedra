@@ -30,7 +30,7 @@ const Bars = () => {
             {bars.length > 0 ? (
                 bars.map((bar) => (
                     <div style={{marginBottom: '20px'}}>
-                        <Card sx={{height: 150, width: 400, position: 'relative', borderRadius: 3}}>
+                        <Card sx={{height: 150, width: 400, position: 'relative', borderRadius: 3, backgroundColor: 'rgb(196, 98, 0)'}}>
                             <CardMedia
                                 sx={{ 
                                     height: 200, 
@@ -44,8 +44,28 @@ const Bars = () => {
                                 image={barImage}
                                 title="Bars Background"
                             />
-                            <CardContent sx={{position: 'relative', zIndex: 1}}>
-                                <Typography gutterBottom variant="h5" component="div" sx={{fontWeight: 'bold', fontSize: 40}}>
+                            <CardContent 
+                                sx={{
+                                    position: 'relative', 
+                                    zIndex: 1,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    height: '100%',
+                                    textAlign: 'center'
+                                    }}
+                            >
+                                <Typography 
+                                    gutterBottom 
+                                    variant="h5" 
+                                    component="div" 
+                                    sx={{
+                                        fontWeight: 'bold', 
+                                        fontSize: 40, 
+                                        color: 'rgb(78, 42, 30)'
+                                    }}
+                                >
                                     {bar.name}
                                 </Typography>
                             </CardContent>

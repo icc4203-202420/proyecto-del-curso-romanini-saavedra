@@ -31,7 +31,7 @@ const Beers = () => {
                 beers.map((beer) => (
                     <div style={{marginBottom: '20px'}}>
                         <Card>
-                            <Box sx={{height: 130, display: 'flex', alignItems: 'center'}}>
+                            <Box sx={{height: 150, display: 'flex', alignItems: 'center', backgroundColor: 'rgb(245, 222, 179)'}}>
                                 <CardMedia
                                     component="img"
                                     sx={{width: 100, height: 100, objectFit: 'cover'}}
@@ -39,10 +39,10 @@ const Beers = () => {
                                     alt={beer.name}
                                 />
                                 <CardContent>
-                                    <Typography variant="h6" component="div" sx={{textAlign: 'left'}}>
+                                    <Typography variant="h6" component="div" sx={{textAlign: 'left', color: 'rgb(78, 42, 30)'}}>
                                         {beer.name}
                                     </Typography>
-                                    <Typography variant="body2" color="textSecondary" sx={{textAlign: 'left', mt: 1}}>
+                                    <Typography variant="body2" color="textSecondary" sx={{textAlign: 'left', mt: 1, color: 'rgb(78, 42, 30)'}}>
                                         {beer.style}
                                     </Typography>
                                 </CardContent>

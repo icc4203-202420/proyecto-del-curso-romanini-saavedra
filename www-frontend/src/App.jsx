@@ -32,7 +32,7 @@ function App() {
 
   return (
     <>
-      <AppBar position="fixed">
+      <AppBar position="fixed" sx={{backgroundColor: 'rgb(78, 42, 30)'}}>
         <Toolbar>
           <IconButton
             color="inherit"
