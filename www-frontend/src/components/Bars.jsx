@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import useLocalStorageState from 'use-local-storage-state';
 import axios from 'axios';
@@ -63,7 +64,7 @@ const Bars = () => {
                 {allBarsData && (
                     <List>
                         {(searchKeywords ? filteredBars : allBarsData.bars).map((bar, index) => (
-                            <ListItem key={index}>
+                            <ListItem key={index} button component={Link} to={`/bars/${bar.id}/events`}>
                                 <div style={{marginBottom: '20px'}}>
                                     <Card sx={{height: 150, width: {xs: '280px', sm: '600px', md: '600px'}, maxWidth: '100%', position: 'relative', borderRadius: 3, backgroundColor: 'rgb(196, 98, 0)'}}>
                                         <CardMedia

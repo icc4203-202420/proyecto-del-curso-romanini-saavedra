@@ -8,6 +8,7 @@ import SportsBarIcon from '@mui/icons-material/SportsBar';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import Beers from './components/Beers';
 import Bars from './components/Bars';
+import BarEvents from './components/BarEvents';
 import './App.css'
 
 function App() {
@@ -81,6 +82,7 @@ function App() {
       <Routes>
         <Route path="/beers" element={<Beers/>}/>
         <Route path="/bars" element={<Bars/>}/>
+        <Route path="/bars/:bar_id/events" element={<BarEvents />} />
       </Routes>
     </>
   );
