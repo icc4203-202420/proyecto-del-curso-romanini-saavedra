@@ -1,10 +1,10 @@
 import React, { useReducer, useState } from 'react';
-import {Routes, Route, Link} from 'react-router-dom';
+import {Routes, Route, Link, useLocation} from 'react-router-dom';
 import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon} from '@mui/material';
 import useLocalStorageState from 'use-local-storage-state';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
-import SearchIcon from '@mui/icons-material/Search';
+import SportsBarIcon from '@mui/icons-material/SportsBar'
 import Beers from './components/Beers';
 import './App.css'
 
@@ -13,6 +13,17 @@ function App() {
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
+  };
+
+  const getTitle = () => {
+    switch (location.pathname) {
+      case '/beers':
+        return 'Beers';
+      case '/':
+        return 'BeerMates';
+      default:
+        return 'BeerMates';
+    }
   };
 
   return (
@@ -29,7 +40,7 @@ function App() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            BeerMates
+            {getTitle()}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -46,11 +57,11 @@ function App() {
             <ListItemIcon>
               <HomeIcon />
             </ListItemIcon>
-            <ListItemText primary="Inicio" />
+            <ListItemText primary="Home" />
           </ListItem>
           <ListItem button component={Link} to="/beers" onClick={toggleDrawer}>
             <ListItemIcon>
-              <SearchIcon />
+              <SportsBarIcon />
             </ListItemIcon>
             <ListItemText primary="Beers" />
           </ListItem>
