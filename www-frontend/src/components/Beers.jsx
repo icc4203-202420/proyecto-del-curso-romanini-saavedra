@@ -76,7 +76,7 @@ const Beers = () => {
                         {(searchKeywords ? filteredBeers : allBeersData.beers).map((beer, index) => (
                             <ListItem key={index}>
                                 <div style={{marginBottom: '20px', width: '100%'}}>
-                                    <Card sx={{width: '260px', height:'170px'}}>
+                                    <Card sx={{width: {xs: '260px', sm: '600px', md: '600px'}, maxWidth: '100%', height:'170px'}}>
                                         <Box sx={{height: "100%", display: 'flex', alignItems: 'center', backgroundColor: 'rgb(245, 222, 179)'}}>
                                             <CardMedia
                                                 component="img"
