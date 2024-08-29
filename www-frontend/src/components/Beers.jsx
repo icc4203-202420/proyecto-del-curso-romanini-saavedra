@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Card, CardActions, CardContent, Typography, Box } from '@mui/material'
+import { Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
+import beerIcon from '../assets/images/beer_bottle_icon.png'
 
 const Beers = () => {
     const [beers, setBeers] = useState([]);
@@ -13,6 +14,8 @@ const Beers = () => {
                 
                 console.log(apiResponse)
                 setBeers(apiResponse.data.beers);
+
+                console.log(apiResponse.data.beers)
 
             } catch(error){
                 console.error('Failed to fetch API data:', error);
@@ -28,14 +31,22 @@ const Beers = () => {
                 beers.map((beer) => (
                     <div style={{marginBottom: '20px'}}>
                         <Card>
-                            <CardContent>
-                                <Typography variant="h6" component="div">
-                                    {beer.name}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {"No description available"}
-                                </Typography>
-                            </CardContent>
+                            <Box sx={{height: 130, display: 'flex', alignItems: 'center'}}>
+                                <CardMedia
+                                    component="img"
+                                    sx={{width: 100, height: 100, objectFit: 'cover'}}
+                                    image={beerIcon}
+                                    alt={beer.name}
+                                />
+                                <CardContent>
+                                    <Typography variant="h6" component="div" sx={{textAlign: 'left'}}>
+                                        {beer.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary" sx={{textAlign: 'left', mt: 1}}>
+                                        {beer.style}
+                                    </Typography>
+                                </CardContent>
+                            </Box>
                         </Card>
                     </div>
                 ))
