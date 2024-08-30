@@ -70,23 +70,35 @@ const BarEvents = () => {
         )}
         {eventsData && (
             <List>
-                {eventsData.map((event, index) => (
+                {eventsData.map((event, index) => {
+                const eventDate = new Date(event.date);
+                const formattedDate = eventDate.toLocaleDateString(undefined, {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                });
+                return(
                 <React.Fragment key={index}>
                     <ListItem>
                     <Card sx={{ width: '100%', backgroundColor: 'rgb(255, 244, 229)', borderRadius: 3 }}>
                         <CardContent>
                         <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
-                            {event.name}
+                            {`Name: ${event.name}`}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {event.description}
+                            {`Description: ${event.description}`}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {`Date: ${formattedDate}`}
                         </Typography>
                         </CardContent>
                     </Card>
                     </ListItem>
                     {index < eventsData.length - 1 && <Divider sx={{ my: 2 }} />}
                 </React.Fragment>
-                ))}
+                );
+                })}
             </List>
         )}
       </Box>
