@@ -77,7 +77,7 @@ const Beers = () => {
                             <ListItem key={index}>
                                 <div style={{marginBottom: '20px', width: '100%'}}>
                                     <Card sx={{width: {xs: '260px', sm: '600px', md: '600px'}, maxWidth: '100%', height:'170px'}}>
-                                        <Box sx={{height: "100%", display: 'flex', alignItems: 'center', backgroundColor: 'rgb(245, 222, 179)'}}>
+                                        <Box sx={{height: "100%", display: 'flex', alignItems: 'center', backgroundColor: 'rgb(212, 160, 23)'}}>
                                             <CardMedia
                                                 component="img"
                                                 sx={{width: 100, height: 100, objectFit: 'cover'}}
