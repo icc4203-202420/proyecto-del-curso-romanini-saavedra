@@ -5,8 +5,15 @@ import axios from 'axios';
 import { Container, Grid, Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
 import beerMatesLogo from '../assets/images/beerMatesLogo.jpg'
 import bottleIcon from '../assets/images/beer_bottle_icon.png'
+import {Navigate, useNavigate} from 'react-router-dom';
 
 const Home = () => {
+    const navigate = useNavigate();
+
+    const handleFindMatesClick = () => {
+        navigate('/users');
+    };
+
     return (
         <div style={{backgroundColor: '#f5deb3', minHeight: '100vh'}}>
             <Container maxWidth="sm" sx={{display: 'flex', justifyContent: 'center', margin: '32px auto'}}>
@@ -26,6 +33,7 @@ const Home = () => {
                     marginLeft: 'auto',
                     marginRight: 'auto'
                 }}
+                onClick={handleFindMatesClick}
             >
                 Find Mates
             </Button>

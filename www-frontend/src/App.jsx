@@ -9,6 +9,7 @@ import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import Beers from './components/Beers';
 import Bars from './components/Bars';
 import Home from './components/Home';
+import Users from './components/Users';
 import BarEvents from './components/BarEvents';
 import './App.css'
 
@@ -25,6 +26,8 @@ function App() {
         return 'Beers';
       case '/bars':
         return 'Bars'
+      case '/users':
+        return 'Users'
       case '/':
         return 'BeerMates';
       default:
@@ -85,6 +88,7 @@ function App() {
         <Route path="/beers" element={<Beers/>}/>
         <Route path="/bars" element={<Bars/>}/>
         <Route path="/bars/:bar_id/events" element={<BarEvents />} />
+        <Route path="/users" element={<Users/>}/>
       </Routes>
     </>
   );
