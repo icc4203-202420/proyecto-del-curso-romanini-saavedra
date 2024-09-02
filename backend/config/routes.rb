@@ -33,6 +33,8 @@ Rails.application.routes.draw do
 
       resources :events, only: [:show, :create, :update, :destroy]
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
+      resources :brands, only: [:index, :show]
+      resources :breweries, only: [:index, :show]
     end
   end
 
