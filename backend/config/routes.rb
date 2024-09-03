@@ -35,6 +35,7 @@ Rails.application.routes.draw do
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
       resources :brands, only: [:index, :show]
       resources :breweries, only: [:index, :show]
+      resources :bars_beers, only: [:index]
     end
   end
 
