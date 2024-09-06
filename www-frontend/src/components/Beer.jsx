@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
+import {Link} from 'react-router-dom';
 import useLocalStorageState from 'use-local-storage-state';
 import axios from 'axios';
-import { IconButton, Tabs, Tab, Grid, Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tabs, Tab, Grid, Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
 import beerIcon from '../assets/images/beer_bottle_icon.png'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
 import StarIcon from '@mui/icons-material/Star';
 import Reviews from './Reviews'
+import CreateReview from './CreateReview'
 
 const Beer = () => {
+    const [open, setOpen] = useState(false)
     const {beer_id} = useParams();
     const [tabIndex,  setTabIndex] = useState(0);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
     };
@@ -108,10 +120,20 @@ const Beer = () => {
                                 variant="outlined"
                                 startIcon={<StarIcon/>}
                                 sx={{borderRadius: 2}}
+                                onClick={handleClickOpen}
                             >
                                 Review
                             </Button>
                         </Box>
+                        <Dialog open={open} onClose={handleClose}>
+                            <DialogTitle>Review this beer</DialogTitle>
+                            <DialogContent>
+                                <CreateReview beer_id={beer_id} onClose={handleClose}/>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleClose}>Cancel</Button>
+                            </DialogActions>
+                        </Dialog>
                         <Tabs
                             value={tabIndex}
                             onChange={handleTabChange}

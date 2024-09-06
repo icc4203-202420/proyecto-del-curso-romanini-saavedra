@@ -7,10 +7,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import SportsBarIcon from '@mui/icons-material/SportsBar';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import Beers from './components/Beers';
+import Beer from './components/Beer';
 import Bars from './components/Bars';
 import Home from './components/Home';
 import Users from './components/Users';
 import BarEvents from './components/BarEvents';
+import CreateReview from './components/CreateReview';
 import './App.css'
 
 function App() {
@@ -86,6 +88,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/beers" element={<Beers/>}/>
+        <Route path="/beers/:beer_id" element={<Beer/>}/>
         <Route path="/bars" element={<Bars/>}/>
         <Route path="/bars/:bar_id/events" element={<BarEvents />} />
         <Route path="/users" element={<Users/>}/>
