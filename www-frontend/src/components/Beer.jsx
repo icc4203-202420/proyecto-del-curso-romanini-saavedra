@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
-import {Link} from 'react-router-dom';
-import useLocalStorageState from 'use-local-storage-state';
-import axios from 'axios';
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tabs, Tab, Grid, Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
-import beerIcon from '../assets/images/beer_bottle_icon.png'
+import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tabs, Tab, Grid, Button, Card, CardContent, Typography, Box } from '@mui/material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
 import StarIcon from '@mui/icons-material/Star';
 import Reviews from './Reviews'
 import CreateReview from './CreateReview'
+import BarsBeers from './BarsBeers'
 
 const Beer = () => {
     const [open, setOpen] = useState(false)
@@ -44,11 +41,6 @@ const Beer = () => {
         method: 'GET'
     })
 
-    const [{ data: barsBeersData}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/bars_beers`,
-        method: 'GET'
-    })
-
     const [{ data: reviewsData }] = useAxios({
         url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
         method: 'GET'
@@ -58,8 +50,7 @@ const Beer = () => {
     console.log("BRAND DATA:", brandData)
     console.log("BREWERY DATA:", breweryData)
     console.log("REVIEWS DATA:", reviewsData)
-    console.log("BARS BEERS DATA:", barsBeersData)
-
+  
     return(
         <div>
             {loading && (
@@ -176,19 +167,7 @@ const Beer = () => {
                             </Box>
                         )}
                         {tabIndex === 2 && (
-                            <>
-                                {barsBeersData && (barsBeersData.bars_beers.filter((beer) => beer.beer_id === beerData.id)).length > 0 ? (
-                                    <List>
-                                        {filteredBeer.map((beer, index) => (
-                                            <ListItem key={index}>
-                                                <ListItemText primary={`Available at: ${beer.bar_id}`}></ListItemText>
-                                            </ListItem>
-                                        ))}
-                                    </List>
-                                ) : (
-                                    <Typography>No bars found with this beer.</Typography>
-                                )}
-                            </>
+                            <BarsBeers beer_id={beer_id}/>
                         )}
                     </CardContent>
                 </Card>
