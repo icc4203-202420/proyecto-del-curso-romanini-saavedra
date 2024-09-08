@@ -33,6 +33,12 @@ Rails.application.routes.draw do
 
       resources :events, only: [:show, :create, :update, :destroy]
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
+
+      post 'verify-token', to: 'sessions#verify_token'
+      devise_scope :user do
+        get 'verify-token', to: 'sessions#verify_token'
+      end
+      post 'signup', to: 'sessions#signup'
     end
   end
 
