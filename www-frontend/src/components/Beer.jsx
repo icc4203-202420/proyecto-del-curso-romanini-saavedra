@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tabs, Tab, Grid, Button, Card, CardContent, Typography, Box } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tabs, Tab, Grid, Button, Card, CardContent, CardMedia, Typography, Box } from '@mui/material'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
 import StarIcon from '@mui/icons-material/Star';
@@ -65,53 +65,89 @@ const Beer = () => {
             )}
 
             {beerData && (
-                <Card
+                <Box
                     sx={{
-                        maxWidth: 300,
+                        maxWidth: 280,
                         margin: 'auto',
-                        backgroundColor: '#F5D7B0',
-                        padding: 2,
-                        borderRadius: 4
                     }}
                 >
-                    <IconButton sx={{marginBottom: 1}}>
+                    {/* <IconButton 
+                        sx={{
+                            top: 16,
+                            left: 16,
+                            position: 'absolute'
+                        }}
+                    >
                         <ArrowBackIosIcon/>
-                    </IconButton>
+                    </IconButton> */}
 
-                    <CardContent>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
-                                <Typography variant="h4" sx={{fontWeight: 'bold'}}>
+                    <Box position="relative" width="100%" height={300} mb={2}>
+                        <Card
+                            sx={{
+                                backgroundColor: 'transparent',
+                                boxShadow: 'none',
+                                border: 'none',
+                                position: 'relative'
+                            }}
+                        >
+                            <CardMedia
+                                component="img"
+                                sx={{ 
+                                    height: '100%', 
+                                    width: '100%', 
+                                    objectFit: 'cover',
+                                    objectPosition: 'center',
+                                    opacity: 0.1
+                                }}
+                                image={beerBottleIcon}
+                                title={beerData.beer.name}
+                            />
+                            <CardContent 
+                                sx={{
+                                position: 'absolute', 
+                                top: 16, 
+                                left: 16, 
+                                zIndex: 1,
+                                display: 'flex', 
+                                flexDirection: 'column',
+                                justifyContent: 'flex-start', 
+                                alignItems: 'flex-start'
+                                }}
+                            >
+                                <Box display='flex' alignItems='center' mb={1}>
+                                    <StarIcon fontSize='small' sx={{color: '#D4A017'}}/>
+                                    {beerData.beer.avg_rating !== undefined && beerData.beer.avg_rating !== null
+                                            ? (
+                                                <Typography variant="body2" sx={{marginLeft: 0.5}}>
+                                                    {beerData.beer.avg_rating.toFixed(1)}
+                                                </Typography>
+                                            ) : 
+                                            (
+                                                <Typography variant="body2" sx={{marginLeft: 0.5}}>
+                                                    No reviews yet
+                                                </Typography>
+                                            )}
+                                </Box>
+                                <Typography variant="h4" component="div" sx={{ color: 'black', fontWeight: 'bold', textAlign: "left"}}>
                                     {beerData.beer.name}
                                 </Typography>
                                 {brandData && breweryData && (
-                                    <Typography variant="subtitle1" color="text.secondary">
+                                    <Typography variant="subtitle1" color="black" sx={{ mt: 1}}>
                                         {`${breweryData.breweries[(brandData.brands[beerData.beer.brand_id].brewery_id)-1].name}`}
                                     </Typography>
                                 )}
-                                <Box display="flex" alignItems="center" my={1}>
-                                    <StarIcon fontSize="small" color="secondary"/>
-                                    <Typography variant="body2" sx={{marginLeft: 0.5}}>
-                                        {beerData.beer.avg_rating !== undefined && beerData.beer.avg_rating !== null
-                                            ? beerData.beer.avg_rating.toFixed(1)
-                                            : "No reviews yet"}
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <img
-                                    src={beerBottleIcon}
-                                    alt="beer"
-                                    style={{width: '100%'}}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Box display="flex" justifyContent="center" my={2}>
+                            </CardContent>
+                        </Card>
+                    </Box>
+
+
+                        <Box display="flex" justifyContent="left" my={2}>
                             <Button
                                 variant="outlined"
                                 startIcon={<StarIcon/>}
                                 sx={{borderRadius: 2}}
                                 onClick={handleClickOpen}
+                                color="black"
                             >
                                 Review
                             </Button>
@@ -129,7 +165,20 @@ const Beer = () => {
                             value={tabIndex}
                             onChange={handleTabChange}
                             variant="fullWidth"
-                            sx={{marginBottom: 2}}
+                            sx={{
+                                marginBottom: 2,
+                                '.MuiTab-root': {
+                                    color: 'black',
+                                },
+                                '.Multi-selected': {
+                                    color: 'black',
+                                }
+                            }}
+                            TabIndicatorProps={{
+                                style: {
+                                    backgroundColor: '#D4A017'
+                                }
+                            }}
                         >
                             <Tab label="Information"></Tab>
                             <Tab label="Reviews"></Tab>
@@ -138,22 +187,22 @@ const Beer = () => {
 
                         {tabIndex === 0 && (
                             <Box>
-                                <Typography variant="body2" gutterBottom>
+                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
                                     <strong>Style:</strong> {beerData.beer.style}
                                 </Typography>
-                                <Typography variant="body2" gutterBottom>
+                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
                                     <strong>Alcohol:</strong> {beerData.beer.alcohol}
                                 </Typography>
-                                <Typography variant="body2" gutterBottom>
+                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
                                     <strong>Hops:</strong> {beerData.beer.hop}
                                 </Typography>
-                                <Typography variant="body2" gutterBottom>
+                                <Typography variant="body1" gutterBottom textAlign="left" color="black"> 
                                     <strong>IBU:</strong> {beerData.beer.ibu}
                                 </Typography>
-                                <Typography variant="body2" gutterBottom>
+                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
                                     <strong>Yeast:</strong> {beerData.beer.yeast}
                                 </Typography>
-                                <Typography variant="body2" gutterBottom>
+                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
                                     <strong>Malts:</strong> {beerData.beer.malts}
                                 </Typography>
                             </Box>
@@ -169,8 +218,10 @@ const Beer = () => {
                         {tabIndex === 2 && (
                             <BarsBeers beer_id={beer_id}/>
                         )}
-                    </CardContent>
-                </Card>
+                    
+
+                </Box>
+                
             )}
         </div>
     )
