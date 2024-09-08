@@ -3,7 +3,7 @@ import useAxios from 'axios-hooks';
 import { Dialog, Slider, TextField, Button, Typography, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import {useUser} from '../context/UserContext';
 
-const CreateReview = ({beer_id, user_id, onClose}) => {
+const CreateReview = ({beer_id, onClose}) => {
     const { user } = useUser();
     const [review, setReview] = useState({
         text: '',
@@ -14,10 +14,18 @@ const CreateReview = ({beer_id, user_id, onClose}) => {
     const [openReviewDialog, setOpenReviewDialog] = useState(true);
     const [validationError, setValidationError] = useState(null);
     
+    const aux_token = localStorage.getItem('app-token');
+    const token = aux_token.replace(/"/g, '');
+
+    console.log("USER TOKEN:", token)
+
     const [{ loading, error}, executePost] = useAxios(
         {
             url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
         },
         {manual: true}
     );
