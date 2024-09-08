@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tabs, Tab, Grid, Button, Card, CardContent, CardMedia, Typography, Box } from '@mui/material'
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, CardMedia, Typography, Box } from '@mui/material'
 import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
 import StarIcon from '@mui/icons-material/Star';
 import Reviews from './Reviews'
@@ -132,8 +131,8 @@ const Beer = () => {
                                     {beerData.beer.name}
                                 </Typography>
                                 {brandData && breweryData && (
-                                    <Typography variant="subtitle1" color="black" sx={{ mt: 1}}>
-                                        {`${breweryData.breweries[(brandData.brands[beerData.beer.brand_id].brewery_id)-1].name}`}
+                                    <Typography variant="subtitle1" color="black" sx={{ mt: 1, textAlign: "left"}}>
+                                        {`Brewery: ${breweryData.breweries[(brandData.brands[beerData.beer.brand_id].brewery_id)-1].name}`}
                                     </Typography>
                                 )}
                             </CardContent>
@@ -209,19 +208,23 @@ const Beer = () => {
                         )}
                         {tabIndex === 1 && (
                             <Box>
-                                {reviewsData.map((review) => (
-                                    <Reviews reviewsData={review}/>
-                                ))
+                                {
+                                    parseInt(reviewsData.length) > 0 ? (
+                                        reviewsData.map((review) => (
+                                            <Reviews reviewsData={review}/>
+                                        ))
+                                    ) : (
+                                        <Typography color="black">
+                                            No reviews yet
+                                        </Typography>
+                                    )
                                 }
                             </Box>
                         )}
                         {tabIndex === 2 && (
                             <BarsBeers beer_id={beer_id}/>
                         )}
-                    
-
                 </Box>
-                
             )}
         </div>
     )

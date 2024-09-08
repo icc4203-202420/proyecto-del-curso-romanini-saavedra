@@ -1,6 +1,7 @@
 import React, { useReducer, useEffect, }from 'react';
 import useAxios from 'axios-hooks';
-import { Typography, Box } from '@mui/material'
+import { Card, CardContent, Typography, Box } from '@mui/material'
+import StarIcon from '@mui/icons-material/Star';
 
 const initialState = {
     user: null, 
@@ -20,7 +21,6 @@ const reviewsReducer = (state, action) => {
             return state;
     }
 };
-
 
 const Reviews = ({reviewsData}) => {
     const [state, dispatch] = useReducer(reviewsReducer, initialState);
@@ -46,13 +46,38 @@ const Reviews = ({reviewsData}) => {
             {state.error && <Typography color="error">Failed to load user data</Typography>}
             {state.user && (
                 <Box>
-                    <Typography>
-                        {`User: ${userData.user.handle}`} {`Rating: ${reviewsData.rating}`}
-                    </Typography>
-                    <Typography>
-                        {`Review: ${reviewsData.text}`}
-                    </Typography>
+                    <Card 
+                        sx={{
+                            width: 280,
+                            height: 'auto',
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            marginBottom: 1,
+                            backgroundColor: 'transparent',
+                            borderRadius: 4
+                        }}
+                    >
+                        <CardContent>
+                            <Typography variant="h6" component="div" textAlign="left">
+                                {userData.user.handle} 
+                            </Typography>
+
+                            <Box display='flex' alignItems='center' mb={1}>
+                                <StarIcon fontSize='small' sx={{color: '#D4A017'}}/>
+                                <Typography variant="body2" color="textSecondary" textAlign="left">
+                                    {reviewsData.rating}
+                                </Typography>
+                                    
+                            </Box>
+
+                            <Typography variant="body1" mt={2} textAlign="left">
+                                {reviewsData.text}
+                            </Typography>
+                        </CardContent>
+
+                    </Card>
                 </Box>
+
             )}
         </Box>
         
