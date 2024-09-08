@@ -18,11 +18,14 @@
     "@mui/styles": "^6.0.0",
     "axios": "^1.7.5",
     "axios-hooks": "^5.0.2",
+    "formik": "^2.4.6",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
     "styled-components": "^6.1.12",
-    "use-local-storage-state": "^19.4.0"
+    "use-local-storage-state": "^19.4.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
