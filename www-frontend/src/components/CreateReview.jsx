@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import useAxios from 'axios-hooks';
 import { Dialog, Slider, TextField, Button, Typography, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import {useUser} from '../context/UserContext';
 
 const CreateReview = ({beer_id, user_id, onClose}) => {
+    const { user } = useUser();
     const [review, setReview] = useState({
         text: '',
         rating: 0,
@@ -63,7 +65,7 @@ const CreateReview = ({beer_id, user_id, onClose}) => {
                     beer_id: beer_id,
                     // CAMBIAR ACA user_id = 1 POR user_id = user_id
                     // ESTO ES POR MIENTRAS QUE NO TENEMOS LO DE LOG IN
-                    user_id: 1
+                    user_id: user.id
                 }
             }
         }).then((response) => {

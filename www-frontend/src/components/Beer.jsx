@@ -7,18 +7,29 @@ import StarIcon from '@mui/icons-material/Star';
 import Reviews from './Reviews'
 import CreateReview from './CreateReview'
 import BarsBeers from './BarsBeers'
+import {useUser} from '../context/UserContext';
 
 const Beer = () => {
+    const {user, isAuthenticated} = useUser();
     const [open, setOpen] = useState(false)
+    const [loginPromptOpen, setLoginPromptOpen] = useState(false);
     const {beer_id} = useParams();
     const [tabIndex,  setTabIndex] = useState(0);
 
     const handleClickOpen = () => {
-        setOpen(true);
+        if (isAuthenticated) {
+            setOpen(true);
+        } else {
+            setLoginPromptOpen(true);
+        }
     }
 
     const handleClose = () => {
         setOpen(false);
+    }
+
+    const handleLoginPromptClose = () => {
+        setLoginPromptOpen(false);
     }
 
     const handleTabChange = (event, newValue) => {
@@ -70,15 +81,12 @@ const Beer = () => {
                         margin: 'auto',
                     }}
                 >
-                    {/* <IconButton 
-                        sx={{
-                            top: 16,
-                            left: 16,
-                            position: 'absolute'
-                        }}
-                    >
-                        <ArrowBackIosIcon/>
-                    </IconButton> */}
+                    
+                    {/* {isAuthenticated ? (
+                        <div>Welcome, {user.first_name} {user.last_name}</div>
+                    ) : (
+                        <div>Please log in to view this page</div>
+                    )} */}
 
                     <Box position="relative" width="100%" height={300} mb={2}>
                         <Card
@@ -103,14 +111,14 @@ const Beer = () => {
                             />
                             <CardContent 
                                 sx={{
-                                position: 'absolute', 
-                                top: 16, 
-                                left: 16, 
-                                zIndex: 1,
-                                display: 'flex', 
-                                flexDirection: 'column',
-                                justifyContent: 'flex-start', 
-                                alignItems: 'flex-start'
+                                    position: 'absolute', 
+                                    top: 16, 
+                                    left: 16, 
+                                    zIndex: 1,
+                                    display: 'flex', 
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-start', 
+                                    alignItems: 'flex-start'
                                 }}
                             >
                                 <Box display='flex' alignItems='center' mb={1}>
@@ -158,6 +166,15 @@ const Beer = () => {
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleClose}>Cancel</Button>
+                            </DialogActions>
+                        </Dialog>
+                        <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
+                            <DialogTitle>Please Log In</DialogTitle>
+                            <DialogContent>
+                                You need to be logged in to review a beer. Please log in or create an account.
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleLoginPromptClose}>Close</Button>
                             </DialogActions>
                         </Dialog>
                         <Tabs

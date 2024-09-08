@@ -39,17 +39,6 @@ class API::V1::ReviewsController < ApplicationController
   #   end
   # end
 
-
-
-  # Para crear un review:
-  # {
-#     "review": {
-#         "text": "Great beer! I loved it!", 
-#         "rating": 5,
-#         "user_id": 16,
-#         "beer_id": 1
-#     }
-# }
   def create
     @review = Review.new(review_params)
 
@@ -59,8 +48,6 @@ class API::V1::ReviewsController < ApplicationController
       render json: @review.errors, status: :unprocessable_entity
     end
   end
-
-
 
   def update
     if @review.update(review_params)
