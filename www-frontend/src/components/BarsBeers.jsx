@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import useAxios from 'axios-hooks';
-import {Typography} from '@mui/material'
+import {Typography, Card, CardContent, Box} from '@mui/material'
 
 const BarsBeers = ({beer_id}) => {
     const [{ data: barsBeersData, loading: barsLoading, error: barsError }] = useAxios({
@@ -31,7 +31,7 @@ const BarsBeers = ({beer_id}) => {
             {barsFiltered.length > 0 ? (
                 barsFiltered.map((bar) => <SingleBar key={bar.id} barId={bar.bar_id}/>)
             ) : (
-                <Typography>No bars serve this beer.</Typography>
+                <Typography color="black">No bars serve this beer.</Typography>
             )}
         </div>
     );
@@ -49,9 +49,25 @@ const SingleBar = ({barId}) => {
     return (
         <div>
             {barData && (
-                <Typography>
-                    {barData.bar.name}
-                </Typography>
+                <Card
+                    sx={{
+                        width: 280,
+                        height: 'auto',
+                        maxHeight: 300,
+                        overflow: 'auto',
+                        marginBottom: 2,
+                        backgroundColor: 'transparent',
+                        borderRadius: 4
+                    }}
+                >
+                    <CardContent>
+                        <Typography variant="h5" component="div" textAlign="center">
+                            {barData.bar.name}
+                        </Typography>
+
+                    </CardContent>
+
+                </Card>
             )}
         </div>
     )
