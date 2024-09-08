@@ -38,7 +38,7 @@ Rails.application.routes.draw do
       devise_scope :user do
         get 'verify-token', to: 'sessions#verify_token'
       end
-      post 'signup', to: 'sessions#signup'
+      post 'signup', to: 'registrations#create'
     end
   end
 
