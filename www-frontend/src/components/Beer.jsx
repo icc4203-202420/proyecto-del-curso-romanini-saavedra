@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, CardMedia, Typography, Box } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, CardMedia, Typography, Box, Pagination } from '@mui/material'
 import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
 import StarIcon from '@mui/icons-material/Star';
 import ReviewsList from './ReviewsList'
@@ -11,10 +11,13 @@ import {useUser} from '../context/UserContext';
 
 const Beer = () => {
     const {user, isAuthenticated} = useUser();
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
     const [loginPromptOpen, setLoginPromptOpen] = useState(false);
     const {beer_id} = useParams();
     const [tabIndex,  setTabIndex] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const reviewsPerPage = 2;
 
     const handleClickOpen = () => {
         if (isAuthenticated) {
@@ -22,15 +25,15 @@ const Beer = () => {
         } else {
             setLoginPromptOpen(true);
         }
-    }
+    };
 
     const handleClose = () => {
         setOpen(false);
-    }
+    };
 
     const handleLoginPromptClose = () => {
         setLoginPromptOpen(false);
-    }
+    };
 
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
@@ -39,7 +42,11 @@ const Beer = () => {
     const handleReviewCreated = () => {
         refetchBeerData();
         refetchReviews();
-    }
+    };
+
+    const handlePageChange = (event, value) => {
+        setCurrentPage(value);
+    };
 
     const [{ data: beerData, loading, error }, refetchBeerData] = useAxios({
         url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}`,
@@ -60,6 +67,15 @@ const Beer = () => {
         url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
         method: 'GET'
     })
+
+    const totalReviews = reviewsData && reviewsData.reviews ? reviewsData.reviews.length : 0;
+    const totalPages = Math.ceil(totalReviews / reviewsPerPage);
+
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    // const currentReviews = reviewsData?.slice(indexOfFirstReview, indexOfLastReview) || [];
+    const currentReviews = reviewsData && reviewsData.reviews ? reviewsData.reviews.slice(indexOfFirstReview, indexOfLastReview) : [];
+    // const totalPages = Math.ceil((reviewsData?.length || 0) / reviewsPerPage);
   
     return(
         <div>
@@ -220,7 +236,7 @@ const Beer = () => {
                         </Box>
                     )}
                     {tabIndex === 1 && (
-                        <ReviewsList reviewsData={reviewsData} currentUserId={user?.id}/>
+                            <ReviewsList reviewsData={reviewsData} currentUserId={user?.id}/>
                     )}
                     {tabIndex === 2 && (
                         <BarsBeers beer_id={beer_id}/>
