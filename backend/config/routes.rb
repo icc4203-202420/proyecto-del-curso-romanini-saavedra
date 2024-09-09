@@ -40,12 +40,11 @@ Rails.application.routes.draw do
       resources :breweries, only: [:index, :show]
       resources :bars_beers, only: [:index]
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
-
       post 'verify-token', to: 'sessions#verify_token'
       devise_scope :user do
         get 'verify-token', to: 'sessions#verify_token'
       end
-      post 'signup', to: 'sessions#signup'
+      post 'signup', to: 'registrations#create'
     end
   end
 

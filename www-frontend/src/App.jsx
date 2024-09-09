@@ -2,7 +2,6 @@ import React, { useReducer, useState, useEffect } from 'react';
 import {Routes, Route, Link, useLocation} from 'react-router-dom';
 import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 import useLocalStorageState from 'use-local-storage-state';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
@@ -172,7 +171,7 @@ function App() {
         <Route path="/bars/:bar_id/events" element={<BarEvents />} />
         <Route path="/users" element={<Users />} />
         <Route path="/login" element={<LoginForm tokenHandler={handleJWT} />} />
-        <Route path="/signup" element={<SignupForm tokenHandler={handleJWT} />} />
+        <Route path="/signup" element={<SignupForm />} />
       </Routes>
     </>
   );

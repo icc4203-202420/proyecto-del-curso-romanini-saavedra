@@ -24,25 +24,6 @@ class API::V1::SessionsController < Devise::SessionsController
     render json: { error: 'Invalid token' }, status: :unauthorized
   end
 
-  def signup
-    user = User.new(user_params)
-    if user.save
-      token = JWT.encode({ sub: user.id }, Rails.application.credentials.devise_jwt_secret_key, 'HS256')
-      render json: {
-        status: {
-          code: 201,
-          message: 'User created successfully.',
-          data: {
-            user: UserSerializer.new(user).serializable_hash[:data][:attributes],
-            token: token
-          }
-        }
-      }, status: :created
-    else
-      render json: { error: user.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
   private
 
   def respond_with(current_user, _opts = {})
@@ -80,8 +61,5 @@ class API::V1::SessionsController < Devise::SessionsController
         message: "Couldn't find an active session."
       }, status: :unauthorized
     end
-  end
-  def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
   end
 end

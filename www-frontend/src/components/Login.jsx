@@ -6,8 +6,8 @@ import useAxios from 'axios-hooks';
 import { useNavigate } from 'react-router-dom';
 
 const validationSchema = Yup.object({
-  email: Yup.string().email('Email no válido').required('El email es requerido'),
-  password: Yup.string().required('La contraseña es requerida').min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  email: Yup.string().email('Invalid email address').required('Email is required'),
+  password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters long'),
 });
 
 const initialValues = {
@@ -30,7 +30,7 @@ const LoginForm = ({ tokenHandler }) => {
   );
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    console.log("Formulario enviado con valores:", values);
+    //console.log("Formulario enviado con valores:", values);
     try {
       // Enviar datos en el formato esperado por el backend
       const response = await executePost({
@@ -41,14 +41,14 @@ const LoginForm = ({ tokenHandler }) => {
           }
         }
       });
-      console.log("Post ejecutado")
+      //console.log("Post ejecutado")
       const receivedToken = response.data.status.data.token; // Ajustar acceso al token según respuesta
-      console.log("Token recibido:", receivedToken);
+      //console.log("Token recibido:", receivedToken);
       tokenHandler(receivedToken);
 
-      console.log("Llegué aquí!");
-      console.log("Respuesta completa del servidor:", response);
-      console.log("Token recibido:", receivedToken);
+      //console.log("Llegué aquí!");
+      //console.log("Respuesta completa del servidor:", response);
+      //console.log("Token recibido:", receivedToken);
 
       setServerError(''); // Limpia el mensaje de error si el login es exitoso
       navigate('/'); // Redirige a la ruta raíz después de un login exitoso
