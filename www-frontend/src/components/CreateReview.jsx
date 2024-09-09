@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import useAxios from 'axios-hooks';
 import { Dialog, Slider, TextField, Button, Typography, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import {useUser} from '../context/UserContext';
 
-const CreateReview = ({beer_id, user_id, onClose}) => {
+const CreateReview = ({beer_id, onClose, onReviewCreated}) => {
+    const { user } = useUser();
     const [review, setReview] = useState({
         text: '',
         rating: 0,
@@ -12,10 +14,16 @@ const CreateReview = ({beer_id, user_id, onClose}) => {
     const [openReviewDialog, setOpenReviewDialog] = useState(true);
     const [validationError, setValidationError] = useState(null);
     
+    const aux_token = localStorage.getItem('app-token');
+    const token = aux_token.replace(/"/g, '');
+
     const [{ loading, error}, executePost] = useAxios(
         {
             url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
-            method: 'POST'
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
         },
         {manual: true}
     );
@@ -61,14 +69,13 @@ const CreateReview = ({beer_id, user_id, onClose}) => {
                 review: {
                     ...review, 
                     beer_id: beer_id,
-                    // CAMBIAR ACA user_id = 1 POR user_id = user_id
-                    // ESTO ES POR MIENTRAS QUE NO TENEMOS LO DE LOG IN
-                    user_id: 1
+                    user_id: user.id
                 }
             }
         }).then((response) => {
             setOpenReviewDialog(false);
             setOpenSuccessDialog(true);
+            if (onReviewCreated) onReviewCreated();
             console.log("Review created succesfully", response.data);
         }).catch((error) => {
             console.error("Error creating review:", error);

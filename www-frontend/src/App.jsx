@@ -1,4 +1,5 @@
 import React, { useReducer, useState, useEffect } from 'react';
+import { UserContext } from './context/UserContext';
 import {Routes, Route, Link, useLocation} from 'react-router-dom';
 import {AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText, ListItemIcon} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +24,7 @@ import SignupForm from './components/Signup';
 import './App.css'
 
 function App() {
+  const [user, setUser] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [token, setToken] = useLocalStorageState('app-token', { defaultValue: '' });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -41,15 +43,17 @@ function App() {
       })
       .then(response => {
         console.log('response test info:',response)
-        const user = response.data.user;
+        const userData = response.data.user;
+        setUser(userData);
         setIsAuthenticated(true);
-        setUsername(`${user.first_name} ${user.last_name}`);
+        setUsername(`${userData.first_name} ${userData.last_name}`);
         setLoading(false);
         navigate('/')
       })
       .catch(error => {
         console.error('Error during authentication:', error);
         setToken('');
+        setUser(null);
         setIsAuthenticated(false);
         setUsername('');
         navigate('/login');
@@ -163,16 +167,18 @@ function App() {
         </List>
       </Drawer>
       <Toolbar /> {/* This empty toolbar is necessary to offset the content below the AppBar */}
-      <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/beers" element={<Beers/>}/>
-        <Route path="/beers/:beer_id" element={<Beer/>}/>
-        <Route path="/bars" element={<Bars/>}/>
-        <Route path="/bars/:bar_id/events" element={<BarEvents />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/login" element={<LoginForm tokenHandler={handleJWT} />} />
-        <Route path="/signup" element={<SignupForm />} />
-      </Routes>
+      <UserContext.Provider value={{user, isAuthenticated}}>
+        <Routes>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/beers" element={<Beers/>}/>
+          <Route path="/beers/:beer_id" element={<Beer/>}/>
+          <Route path="/bars" element={<Bars/>}/>
+          <Route path="/bars/:bar_id/events" element={<BarEvents />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/login" element={<LoginForm tokenHandler={handleJWT} />} />
+          <Route path="/signup" element={<SignupForm tokenHandler={handleJWT} />} />
+        </Routes>
+      </UserContext.Provider>
     </>
   );
 }

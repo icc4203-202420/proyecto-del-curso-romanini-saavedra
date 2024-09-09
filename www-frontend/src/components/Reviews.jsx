@@ -31,14 +31,22 @@ const Reviews = ({reviewsData}) => {
     })
 
     useEffect(() => {
-        dispatch({ type: 'SET_LOADING' });
-
-        if(error) {
+        if (loading) {
+            dispatch({ type: 'SET_LOADING' });
+        }else if (error) {
             dispatch({ type: 'SET_ERROR', payload: error });
         } else if (userData) {
             dispatch({ type: 'SET_USER', payload: userData.user })
         }
-    }, [userData, error]);
+    }, [userData, error, loading]);
+
+    if (state.loading) {
+        return <Typography>Loading...</Typography>
+    }
+
+    if (state.error) {
+        return <Typography color="error">Failed to load user data</Typography>
+    }
 
     return(
         <Box>
