@@ -36,7 +36,12 @@ const Beer = () => {
         setTabIndex(newValue);
     };
 
-    const [{ data: beerData, loading, error }, refetch] = useAxios({
+    const handleReviewCreated = () => {
+        refetchBeerData();
+        refetchReviews();
+    }
+
+    const [{ data: beerData, loading, error }, refetchBeerData] = useAxios({
         url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}`,
         method: 'GET'
       });
@@ -55,11 +60,6 @@ const Beer = () => {
         url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
         method: 'GET'
     })
-    
-    console.log("BEER DATA:", beerData)
-    console.log("BRAND DATA:", brandData)
-    console.log("BREWERY DATA:", breweryData)
-    console.log("REVIEWS DATA:", reviewsData)
   
     return(
         <div>
@@ -140,106 +140,91 @@ const Beer = () => {
                             </CardContent>
                         </Card>
                     </Box>
-
-
-                        <Box display="flex" justifyContent="left" my={2}>
-                            <Button
-                                variant="outlined"
-                                startIcon={<StarIcon/>}
-                                sx={{borderRadius: 2}}
-                                onClick={handleClickOpen}
-                                color="black"
-                            >
-                                Review
-                            </Button>
-                        </Box>
-                        <Dialog open={open} onClose={handleClose}>
-                            <DialogTitle>Review this beer</DialogTitle>
-                            <DialogContent>
-                                <CreateReview 
-                                    beer_id={beer_id} 
-                                    onClose={handleClose}
-                                    onReviewCreated={refetchReviews}
-                                />
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleClose}>Cancel</Button>
-                            </DialogActions>
-                        </Dialog>
-                        <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
-                            <DialogTitle>Please Log In</DialogTitle>
-                            <DialogContent>
-                                You need to be logged in to review a beer. Please log in or create an account.
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={handleLoginPromptClose}>Close</Button>
-                            </DialogActions>
-                        </Dialog>
-                        <Tabs
-                            value={tabIndex}
-                            onChange={handleTabChange}
-                            variant="fullWidth"
-                            sx={{
-                                marginBottom: 2,
-                                '.MuiTab-root': {
-                                    color: 'black',
-                                },
-                                '.Multi-selected': {
-                                    color: 'black',
-                                }
-                            }}
-                            TabIndicatorProps={{
-                                style: {
-                                    backgroundColor: '#D4A017'
-                                }
-                            }}
+                    <Box display="flex" justifyContent="left" my={2}>
+                        <Button
+                            variant="outlined"
+                            startIcon={<StarIcon/>}
+                            sx={{borderRadius: 2}}
+                            onClick={handleClickOpen}
+                            color="black"
                         >
-                            <Tab label="Information"></Tab>
-                            <Tab label="Reviews"></Tab>
-                            <Tab label="Available at"></Tab>
-                        </Tabs>
+                            Review
+                        </Button>
+                    </Box>
+                    <Dialog open={open} onClose={handleClose}>
+                        <DialogTitle>Review this beer</DialogTitle>
+                        <DialogContent>
+                            <CreateReview 
+                                beer_id={beer_id} 
+                                onClose={handleClose}
+                                onReviewCreated={handleReviewCreated}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
+                        <DialogTitle>Please Log In</DialogTitle>
+                        <DialogContent>
+                            You need to be logged in to review a beer. Please log in or create an account.
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleLoginPromptClose}>Close</Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Tabs
+                        value={tabIndex}
+                        onChange={handleTabChange}
+                        variant="fullWidth"
+                        sx={{
+                            marginBottom: 2,
+                            '.MuiTab-root': {
+                                color: 'black',
+                            },
+                            '.Multi-selected': {
+                                color: 'black',
+                            }
+                        }}
+                        TabIndicatorProps={{
+                            style: {
+                                backgroundColor: '#D4A017'
+                            }
+                        }}
+                    >
+                        <Tab label="Information"></Tab>
+                        <Tab label="Reviews"></Tab>
+                        <Tab label="Available at"></Tab>
+                    </Tabs>
 
-                        {tabIndex === 0 && (
-                            <Box>
-                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                    <strong>Style:</strong> {beerData.beer.style}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                    <strong>Alcohol:</strong> {beerData.beer.alcohol}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                    <strong>Hops:</strong> {beerData.beer.hop}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom textAlign="left" color="black"> 
-                                    <strong>IBU:</strong> {beerData.beer.ibu}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                    <strong>Yeast:</strong> {beerData.beer.yeast}
-                                </Typography>
-                                <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                    <strong>Malts:</strong> {beerData.beer.malts}
-                                </Typography>
-                            </Box>
-                        )}
-                        {tabIndex === 1 && (
-                            // <Box>
-                            //     {
-                            //         parseInt(reviewsData.length) > 0 ? (
-                            //             reviewsData.map((review) => (
-                            //                 <Reviews reviewsData={review}/>
-                            //             ))
-                            //         ) : (
-                            //             <Typography color="black">
-                            //                 No reviews yet
-                            //             </Typography>
-                            //         )
-                            //     }
-                            // </Box>
-                            <ReviewsList reviewsData={reviewsData} currentUserId={user?.id}/>
-                        )}
-                        {tabIndex === 2 && (
-                            <BarsBeers beer_id={beer_id}/>
-                        )}
+                    {tabIndex === 0 && (
+                        <Box>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Style:</strong> {beerData.beer.style}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Alcohol:</strong> {beerData.beer.alcohol}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Hops:</strong> {beerData.beer.hop}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black"> 
+                                <strong>IBU:</strong> {beerData.beer.ibu}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Yeast:</strong> {beerData.beer.yeast}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Malts:</strong> {beerData.beer.malts}
+                            </Typography>
+                        </Box>
+                    )}
+                    {tabIndex === 1 && (
+                        <ReviewsList reviewsData={reviewsData} currentUserId={user?.id}/>
+                    )}
+                    {tabIndex === 2 && (
+                        <BarsBeers beer_id={beer_id}/>
+                    )}
                 </Box>
             )}
         </div>
