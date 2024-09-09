@@ -3,7 +3,7 @@ import useAxios from 'axios-hooks';
 import { Dialog, Slider, TextField, Button, Typography, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import {useUser} from '../context/UserContext';
 
-const CreateReview = ({beer_id, onClose}) => {
+const CreateReview = ({beer_id, onClose, onReviewCreated}) => {
     const { user } = useUser();
     const [review, setReview] = useState({
         text: '',
@@ -16,8 +16,6 @@ const CreateReview = ({beer_id, onClose}) => {
     
     const aux_token = localStorage.getItem('app-token');
     const token = aux_token.replace(/"/g, '');
-
-    console.log("USER TOKEN:", token)
 
     const [{ loading, error}, executePost] = useAxios(
         {
@@ -71,14 +69,13 @@ const CreateReview = ({beer_id, onClose}) => {
                 review: {
                     ...review, 
                     beer_id: beer_id,
-                    // CAMBIAR ACA user_id = 1 POR user_id = user_id
-                    // ESTO ES POR MIENTRAS QUE NO TENEMOS LO DE LOG IN
                     user_id: user.id
                 }
             }
         }).then((response) => {
             setOpenReviewDialog(false);
             setOpenSuccessDialog(true);
+            if (onReviewCreated) onReviewCreated();
             console.log("Review created succesfully", response.data);
         }).catch((error) => {
             console.error("Error creating review:", error);

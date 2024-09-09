@@ -4,7 +4,7 @@ import useAxios from 'axios-hooks';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, CardMedia, Typography, Box } from '@mui/material'
 import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
 import StarIcon from '@mui/icons-material/Star';
-import Reviews from './Reviews'
+import ReviewsList from './ReviewsList'
 import CreateReview from './CreateReview'
 import BarsBeers from './BarsBeers'
 import {useUser} from '../context/UserContext';
@@ -51,7 +51,7 @@ const Beer = () => {
         method: 'GET'
     })
 
-    const [{ data: reviewsData }] = useAxios({
+    const [{ data: reviewsData }, refetchReviews] = useAxios({
         url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
         method: 'GET'
     })
@@ -81,12 +81,6 @@ const Beer = () => {
                         margin: 'auto',
                     }}
                 >
-                    
-                    {/* {isAuthenticated ? (
-                        <div>Welcome, {user.first_name} {user.last_name}</div>
-                    ) : (
-                        <div>Please log in to view this page</div>
-                    )} */}
 
                     <Box position="relative" width="100%" height={300} mb={2}>
                         <Card
@@ -162,7 +156,11 @@ const Beer = () => {
                         <Dialog open={open} onClose={handleClose}>
                             <DialogTitle>Review this beer</DialogTitle>
                             <DialogContent>
-                                <CreateReview beer_id={beer_id} onClose={handleClose}/>
+                                <CreateReview 
+                                    beer_id={beer_id} 
+                                    onClose={handleClose}
+                                    onReviewCreated={refetchReviews}
+                                />
                             </DialogContent>
                             <DialogActions>
                                 <Button onClick={handleClose}>Cancel</Button>
@@ -224,19 +222,20 @@ const Beer = () => {
                             </Box>
                         )}
                         {tabIndex === 1 && (
-                            <Box>
-                                {
-                                    parseInt(reviewsData.length) > 0 ? (
-                                        reviewsData.map((review) => (
-                                            <Reviews reviewsData={review}/>
-                                        ))
-                                    ) : (
-                                        <Typography color="black">
-                                            No reviews yet
-                                        </Typography>
-                                    )
-                                }
-                            </Box>
+                            // <Box>
+                            //     {
+                            //         parseInt(reviewsData.length) > 0 ? (
+                            //             reviewsData.map((review) => (
+                            //                 <Reviews reviewsData={review}/>
+                            //             ))
+                            //         ) : (
+                            //             <Typography color="black">
+                            //                 No reviews yet
+                            //             </Typography>
+                            //         )
+                            //     }
+                            // </Box>
+                            <ReviewsList reviewsData={reviewsData} currentUserId={user?.id}/>
                         )}
                         {tabIndex === 2 && (
                             <BarsBeers beer_id={beer_id}/>
