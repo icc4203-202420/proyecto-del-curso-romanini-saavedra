@@ -23,6 +23,17 @@ if Rails.env.development?
     FactoryBot.create(:brewery_with_brands_with_beers, countries: [country])
   end
 
+  # Crear un usuario para testeo
+  test_user = User.create!(
+    email: 'test@example.com',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Test',
+    last_name: 'User',
+    handle: "userHandle"
+  )
+  address = Address.create!(user: test_user, country: countries.sample)
+
   # Crear usuarios con direcciones asociadas
   users = FactoryBot.create_list(:user, 10) do |user, i|
     user.address.update(country: countries.sample)
