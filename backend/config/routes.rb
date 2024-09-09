@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   controllers: {
     sessions: 'api/v1/sessions',
     registrations: 'api/v1/registrations',
-    events: 'api/v1/events'
   }
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -22,16 +21,30 @@ Rails.application.routes.draw do
 
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
-      resources :bars
-      resources :beers
+      resources :bars do
+        resources :events, only: [:index, :update, :destroy]
+      end
+      resources :beers do 
+        resources :reviews, only: [:create, :index, :show, :update, :destroy]
+      end
       resources :users do
-        resources :reviews, only: [:index]
+        # resources :reviews, only: [:index, :update, :destroy]
+        # post 'reviews', to: 'reviews#create'
         get 'friendships', to: 'users#index_friendships', as: :friendships
         post 'friendships', to: 'users#create_friendship'
       end
 
-      resources :events
+      resources :events, only: [:show, :create, :update, :destroy]
+      # resources :reviews, only: [:show, :create, :update, :destroy]
+      resources :brands, only: [:index, :show]
+      resources :breweries, only: [:index, :show]
+      resources :bars_beers, only: [:index]
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
+      post 'verify-token', to: 'sessions#verify_token'
+      devise_scope :user do
+        get 'verify-token', to: 'sessions#verify_token'
+      end
+      post 'signup', to: 'registrations#create'
     end
   end
 
