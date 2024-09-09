@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const validationSchema = Yup.object({
   firstName: Yup.string().required('First name is required').min(2, 'First name must be at least 2 characters long'),
   lastName: Yup.string().required('Last name is required').min(2, 'Last name must be at least 2 characters long'),
-  email: Yup.string().email('Invalid email address').required('Email is required').matches(/\.[a-zA-Z]{2,}$/, 'Email must end with a dot followed by two characters'),
+  email: Yup.string().email('Invalid email address').required('Email is required').matches(/\.[a-zA-Z]{2,}$/, 'Email must end with a dot followed by two characters or more'),
   password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters long'),
   handle: Yup.string().required('Handle is required').min(3, 'Handle must be at least 3 characters long'),
   line1: Yup.string(),  // Optional
@@ -52,19 +52,19 @@ const SignupForm = () => {
       //console.log('User created:', response.data);
       navigate('/login');
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrors({ 
-          server: 'Error en el registro. Por favor revisa los datos ingresados.'
-        });
-      } else {
-        setErrors({ 
-          server: 'Error en el servidor. Intenta nuevamente más tarde.'
-        });
+        if (error.response && error.response.status === 422) {
+          setErrors({ 
+            server: error.response.data.error || 'Registration error. Please check the submitted data.'
+          });
+        } else {
+          setErrors({ 
+            server: 'Server error. Please try again later.'
+          });
+        }
+        console.error('Error during registration:', error);
+      } finally {
+        setSubmitting(false);
       }
-      console.error('Error durante el registro:', error);
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   return (
@@ -199,7 +199,7 @@ const SignupForm = () => {
                   color="primary"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Enviando...' : 'Registrarse'}
+                  {isSubmitting ? 'Sending...' : 'Sign up'}
                 </Button>
               </Box>
               {errors.server && (

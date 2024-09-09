@@ -124,13 +124,13 @@ function App() {
                 <ListItemIcon>
                   <LoginIcon />
                 </ListItemIcon>
-                <ListItemText primary="Iniciar Sesión" />
+                <ListItemText primary="Log in" />
               </ListItem>
               <ListItem button component={Link} to="/signup" onClick={toggleDrawer}>
                 <ListItemIcon>
                   <AddIcon />
                 </ListItemIcon>
-                <ListItemText primary="Crear cuenta" />
+                <ListItemText primary="Sign up" />
               </ListItem>
             </>
           ) : (
@@ -142,7 +142,7 @@ function App() {
                 <ListItemIcon>
                   <LogoutIcon />
                 </ListItemIcon>
-                <ListItemText primary="Cerrar Sesión" />
+                <ListItemText primary="Log out" />
               </ListItem>
             </>
           )}
@@ -150,7 +150,7 @@ function App() {
             <ListItemIcon>
               <HomeIcon />
             </ListItemIcon>
-            <ListItemText primary="Inicio" />
+            <ListItemText primary="Home" />
           </ListItem>
           <ListItem button component={Link} to="/beers" onClick={toggleDrawer}>
             <ListItemIcon>

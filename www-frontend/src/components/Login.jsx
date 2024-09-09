@@ -6,7 +6,7 @@ import useAxios from 'axios-hooks';
 import { useNavigate } from 'react-router-dom';
 
 const validationSchema = Yup.object({
-  email: Yup.string().email('Invalid email address').required('Email is required'),
+  email: Yup.string().email('Invalid email address').required('Email is required').matches(/\.[a-zA-Z]{2,}$/, 'Email must end with a dot followed by two characters or more'),
   password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters long'),
 });
 
@@ -54,11 +54,11 @@ const LoginForm = ({ tokenHandler }) => {
       navigate('/'); // Redirige a la ruta raíz después de un login exitoso
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        setServerError('Correo electrónico o contraseña incorrectos.');
+        setServerError('Incorrect email or password.');
       } else {
-        setServerError('Error en el servidor. Intenta nuevamente más tarde.');
+        setServerError('Server error. Please try again later.');
       }
-      console.error('Error en el envío del formulario:', err);
+      console.error('Error submitting the form:', err);
     } finally {
       setSubmitting(false);
     }
@@ -103,7 +103,7 @@ const LoginForm = ({ tokenHandler }) => {
                   as={TextField}
                   fullWidth
                   variant="outlined"
-                  label="Contraseña"
+                  label="Password"
                   name="password"
                   type="password"
                   error={touched.password && Boolean(errors.password)}
@@ -119,7 +119,7 @@ const LoginForm = ({ tokenHandler }) => {
                   color="primary"
                   disabled={isSubmitting || loading}
                 >
-                  {loading ? 'Enviando...' : 'Iniciar Sesión'}
+                  {loading ? 'Sending...' : 'Log in'}
                 </Button>
               </Box>
               {serverError && (
