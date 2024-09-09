@@ -30,8 +30,48 @@ if Rails.env.development?
     password_confirmation: 'password123',
     first_name: 'Test',
     last_name: 'User',
-    handle: "userHandle"
+    handle: "testUserHandle"
   )
+
+  caromanini = User.create!(
+    email: 'caromanini@miuandes.cl',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Chiara',
+    last_name: 'Romanini',
+    handle: "caromanini"
+  )
+
+  fasaavedra = User.create!(
+    email: 'fasaavedra@miuandes.cl',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Fabian',
+    last_name: 'Saavedra',
+    handle: "fasaavedra"
+  )
+
+  review1 = Review.create!(
+    text: "Amazing beer! This was the best beer I have ever had! 10/10 would recommend. The best",
+    rating: 5,
+    user_id: 2,
+    beer_id: 1
+  )
+
+  review2 = Review.create!(
+    text: "This is the worst beer I have ever had. The worst ever. I don't like this style of beer. The worst.",
+    rating: 1.1,
+    user_id: 1,
+    beer_id: 1
+  )
+
+  review3 = Review.create!(
+    text: "This beer has a smooth, malty flavor with a hint of caramel. The hops provide a nice balance, making it refreshing and flavorful",
+    rating: 4.6,
+    user_id: 3,
+    beer_id: 1
+  )
+
   address = Address.create!(user: test_user, country: countries.sample)
 
   # Crear usuarios con direcciones asociadas
