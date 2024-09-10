@@ -65,12 +65,10 @@ const BarsMap = () => {
         return;
       }
 
-      /* if (!cities || parseInt(cities.length) === 0) {
-        console.log("ERROR CIUDADES:", cities)
+      if (!cities) {
         return;
-      } */
-    //   console.log("CIUDADES EN ACA:", cities)
-  
+      }
+
       const { Map, InfoWindow } = libraries[MAPS_LIBRARY];
       mapRef.current = new Map(mapNodeRef.current, {
         mapId: 'DEMO_MAP_ID',
@@ -100,8 +98,16 @@ const BarsMap = () => {
 
     //   console.log("CIUDADES:", cities)
     //   console.log("CIUDADES:", cities[0].latitude)
-      const markers = cities.map(({name, lat, lng}) => {
+      const markers = cities.map(({name, latitude, longitude}) => {
         console.log("NAMES:", name)
+        console.log("LATITUDE:", latitude)
+        // console.log("LATITUDE TYPE", latitude.oftype)
+        console.log("LONGITUDE:", longitude)
+        // console.log("LONGITUDE TYPE:", longitude.oftype)
+
+        const lat = latitude
+        const lng = longitude
+
         const pin = new PinElement
         pin.glyph = name
         // pin.background = "#00ff00"

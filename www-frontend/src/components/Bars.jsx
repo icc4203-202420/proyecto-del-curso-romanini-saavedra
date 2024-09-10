@@ -146,9 +146,6 @@ const Bars = () => {
             )}
             {tabIndex === 1 && (
                 <Box>
-                    {/* <Typography>
-                        hola estamos en mapa
-                    </Typography> */}
                     <BarsMap/>
                 </Box>
             )}
