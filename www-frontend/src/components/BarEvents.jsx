@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { Box, Card, CardContent, CardMedia, Typography, List, ListItem, Divider } from '@mui/material';
 import barImage from '../assets/images/FondoBar.jpg';
@@ -79,21 +79,21 @@ const BarEvents = () => {
                   year: 'numeric'
                 });
                 return(
-                <React.Fragment key={index}>
-                    <ListItem>
-                    <Card sx={{ width: '100%', backgroundColor: 'rgb(255, 244, 229)', borderRadius: 3 }}>
-                        <CardContent>
-                        <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
-                            {`Name: ${event.name}`}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {`Description: ${event.description}`}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {`Date: ${formattedDate}`}
-                        </Typography>
-                        </CardContent>
-                    </Card>
+                <React.Fragment>
+                    <ListItem key={index} button component={Link} to={`/events/${event.id}`}>
+                      <Card sx={{ width: '100%', backgroundColor: 'rgb(255, 244, 229)', borderRadius: 3 }}>
+                          <CardContent>
+                          <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                              {`Name: ${event.name}`}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                              {`Description: ${event.description}`}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                              {`Date: ${formattedDate}`}
+                          </Typography>
+                          </CardContent>
+                      </Card>
                     </ListItem>
                     {index < eventsData.length - 1 && <Divider sx={{ my: 2 }} />}
                 </React.Fragment>
