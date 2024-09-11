@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         post 'friendships', to: 'users#create_friendship'
       end
 
+      resources :attendances, only: [:index, :show, :create, :destroy]
       resources :events, only: [:show, :create, :update, :destroy]
       # resources :reviews, only: [:show, :create, :update, :destroy]
       resources :brands, only: [:index, :show]
