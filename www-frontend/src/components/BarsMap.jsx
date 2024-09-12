@@ -14,28 +14,6 @@ const BarsMap = () => {
     const infoWindowRef = useRef();
     const inputRef = useRef();
     const [cities, setCities] = useState([]);
-  
-
-    // const [{ data: allBarsData, loading, error}, refetch] = useAxios(
-    //     {
-    //         url: 'http://127.0.0.1:3001/api/v1/bars',
-    //         method: 'GET'
-    //     }
-    // );
-
-    // console.log("BARS DATA:", allBarsData)
-    
-
-    // useEffect(() => {
-    //     const dataParsed = allBarsData.bars
-    //     setCities(dataParsed)
-    // })
-    // const dataParsed = allBarsData.bars
-    // setCities(dataParsed)
-
-    
-
-
 
     // Hacer peticion para el backend
     useEffect(() => {
@@ -53,93 +31,56 @@ const BarsMap = () => {
       fetchCities();
     //   console.log("Ciudades:", cities)
     }, [])
-
-    // useEffect(() => {
-    //     console.log("CIUDADES:", cities);
-    //     console.log("CIUDADES TIPO:", cities.typeof);
-    // }, [cities]);
   
     useEffect(() => {
-        
-      if (!libraries) {
+      if (!libraries || cities.length === 0) {
         return;
       }
-
-      if (!cities) {
-        return;
-      }
-
+    
       const { Map, InfoWindow } = libraries[MAPS_LIBRARY];
       mapRef.current = new Map(mapNodeRef.current, {
         mapId: 'DEMO_MAP_ID',
         center: MAP_CENTER,
         zoom: 7,
       });
-  
-    //   mapRef.current.controls[ControlPosition.TOP_LEFT].push(inputRef.current);
-  
+    
+      // Colocar el marcador de ubicación del usuario
       navigator.geolocation.getCurrentPosition((position) => {
-        const {latitude, longitude} = position.coords
-        const userCords = {lat: latitude, lng: longitude}
-  
-        const marker = new Marker({position: userCords})
-  
-        marker.setMap(mapRef.current)
-  
-  
-  
-        // Esta funcion recibe la coordenada a la que queremos ir
-        mapRef.current.panTo(userCords)
-      })
-   
+        const { latitude, longitude } = position.coords;
+        const userCords = { lat: latitude, lng: longitude };
+        const marker = new Marker({ position: userCords });
+        marker.setMap(mapRef.current);
+        mapRef.current.panTo(userCords);
+      });
+    
       const { AdvancedMarkerElement: Marker, PinElement } = libraries[MARKER_LIBRARY];
-      // const positions = Array.from({ length: 10 }, randomCoordinates(MAP_CENTER));
-      // const markers = positions.map((position) => new Marker({ position }));
-
-    //   console.log("CIUDADES:", cities)
-    //   console.log("CIUDADES:", cities[0].latitude)
-      const markers = cities.map(({name, latitude, longitude}) => {
-        console.log("NAMES:", name)
-        console.log("LATITUDE:", latitude)
-        // console.log("LATITUDE TYPE", latitude.oftype)
-        console.log("LONGITUDE:", longitude)
-        // console.log("LONGITUDE TYPE:", longitude.oftype)
-
-        const lat = latitude
-        const lng = longitude
-
-        const pin = new PinElement
-        pin.glyph = name
-        // pin.background = "#00ff00"
-        const  marker = new Marker ({position: {lat, lng}, content: pin.element})
-  
-        marker.addListener("click", () => {
+    
+      const markers = cities.map(({ name, latitude, longitude }) => {
+        const pin = new PinElement();
+        pin.glyph = name;
+        const marker = new Marker({
+          position: { lat: latitude, lng: longitude },
+          content: pin.element,
+        });
+    
+        marker.addListener('click', () => {
           if (infoWindowRef.current) {
-            infoWindowRef.current.close()
+            infoWindowRef.current.close();
           }
-  
           const infoWindow = new InfoWindow({
             content: `<div>${name}</div>`,
-            position: {}
-          })
-  
-          infoWindow.open(mapRef.current, marker)
-          infoWindowRef.current = infoWindow
-  
-  
-          console.log(`Hiciste click en el punto en ${latitude}, ${longitude}`)
-        })
-  
-        
-  
-        return marker
+          });
+          infoWindow.open(mapRef.current, marker);
+          infoWindowRef.current = infoWindow;
+        });
+        return marker;
       });
-  
+    
       markerCluster.current = new MarkerClusterer({
         map: mapRef.current,
         markers,
       });
-    }, [libraries], [cities]);
+    }, [libraries, cities]);
   
     if (!libraries) {
       return <h1>Cargando. . .</h1>;
@@ -159,3 +100,25 @@ const BarsMap = () => {
 }
 
 export default BarsMap;
+
+    // const [{ data: allBarsData, loading, error}, refetch] = useAxios(
+    //     {
+    //         url: 'http://127.0.0.1:3001/api/v1/bars',
+    //         method: 'GET'
+    //     }
+    // );
+
+    // console.log("BARS DATA:", allBarsData)
+    
+
+    // useEffect(() => {
+    //     const dataParsed = allBarsData.bars
+    //     setCities(dataParsed)
+    // })
+    // const dataParsed = allBarsData.bars
+    // setCities(dataParsed)
+
+        // useEffect(() => {
+    //     console.log("CIUDADES:", cities);
+    //     console.log("CIUDADES TIPO:", cities.typeof);
+    // }, [cities]);
