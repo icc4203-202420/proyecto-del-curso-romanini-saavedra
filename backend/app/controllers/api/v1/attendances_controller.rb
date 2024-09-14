@@ -11,7 +11,7 @@ class API::V1::AttendancesController < ApplicationController
   def create
       @attendance = Attendance.new(attendance_params)
   
-      if @attendace.save
+      if @attendance.save
         render json: { attendance: @attendance, message: 'Attendance created successfully.' }, status: :created
       else
         render json: @attendance.errors, status: :unprocessable_entity

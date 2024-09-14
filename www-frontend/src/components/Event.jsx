@@ -8,23 +8,37 @@ import ReviewsList from './ReviewsList'
 import CreateReview from './CreateReview'
 import BarsBeers from './BarsBeers'
 import {useUser} from '../context/UserContext';
+import CreateAttendance from './CreateAttendance';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
     const {event_id} = useParams();
     const [tabIndex, setTabIndex] = useState(0);
     const [open, setOpen] = useState(false);
+    const [loginPromptOpen, setLoginPromptOpen] = useState(false);
 
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
     };
 
     const handleClickOpen = () => {
-        setOpen(true);
-    }
+        if (isAuthenticated) {
+            setOpen(true);
+        } else {
+            setLoginPromptOpen(true);
+        }
+    };
 
     const handleClose = () => {
         setOpen(false);
+    }
+
+    const handleLoginPromptClose = () => {
+        setLoginPromptOpen(false);
+    };
+
+    const handleAttendanceCreated = () => {
+        refetchEventData();
     }
 
     const [{ data: eventData, loading, error }, refetchEventData] = useAxios({
@@ -54,14 +68,7 @@ const Event = () => {
                     }}
                 >
                     <Box position="relative" width="100%" height={300} mb={2}>
-                        <Card
-                            sx={{
-                                backgroundColor: 'transparent',
-                                boxShadow: 'none',
-                                border: 'none',
-                                position: 'relative'
-                            }}
-                        >
+                        <Card>
                             <CardContent
                                 sx={{
                                     position: 'absolute',
@@ -93,11 +100,38 @@ const Event = () => {
                     </Box>
                     <Dialog open={open} onClose={handleClose}>
                         <DialogTitle>Confirm attendance?</DialogTitle>
-                        {/* <DialogContent>
+                        <DialogContent>
+                            <CreateAttendance
+                                event_id={eventData.event.id}
+                                onClose={handleClose}
+                                onAttendanceCreated={handleAttendanceCreated}
+                            />
 
-                        </DialogContent> */}
+                        </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+                    {/* <Dialog open={open} onClose={handleClose}>
+                        <DialogTitle>Review this beer</DialogTitle>
+                        <DialogContent>
+                            <CreateReview 
+                                beer_id={beer_id} 
+                                onClose={handleClose}
+                                onReviewCreated={handleReviewCreated}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog> */}
+                    <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
+                        <DialogTitle>Please Log In</DialogTitle>
+                        <DialogContent>
+                            You need to be logged in to confirm attendance to an event. Please log in or create an account.
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleLoginPromptClose}>Close</Button>
                         </DialogActions>
                     </Dialog>
                     <Tabs
@@ -126,10 +160,13 @@ const Event = () => {
 
                     {tabIndex === 0 && (
                         <Box>
-                            <Typography>
-                                Aca va la informacion del evento
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                {eventData.event.description}
                             </Typography>
-                        </Box>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Date:</strong> {eventData.event.date}
+                            </Typography>
+                        </Box>   
                     )}
                     {tabIndex === 1 && (
                         <Box>
