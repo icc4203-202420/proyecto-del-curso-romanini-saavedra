@@ -7,43 +7,89 @@ import useAxios from 'axios-hooks';
 const MAP_CENTER = { lat: -33.325125, lng: -70.767349 };
 
 const BarsMap = () => {
-    const libraries = useLoadGMapsLibraries();
-    const markerCluster = useRef();
-    const mapNodeRef = useRef();
-    const mapRef = useRef();
-    const infoWindowRef = useRef();
-    const inputRef = useRef();
-    const [cities, setCities] = useState([]);
+  const libraries = useLoadGMapsLibraries();
+  const markerCluster = useRef();
+  const mapNodeRef = useRef();
+  const mapRef = useRef();
+  const infoWindowRef = useRef();
+  const inputNodeRef = useRef();
+  const [cities, setCities] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
 
-    // Hacer peticion para el backend
-    useEffect(() => {
-
-      const fetchCities = async () => {
-        const url = 'http://127.0.0.1:3001/api/v1/bars'
-        const response = await fetch(url)
-        const dataParsed = await response.json()
-        const dataParsedFiltered = await dataParsed.bars
-        
-        console.log("DATA PARSED:", dataParsedFiltered)
-        console.log("DATA PARSED:", dataParsedFiltered.typeof)
-        setCities(dataParsedFiltered)
-      }
-      fetchCities();
-    //   console.log("Ciudades:", cities)
-    }, [])
-  
-    useEffect(() => {
-      if (!libraries || cities.length === 0) {
+  const handleSearch = (event) => {
+    if (event.key !== 'Enter') {
         return;
-      }
+    }
+
+    // const inputValue = event.target.value
+    const inputValue = inputNodeRef.current.value
+
     
-      const { Map, InfoWindow } = libraries[MAPS_LIBRARY];
+    // Si nos fijamos, con event.key podemos verificar que tecla se esta pulsando, la logica aquí es que si la tecla no es Enter, que no haga nada.
+
+    // Para obtener el valor del input, necesitamos referenciar al elemento HTML, lo podemos hacer mediante event.target, o bien con el useRef que teniamos, inputNodeRef.current
+
+    /*
+    TODO: Es aquí donde deben implementar la logica para que el buscador funcione.
+    */
+    
+  }
+
+  const handleFilter = (event) => {
+    //event.preventDefault();
+    
+    const inputValue = event.target.value.toLowerCase();
+
+    const filtered = cities.filter((city) =>
+      city.name.toLowerCase().includes(inputValue)
+    );
+
+    setFilteredCities(filtered);
+    
+    // En inputValue tenemos almacenado lo que el usuario ha escrito hasta el minuto input 
+    //Por que?, porque con event.target obtenemos el elemento HTML que llamó a esta función, y con .value tenemos su valor.
+
+    /* TODO: Ahora lo que tenemos que hacer, es
+    mediante la lista cities, quedarnos con las ciudades que partan/contengan lo almacenado en el input, con esta nueva lista de ciudades, setearlas en nuestro estado
+    filteredCities
+    */
+  };
+
+  // Hacer peticion para el backend
+  useEffect(() => {
+
+    const fetchCities = async () => {
+      const url = 'http://127.0.0.1:3001/api/v1/bars'
+      const response = await fetch(url)
+      const dataParsed = await response.json()
+      const dataParsedFiltered = await dataParsed.bars
+      
+      console.log("DATA PARSED:", dataParsedFiltered)
+      console.log("DATA PARSED:", dataParsedFiltered.typeof)
+      setCities(dataParsedFiltered)
+      setFilteredCities(dataParsedFiltered); // Mostrar todos los bares inicialmente
+    }
+    fetchCities();
+  //   console.log("Ciudades:", cities)
+  }, [])
+  
+  useEffect(() => {
+    if (!libraries || cities.length === 0) {
+      return;
+    }
+  
+    const { Map, InfoWindow } = libraries[MAPS_LIBRARY];
+    
+    // Solo inicializamos el mapa si no ha sido ya inicializado
+    if (!mapRef.current) {
       mapRef.current = new Map(mapNodeRef.current, {
         mapId: 'DEMO_MAP_ID',
         center: MAP_CENTER,
         zoom: 7,
       });
-    
+      
+      mapRef.current.controls[ControlPosition.TOP_RIGHT].push(inputNodeRef.current);
+  
       // Colocar el marcador de ubicación del usuario
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
@@ -52,51 +98,64 @@ const BarsMap = () => {
         marker.setMap(mapRef.current);
         mapRef.current.panTo(userCords);
       });
-    
-      const { AdvancedMarkerElement: Marker, PinElement } = libraries[MARKER_LIBRARY];
-    
-      const markers = cities.map(({ name, latitude, longitude }) => {
-        const pin = new PinElement();
-        pin.glyph = name;
-        const marker = new Marker({
-          position: { lat: latitude, lng: longitude },
-          content: pin.element,
-        });
-    
-        marker.addListener('click', () => {
-          if (infoWindowRef.current) {
-            infoWindowRef.current.close();
-          }
-          const infoWindow = new InfoWindow({
-            content: `<div>${name}</div>`,
-          });
-          infoWindow.open(mapRef.current, marker);
-          infoWindowRef.current = infoWindow;
-        });
-        return marker;
-      });
-    
-      markerCluster.current = new MarkerClusterer({
-        map: mapRef.current,
-        markers,
-      });
-    }, [libraries, cities]);
-  
-    if (!libraries) {
-      return <h1>Cargando. . .</h1>;
     }
+  
+    const { AdvancedMarkerElement: Marker, PinElement } = libraries[MARKER_LIBRARY];
+    
+    // Crear o actualizar los marcadores en función de las ciudades filtradas
+    const markers = filteredCities.map(({ name, latitude, longitude }) => {
+      const pin = new PinElement();
+      pin.glyph = name;
+      const marker = new Marker({
+        position: { lat: latitude, lng: longitude },
+        content: pin.element,
+      });
+  
+      marker.addListener('click', () => {
+        if (infoWindowRef.current) {
+          infoWindowRef.current.close();
+        }
+        const infoWindow = new InfoWindow({
+          content: `<div>${name}</div>`,
+        });
+        infoWindow.open(mapRef.current, marker);
+        infoWindowRef.current = infoWindow;
+      });
+      return marker;
+    });
+  
+    // Actualizar los marcadores del cluster
+    if (markerCluster.current) {
+      markerCluster.current.clearMarkers();
+    }
+  
+    markerCluster.current = new MarkerClusterer({
+      map: mapRef.current,
+      markers,
+    });
+  
+  }, [libraries, filteredCities]);
 
-    if (!cities || parseInt(cities.length) === 0) {
-        return <h1>Cargando locaciones. . .</h1>;
-    }
-  
-    return (
-      <>
-        <input ref={inputRef} type="text"/>
-        <div ref={mapNodeRef} style={{ width: '100vw', height: '100vh' }} />;
-      
-      </>
-    )
+  if (!libraries) {
+    return <h1>Cargando. . .</h1>;
+  }
+
+  if (!cities || parseInt(cities.length) === 0) {
+      return <h1>Cargando locaciones. . .</h1>;
+  }
+
+  return (
+    <>
+      <input 
+        ref={inputNodeRef} 
+        type="text"
+        placeholder='Buscar bar'
+        //onKeyDown={handleSearch}
+        onChange={handleFilter}
+      />
+      <div ref={mapNodeRef} style={{ width: '100vw', height: '100vh' }} />;
+    </>
+  )
 }
 
 export default BarsMap;
