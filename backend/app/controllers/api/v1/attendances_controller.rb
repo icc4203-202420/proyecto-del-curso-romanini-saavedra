@@ -20,7 +20,7 @@ class API::V1::AttendancesController < ApplicationController
 
   def update
       if @attendance.update(attendance_params)
-        render json: { attendace: @attendance, message: 'Attendance updated successfully.' }, status: :ok
+        render json: { attendance: @attendance, message: 'Attendance updated successfully.' }, status: :ok
       else
         render json: @attendance.errors, status: :unprocessable_entity
       end
@@ -33,8 +33,8 @@ class API::V1::AttendancesController < ApplicationController
 
   private
 
-  def set_attendace
-      @attendace = Attendace.find_by(id: params[:id])
+  def set_attendance
+      @attendance = Attendance.find_by(id: params[:id])
       render json: { error: 'Attendance not found' }, status: :not_found if @attendance.nil?
   end
 

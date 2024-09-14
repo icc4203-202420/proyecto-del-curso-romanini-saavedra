@@ -67,20 +67,19 @@ const CreateAttendance = ({event_id, onClose, onAttendanceCreated}) => {
             <DialogTitle>Confirm Attendance?</DialogTitle>
             <DialogContent>
                 <form onSubmit={handleSubmit} style={{width: 300, margin: 'auto'}}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={loading}
+                    >
+                        {loading ? 'Submitting...' : 'Send'}
+                    </Button>
                     {error && <Typography color="error">Failed to confirm attendance</Typography>}
                 </form>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleCancel} color="secondary">Cancel</Button>
-                <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        
-                        disabled={loading}
-                    >
-                        {loading? 'Submitting...' : 'Send'}
-                    </Button>
             </DialogActions>
         </Dialog>
 

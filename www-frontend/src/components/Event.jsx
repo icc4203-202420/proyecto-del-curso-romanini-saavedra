@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, CardMedia, Typography, Box, Pagination } from '@mui/material'
@@ -10,6 +10,7 @@ import BarsBeers from './BarsBeers'
 import {useUser} from '../context/UserContext';
 import CreateAttendance from './CreateAttendance';
 import EventUsers from './EventUsers';
+import DeleteAttendance from './DeleteAttendance';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
@@ -17,6 +18,8 @@ const Event = () => {
     const [tabIndex, setTabIndex] = useState(0);
     const [open, setOpen] = useState(false);
     const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+    const [isAttending, setIsAttending] = useState(false);
+    const [attendanceId, setAttendanceId] = useState(null);
 
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
@@ -39,7 +42,21 @@ const Event = () => {
     };
 
     const handleAttendanceCreated = () => {
-        refetchEventData();
+        // refetchEventData();
+        // checkAttendanceStatus();
+        // refetchAttendanceData();
+        refetchAttendanceData().then(() => {
+            checkAttendanceStatus();
+            setOpen(false);
+        })
+    }
+
+    const handleAttendanceCancelled = () => {
+        // refetchAttendanceData();
+        refetchAttendanceData().then(() => {
+            checkAttendanceStatus();
+            setOpen(false);
+        })
     }
 
     const [{ data: eventData, loading, error }, refetchEventData] = useAxios({
@@ -54,6 +71,47 @@ const Event = () => {
 
     console.log("EVENT DATA:", eventData);
     console.log("ATTENDANCE DATA:", attendanceData);
+
+
+    // const checkAttendanceStatus = () => {
+    //     if(attendanceData) {
+    //         const userAttendance = attendanceData.attendance.find(att => parseInt(att.user_id) === parseInt(user.id) && parseInt(att.event_id) === parseInt(eventData.event.id));
+    //         setIsAttending(!!userAttendance);
+    //     }
+    // };
+
+    const checkAttendanceStatus = () => {
+        // Ensure attendanceData and attendanceData.attendance are defined
+        if (attendanceData && eventData && eventData.event) {
+            const userAttendance = attendanceData.attendances.find(att => 
+                parseInt(att.user_id) === parseInt(user.id) && 
+                parseInt(att.event_id) === parseInt(eventData.event.id)
+            );
+
+            if (userAttendance){
+                console.log("USER IS ATTENDING THIS EVENT:", userAttendance)
+                setAttendanceId(userAttendance.id);
+                console.log("ATTENDANCE ID:", attendanceId)
+                setIsAttending(true);
+            } else {
+                setIsAttending(false);
+            }
+
+            console.log("CURRENT USER ID:", user.id)
+            // console.log("USER ATTENDANCE:", userAttendance)
+            setIsAttending(!!userAttendance);
+        } else {
+            // Handle the case where attendanceData is undefined or doesn't have the expected structure
+            console.warn("attendanceData is not available or doesn't have the 'attendance' property.");
+            setIsAttending(false); // Default to not attending
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            checkAttendanceStatus();
+        }
+    }, [user, attendanceData]);
 
     return (
         <div>
@@ -102,17 +160,26 @@ const Event = () => {
                             onClick={handleClickOpen}
                             color="black"
                         >
-                            Confirm Attendance
+                            {isAttending ? 'Cancel Attendance' : 'Confirm Attendance'}
                         </Button>
                     </Box>
                     <Dialog open={open} onClose={handleClose}>
-                        <DialogTitle>Confirm attendance?</DialogTitle>
+                        <DialogTitle>{isAttending ? 'Cancel Attendance' : 'Confirm Attendance'}</DialogTitle>
                         <DialogContent>
-                            <CreateAttendance
-                                event_id={eventData.event.id}
-                                onClose={handleClose}
-                                onAttendanceCreated={handleAttendanceCreated}
-                            />
+                            {isAttending ? (
+                                <DeleteAttendance
+                                    event_id={eventData.event.id}
+                                    attendance_id={attendanceId}
+                                    onClose={handleClose}
+                                    onAttendanceCancelled={handleAttendanceCancelled}
+                                />
+                            ) : (
+                                <CreateAttendance
+                                    event_id={eventData.event.id}
+                                    onClose={handleClose}
+                                    onAttendanceCreated={handleAttendanceCreated}
+                                />
+                            )}
 
                         </DialogContent>
                         <DialogActions>
