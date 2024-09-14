@@ -18,22 +18,24 @@ const BarsMap = () => {
 
   const handleSearch = (event) => {
     if (event.key !== 'Enter') {
-        return;
+      return;
     }
-
-    // const inputValue = event.target.value
-    const inputValue = inputNodeRef.current.value
-
-    
-    // Si nos fijamos, con event.key podemos verificar que tecla se esta pulsando, la logica aquí es que si la tecla no es Enter, que no haga nada.
-
-    // Para obtener el valor del input, necesitamos referenciar al elemento HTML, lo podemos hacer mediante event.target, o bien con el useRef que teniamos, inputNodeRef.current
-
-    /*
-    TODO: Es aquí donde deben implementar la logica para que el buscador funcione.
-    */
-    
-  }
+  
+    const inputValue = inputNodeRef.current.value.toLowerCase();
+  
+    // Buscar en la lista de ciudades filtradas
+    const foundCity = filteredCities.find((city) =>
+      city.name.toLowerCase().includes(inputValue)
+    );
+  
+    if (foundCity) {
+      // Panear a la ubicación de la ciudad encontrada
+      mapRef.current.panTo({ lat: foundCity.latitude, lng: foundCity.longitude });
+      mapRef.current.setZoom(12); // Opcional, ajusta el nivel de zoom para centrar mejor
+    } else {
+      console.log("Ciudad no encontrada");
+    }
+  };
 
   const handleFilter = (event) => {
     //event.preventDefault();
@@ -150,7 +152,7 @@ const BarsMap = () => {
         ref={inputNodeRef} 
         type="text"
         placeholder='Buscar bar'
-        //onKeyDown={handleSearch}
+        onKeyDown={handleSearch}
         onChange={handleFilter}
       />
       <div ref={mapNodeRef} style={{ width: '100vw', height: '100vh' }} />;
