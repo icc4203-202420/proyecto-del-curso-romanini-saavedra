@@ -25,7 +25,11 @@ const BarsMap = () => {
   
     // Buscar en la lista de ciudades filtradas
     const foundCity = filteredCities.find((city) =>
-      city.name.toLowerCase().includes(inputValue)
+      city.name.toLowerCase().includes(inputValue) ||
+      city.address.line1.toLowerCase().includes(inputValue) ||
+      city.address.line2?.toLowerCase().includes(inputValue) ||
+      city.address.city.toLowerCase().includes(inputValue) ||
+      city.address.country.name.toLowerCase().includes(inputValue)
     );
   
     if (foundCity) {
@@ -43,7 +47,11 @@ const BarsMap = () => {
     const inputValue = event.target.value.toLowerCase();
 
     const filtered = cities.filter((city) =>
-      city.name.toLowerCase().includes(inputValue)
+      city.name.toLowerCase().includes(inputValue) ||
+      city.address.line1.toLowerCase().includes(inputValue) ||
+      city.address.line2?.toLowerCase().includes(inputValue) ||
+      city.address.city.toLowerCase().includes(inputValue) ||
+      city.address.country.name.toLowerCase().includes(inputValue)
     );
 
     setFilteredCities(filtered);
