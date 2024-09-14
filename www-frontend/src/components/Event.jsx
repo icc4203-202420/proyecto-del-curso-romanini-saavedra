@@ -9,6 +9,7 @@ import CreateReview from './CreateReview'
 import BarsBeers from './BarsBeers'
 import {useUser} from '../context/UserContext';
 import CreateAttendance from './CreateAttendance';
+import EventUsers from './EventUsers';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
@@ -46,7 +47,13 @@ const Event = () => {
         method: 'GET'
     })
 
+    const [{ data: attendanceData }, refetchAttendanceData] = useAxios({
+        url: `http://127.0.0.1:3001/api/v1/attendances`,
+        method: 'GET'
+    })
+
     console.log("EVENT DATA:", eventData);
+    console.log("ATTENDANCE DATA:", attendanceData);
 
     return (
         <div>
@@ -112,19 +119,6 @@ const Event = () => {
                             <Button onClick={handleClose}>Cancel</Button>
                         </DialogActions>
                     </Dialog>
-                    {/* <Dialog open={open} onClose={handleClose}>
-                        <DialogTitle>Review this beer</DialogTitle>
-                        <DialogContent>
-                            <CreateReview 
-                                beer_id={beer_id} 
-                                onClose={handleClose}
-                                onReviewCreated={handleReviewCreated}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Cancel</Button>
-                        </DialogActions>
-                    </Dialog> */}
                     <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
                         <DialogTitle>Please Log In</DialogTitle>
                         <DialogContent>
@@ -161,7 +155,7 @@ const Event = () => {
                     {tabIndex === 0 && (
                         <Box>
                             <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                {eventData.event.description}
+                                <strong>Description: </strong>{eventData.event.description}
                             </Typography>
                             <Typography variant="body1" gutterBottom textAlign="left" color="black">
                                 <strong>Date:</strong> {eventData.event.date}
@@ -171,15 +165,13 @@ const Event = () => {
                     {tabIndex === 1 && (
                         <Box>
                             <Typography>
-                                Aca van las fotos del evento
+                                There are no photos for this event.
                             </Typography>
                         </Box>
                     )}
                     {tabIndex === 2 && (
                         <Box>
-                            <Typography>
-                                Aca van las personas
-                            </Typography>
+                            <EventUsers event_id={eventData.event.id}/>
                         </Box>
                     )}
                 </Box>
