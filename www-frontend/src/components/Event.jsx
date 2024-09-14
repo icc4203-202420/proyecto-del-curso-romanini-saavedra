@@ -42,9 +42,6 @@ const Event = () => {
     };
 
     const handleAttendanceCreated = () => {
-        // refetchEventData();
-        // checkAttendanceStatus();
-        // refetchAttendanceData();
         refetchAttendanceData().then(() => {
             checkAttendanceStatus();
             setOpen(false);
@@ -52,7 +49,6 @@ const Event = () => {
     }
 
     const handleAttendanceCancelled = () => {
-        // refetchAttendanceData();
         refetchAttendanceData().then(() => {
             checkAttendanceStatus();
             setOpen(false);
@@ -72,16 +68,7 @@ const Event = () => {
     console.log("EVENT DATA:", eventData);
     console.log("ATTENDANCE DATA:", attendanceData);
 
-
-    // const checkAttendanceStatus = () => {
-    //     if(attendanceData) {
-    //         const userAttendance = attendanceData.attendance.find(att => parseInt(att.user_id) === parseInt(user.id) && parseInt(att.event_id) === parseInt(eventData.event.id));
-    //         setIsAttending(!!userAttendance);
-    //     }
-    // };
-
     const checkAttendanceStatus = () => {
-        // Ensure attendanceData and attendanceData.attendance are defined
         if (attendanceData && eventData && eventData.event) {
             const userAttendance = attendanceData.attendances.find(att => 
                 parseInt(att.user_id) === parseInt(user.id) && 
@@ -89,21 +76,15 @@ const Event = () => {
             );
 
             if (userAttendance){
-                console.log("USER IS ATTENDING THIS EVENT:", userAttendance)
                 setAttendanceId(userAttendance.id);
-                console.log("ATTENDANCE ID:", attendanceId)
                 setIsAttending(true);
             } else {
                 setIsAttending(false);
             }
-
-            console.log("CURRENT USER ID:", user.id)
-            // console.log("USER ATTENDANCE:", userAttendance)
             setIsAttending(!!userAttendance);
         } else {
-            // Handle the case where attendanceData is undefined or doesn't have the expected structure
             console.warn("attendanceData is not available or doesn't have the 'attendance' property.");
-            setIsAttending(false); // Default to not attending
+            setIsAttending(false); 
         }
     };
 
@@ -225,7 +206,12 @@ const Event = () => {
                                 <strong>Description: </strong>{eventData.event.description}
                             </Typography>
                             <Typography variant="body1" gutterBottom textAlign="left" color="black">
-                                <strong>Date:</strong> {eventData.event.date}
+                                <strong>Date: </strong>{new Date(eventData.event.date).toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric'
+                                })}
                             </Typography>
                         </Box>   
                     )}
