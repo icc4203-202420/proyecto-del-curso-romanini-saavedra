@@ -38,6 +38,8 @@ Rails.application.routes.draw do
       resources :events, only: [:show, :create, :update, :destroy]
       # resources :reviews, only: [:show, :create, :update, :destroy]
       resources :brands, only: [:index, :show]
+      resources :addresses, only: [:index, :show]
+      resources :countries, only: [:index, :show]
       resources :breweries, only: [:index, :show]
       resources :bars_beers, only: [:index]
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
