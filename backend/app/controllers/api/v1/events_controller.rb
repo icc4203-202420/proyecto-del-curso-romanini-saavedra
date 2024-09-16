@@ -6,6 +6,12 @@ class API::V1::EventsController < ApplicationController
     before_action :set_event, only: [:show, :update, :destroy]
     before_action :verify_jwt_token, only: [:create, :update, :destroy]
 
+    def index
+      bar = Bar.find(params[:bar_id])
+      events = bar.events
+      render json: events, status: :ok
+    end
+
     def show
         if @event.flyer.attached?
           render json: @event.as_json.merge({ 

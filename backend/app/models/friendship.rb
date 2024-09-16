@@ -4,5 +4,5 @@ class Friendship < ApplicationRecord
   belongs_to :bar, optional: true
 
   validates :user, presence: true
-  validates :friends, presence: true
+  validates :friend, presence: true
 end
