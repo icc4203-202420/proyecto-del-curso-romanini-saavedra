@@ -166,9 +166,72 @@ if Rails.env.development?
   end
 
   # Crear eventos asociados a los bares
-  events = bars.map do |bar|
-    FactoryBot.create(:event, bar: bar)
-  end
+  # events = bars.map do |bar|
+  #   FactoryBot.create(:event, bar: bar)
+  # end
+  events = Event.create([
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      bar_id: 1
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      bar_id: 2
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      bar_id: 3
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      bar_id: 4
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      bar_id: 5
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      bar_id: 1
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      bar_id: 2
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      bar_id: 3
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      bar_id: 4
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      bar_id: 5
+    }
+
+  ])
 
   # Crear relaciones de amistad entre usuarios
   users.combination(2).to_a.sample(5).each do |user_pair|
