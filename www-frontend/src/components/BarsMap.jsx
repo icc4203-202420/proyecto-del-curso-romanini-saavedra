@@ -163,7 +163,7 @@ const BarsMap = () => {
         onKeyDown={handleSearch}
         onChange={handleFilter}
       />
-      <div ref={mapNodeRef} style={{ width: '100vw', height: '100vh' }} />;
+      <div ref={mapNodeRef} style={{ width: '80vw', height: '80vh' }} />;
     </>
   )
 }

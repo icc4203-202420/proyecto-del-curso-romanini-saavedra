@@ -62,7 +62,7 @@ const SingleBar = ({barId}) => {
                 >
                     <CardContent>
                         <Typography variant="h5" component="div" textAlign="center">
-                            {barData.bar.name}
+                            {barData.name}
                         </Typography>
 
                     </CardContent>
