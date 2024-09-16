@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, CardMedia, Typography, Box, Pagination } from '@mui/material'
-import beerBottleIcon from '../assets/images/beer_bottle_icon.png'
+import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, Typography, Box } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star';
-import ReviewsList from './ReviewsList'
-import CreateReview from './CreateReview'
-import BarsBeers from './BarsBeers'
 import {useUser} from '../context/UserContext';
 import CreateAttendance from './CreateAttendance';
 import EventUsers from './EventUsers';
 import DeleteAttendance from './DeleteAttendance';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
@@ -20,6 +18,9 @@ const Event = () => {
     const [loginPromptOpen, setLoginPromptOpen] = useState(false);
     const [isAttending, setIsAttending] = useState(false);
     const [attendanceId, setAttendanceId] = useState(null);
+
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackBarMessage, setSnackBarMessage] = useState('');
 
     const handleTabChange = (event, newValue) => {
         setTabIndex(newValue);
@@ -53,6 +54,11 @@ const Event = () => {
             checkAttendanceStatus();
             setOpen(false);
         })
+    }
+
+    const handleShowSnackbar = (message) => {
+        setSnackBarMessage(message);
+        setOpenSnackbar(true);
     }
 
     const [{ data: eventData, loading, error }, refetchEventData] = useAxios({
@@ -149,22 +155,22 @@ const Event = () => {
                         <DialogContent>
                             {isAttending ? (
                                 <DeleteAttendance
-                                    event_id={eventData.event.id}
                                     attendance_id={attendanceId}
                                     onClose={handleClose}
                                     onAttendanceCancelled={handleAttendanceCancelled}
+                                    onShowSnackbar={handleShowSnackbar}
                                 />
                             ) : (
                                 <CreateAttendance
                                     event_id={eventData.event.id}
-                                    onClose={handleClose}
                                     onAttendanceCreated={handleAttendanceCreated}
+                                    onShowSnackbar={handleShowSnackbar}
                                 />
                             )}
 
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button onClick={handleClose}>Close</Button>
                         </DialogActions>
                     </Dialog>
                     <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
@@ -229,6 +235,12 @@ const Event = () => {
                     )}
                 </Box>
             )}
+
+            <Snackbar open={openSnackbar} autoHideDuration={4000} onClose={(() => setOpenSnackbar(false))}>
+                <Alert onClose={() => setOpenSnackbar(false)} severity={snackBarMessage.includes('Failed') ? 'error' : 'success'} sx={{ width: '100%' }}>
+                    {snackBarMessage}
+                </Alert>
+            </Snackbar>
         </div>
     )
 };

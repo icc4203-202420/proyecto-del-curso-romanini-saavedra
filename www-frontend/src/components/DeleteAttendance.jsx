@@ -1,11 +1,8 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
-import {Button, Typography} from '@mui/material';
-import {useUser} from '../context/UserContext';
+import { Button, Typography } from '@mui/material';
 
-const DeleteAttendance = ({event_id, attendance_id, onClose, onAttendanceCancelled}) => {
-    const {user} = useUser();
-
+const DeleteAttendance = ({ attendance_id, onClose, onAttendanceCancelled, onShowSnackbar }) => {
     const aux_token = localStorage.getItem('app-token');
     const token = aux_token.replace(/"/g, '');
 
@@ -21,17 +18,21 @@ const DeleteAttendance = ({event_id, attendance_id, onClose, onAttendanceCancell
     );
 
     const handleDelete = () => {
-        executeDelete().then(() => {
-            onAttendanceCancelled();
-            onClose();
-        }).catch((error) => {
-            console.error("Error cancelling attendance:", error);
-        });
+        executeDelete()
+            .then(() => {
+                onShowSnackbar('Attendance cancelled successfully.');
+                onAttendanceCancelled();
+                onClose();
+            })
+            .catch((error) => {
+                console.error("Error cancelling attendance:", error);
+                onShowSnackbar('Failed to cancel attendance.');
+            });
     };
 
     return (
         <>
-            <Typography variant="h6">Are you sure you want to cancel your attendance?</Typography>
+            <Typography variant="body1">Are you sure you want to cancel your attendance?</Typography>
             <Button
                 variant="contained"
                 color="primary"
@@ -43,9 +44,6 @@ const DeleteAttendance = ({event_id, attendance_id, onClose, onAttendanceCancell
             {error && <Typography color="error">{error.message || 'Failed to cancel attendance'}</Typography>}
         </>
     );
-
-    
-
 };
 
 export default DeleteAttendance;
