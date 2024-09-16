@@ -23,7 +23,11 @@ const Event = () => {
     const [snackBarMessage, setSnackBarMessage] = useState('');
 
     const handleTabChange = (event, newValue) => {
-        setTabIndex(newValue);
+        if (!isAuthenticated && (newValue === 1 || newValue === 2)){
+            setLoginPromptOpen(true);
+        } else {
+            setTabIndex(newValue);
+        }
     };
 
     const handleClickOpen = () => {
@@ -71,8 +75,23 @@ const Event = () => {
         method: 'GET'
     })
 
-    console.log("EVENT DATA:", eventData);
-    console.log("ATTENDANCE DATA:", attendanceData);
+    const [{ data: barData, loading: barLoading, error: barError }] = useAxios({
+        url: eventData ? `http://127.0.0.1:3001/api/v1/bars/${eventData.event.bar_id}` : null,
+        method: 'GET',
+        manual: !eventData 
+      });
+
+    const [{ data: addressData, loading: addressLoading, error: addressError}] = useAxios({
+        url: barData ? `http://127.0.0.1:3001/api/v1/addresses/${barData.bar.address_id}` : null,
+        method: 'GET',
+        manual: !barData 
+    })
+
+    const [{ data: countryData, loading: countryLoading, error: countryError}] = useAxios({
+        url: addressData ? `http://127.0.0.1:3001/api/v1/countries/${addressData.address.country_id}` : null,
+        method: 'GET',
+        manual: !addressData   
+    })
 
     const checkAttendanceStatus = () => {
         if (attendanceData && eventData && eventData.event) {
@@ -112,7 +131,7 @@ const Event = () => {
                     Error fetching event data.
                 </Typography>
             )}
-            {eventData && (
+            {eventData && barData && addressData && countryData && (
                 <Box
                     sx={{
                         maxWidth: 280,
@@ -125,7 +144,6 @@ const Event = () => {
                                 sx={{
                                     position: 'absolute',
                                     top: 16, 
-                                    left: 16,
                                     zIndex: 1,
                                     display: 'flex',
                                     flexDirection: 'column',
@@ -133,8 +151,17 @@ const Event = () => {
                                     alignItems: 'flex-start'
                                 }}
                             >
-                                <Typography variant="h4" component="div" sx={{color: 'black', fontWeight: 'bold', textAlign: 'left'}}>
+                                <Typography variant="h3" component="div" sx={{color: 'black', fontWeight: 'bold', textAlign: 'left'}}>
                                     {eventData.event.name}
+                                </Typography>
+                                <Typography variant="h6">
+                                    {barData.bar.name}
+                                </Typography>
+                                <Typography>
+                                    {addressData.address.line1}, {addressData.address.line2}
+                                </Typography>
+                                <Typography>
+                                    {addressData.address.city}, {countryData.country.name}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -176,7 +203,7 @@ const Event = () => {
                     <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
                         <DialogTitle>Please Log In</DialogTitle>
                         <DialogContent>
-                            You need to be logged in to confirm attendance to an event. Please log in or create an account.
+                            You need to be logged in to complete this action. Please log in or create an account.
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleLoginPromptClose}>Close</Button>
