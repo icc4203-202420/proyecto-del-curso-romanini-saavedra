@@ -4,11 +4,10 @@ import useAxios from 'axios-hooks';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, Typography, Box } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star';
 import {useUser} from '../context/UserContext';
-import CreateAttendance from './CreateAttendance';
 import EventUsers from './EventUsers';
-import DeleteAttendance from './DeleteAttendance';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import axios from 'axios';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
@@ -18,6 +17,7 @@ const Event = () => {
     const [loginPromptOpen, setLoginPromptOpen] = useState(false);
     const [isAttending, setIsAttending] = useState(false);
     const [attendanceId, setAttendanceId] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState('');
@@ -30,18 +30,6 @@ const Event = () => {
         }
     };
 
-    const handleClickOpen = () => {
-        if (isAuthenticated) {
-            setOpen(true);
-        } else {
-            setLoginPromptOpen(true);
-        }
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    }
-
     const handleLoginPromptClose = () => {
         setLoginPromptOpen(false);
     };
@@ -49,14 +37,12 @@ const Event = () => {
     const handleAttendanceCreated = () => {
         refetchAttendanceData().then(() => {
             checkAttendanceStatus();
-            setOpen(false);
         })
     }
 
     const handleAttendanceCancelled = () => {
         refetchAttendanceData().then(() => {
             checkAttendanceStatus();
-            setOpen(false);
         })
     }
 
@@ -65,7 +51,7 @@ const Event = () => {
         setOpenSnackbar(true);
     }
 
-    const [{ data: eventData, loading, error }, refetchEventData] = useAxios({
+    const [{ data: eventData, loading: eventLoading, error: eventError }, refetchEventData] = useAxios({
         url: `http://127.0.0.1:3001/api/v1/events/${event_id}`,
         method: 'GET'
     })
@@ -80,8 +66,6 @@ const Event = () => {
         method: 'GET',
         manual: !eventData 
       });
-
-    // console.log("BAR DATA:", barData)
 
     const checkAttendanceStatus = () => {
         if (attendanceData && eventData && eventData.event) {
@@ -103,6 +87,65 @@ const Event = () => {
         }
     };
 
+    const handleConfirmAttendance = () => {
+        if (!isAuthenticated) {
+            setLoginPromptOpen(true);
+            return;
+        }
+
+        const aux_token = localStorage.getItem('app-token');
+        const token = aux_token.replace(/"/g, '');
+        setLoading(true);
+
+        axios.post(`http://127.0.0.1:3001/api/v1/attendances`, {
+            attendance: {
+                user_id: user.id,
+                event_id: eventData.event.id
+            }
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then(() => {
+            handleAttendanceCreated();
+            handleShowSnackbar('Attendance confirmed successfully!');
+        })
+        .catch(() => {
+            handleShowSnackbar('Failed to confirm attendance.');
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+    }
+
+    const handleCancelAttendance = () => {
+        if (!isAuthenticated) {
+            setLoginPromptOpen(true);
+            return;
+        }
+        
+        const aux_token = localStorage.getItem('app-token');
+        const token = aux_token.replace(/"/g, '');
+        setLoading(true);
+
+        axios.delete(`http://127.0.0.1:3001/api/v1/attendances/${attendanceId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+        .then(() => {
+            handleAttendanceCancelled();
+            handleShowSnackbar('Attendance canceled successfully!');
+        })
+        .catch(() => {
+            handleShowSnackbar('Failed to cancel attendance.');
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+    };
+
     useEffect(() => {
         if (user) {
             checkAttendanceStatus();
@@ -111,12 +154,12 @@ const Event = () => {
 
     return (
         <div>
-            {loading && (
+            {eventLoading && (
                 <Typography variant="body1" margin="normal">
                     Loading event data...
                 </Typography>
             )}
-            {error && (
+            {eventError && (
                 <Typography variant="body1" color="error" margin="normal">
                     Error fetching event data.
                 </Typography>
@@ -149,11 +192,9 @@ const Event = () => {
                                     {barData.name}
                                 </Typography>
                                 <Typography>
-                                    {/* {addressData.address.line1}, {addressData.address.line2} */}
                                     {barData.address.line1}, {barData.address.line2}
                                 </Typography>
                                 <Typography>
-                                    {/* {addressData.address.city}, {countryData.country.name} */}
                                     {barData.address.city}, {barData.address.country.name}
                                 </Typography>
                             </CardContent>
@@ -164,35 +205,13 @@ const Event = () => {
                             variant="outlined"
                             startIcon={<StarIcon/>}
                             sx={{borderRadius: 2}}
-                            onClick={handleClickOpen}
+                            onClick={isAttending ? handleCancelAttendance : handleConfirmAttendance}
                             color="black"
+                            disabled={loading}
                         >
-                            {isAttending ? 'Cancel Attendance' : 'Confirm Attendance'}
+                            {loading ? 'Processing...' : (isAttending ? 'Cancel Attendance' : 'Confirm Attendance')}
                         </Button>
                     </Box>
-                    <Dialog open={open} onClose={handleClose}>
-                        <DialogTitle>{isAttending ? 'Cancel Attendance' : 'Confirm Attendance'}</DialogTitle>
-                        <DialogContent>
-                            {isAttending ? (
-                                <DeleteAttendance
-                                    attendance_id={attendanceId}
-                                    onClose={handleClose}
-                                    onAttendanceCancelled={handleAttendanceCancelled}
-                                    onShowSnackbar={handleShowSnackbar}
-                                />
-                            ) : (
-                                <CreateAttendance
-                                    event_id={eventData.event.id}
-                                    onAttendanceCreated={handleAttendanceCreated}
-                                    onShowSnackbar={handleShowSnackbar}
-                                />
-                            )}
-
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleClose}>Close</Button>
-                        </DialogActions>
-                    </Dialog>
                     <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
                         <DialogTitle>Please Log In</DialogTitle>
                         <DialogContent>
