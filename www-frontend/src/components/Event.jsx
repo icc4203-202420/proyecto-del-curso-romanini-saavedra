@@ -239,6 +239,18 @@ const Event = () => {
                                     year: 'numeric'
                                 })}
                             </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>Start Time: </strong>{new Date(eventData.event.start_date).toLocaleDateString('en-US', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom textAlign="left" color="black">
+                                <strong>End Time: </strong>{new Date(eventData.event.end_date).toLocaleDateString('en-US', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </Typography>
                         </Box>   
                     )}
                     {tabIndex === 1 && (

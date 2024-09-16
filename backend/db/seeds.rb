@@ -174,60 +174,80 @@ if Rails.env.development?
       name: "Opening Celebration",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 1
     },
     {
       name: "Opening Celebration",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 2
     },
     {
       name: "Opening Celebration",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 3
     },
     {
       name: "Opening Celebration",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 4
     },
     {
       name: "Opening Celebration",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 5
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 1
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 2
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 3
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 4
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 5
     }
 
