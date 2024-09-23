@@ -38,7 +38,7 @@ Dado que el número de evaluaciones puede ser considerable, incorporar una [Flat
 
 En esta entrega se deben poner en práctica los componentes principales disponibles en React Native, recordar que estos no son las etiquetas HTML a las que estamos acostumbrados, si no que son etiquetas de React Native que se traducen a componentes nativos de Android o iOS. A su vez, se sugiere utilizar [React Native Elements](https://reactnativeelements.com/) para la UI, y [Fetch](https://reactnative.dev/docs/network) para las llamadas HTTP al backend.
 
-El backend es el que han estado desarrollando, el cual pueden seguir modificando para cumplir con los requisitos solicitados. Para inicializar el proyecto, pueden tomar de base el ejemplo de expo en [https://docs.expo.dev/], o bien, utilizar el proyecto vacío de ``hybrid-frontend`, el cual cuenta con solo 1 vista y sin navegación.
+El backend es el que han estado desarrollando, el cual pueden seguir modificando para cumplir con los requisitos solicitados. Para inicializar el proyecto, pueden tomar de base el ejemplo de expo en [https://docs.expo.dev/], o bien, utilizar el proyecto vacío de `hybrid-frontend`, el cual cuenta con solo 1 vista y sin navegación.
 
 La navegación debe ser basada en archivos, es decir, los archivos de la carpeta `app` deben dar cuenta de las rutas disponibles en la aplicación (ver (File-based routing)[https://docs.expo.dev/develop/file-based-routing/])
 
