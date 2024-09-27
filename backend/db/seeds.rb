@@ -23,6 +23,137 @@ if Rails.env.development?
     FactoryBot.create(:brewery_with_brands_with_beers, countries: [country])
   end
 
+  # Crear un usuario para testeo
+  test_user = User.create!(
+    email: 'test@example.com',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Test',
+    last_name: 'User',
+    handle: "testUserHandle"
+  )
+
+  caromanini = User.create!(
+    email: 'caromanini@miuandes.cl',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Chiara',
+    last_name: 'Romanini',
+    handle: "caromanini"
+  )
+
+  fasaavedra = User.create!(
+    email: 'fasaavedra@miuandes.cl',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Fabian',
+    last_name: 'Saavedra',
+    handle: "fasaavedra"
+  )
+
+  User.create!(
+    email: "jdoe@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "John",
+    last_name: "Doe",
+    handle: "jdoe"
+  )
+
+  User.create!(
+    email: "asmith@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "Alice",
+    last_name: "Smith",
+    handle: "asmith"
+  )
+
+  User.create!(
+    email: "browns@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "Bob",
+    last_name: "Brown",
+    handle: "browns"
+  )
+
+  User.create!(
+    email: "cjones@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "Carol",
+    last_name: "Jones",
+    handle: "cjones"
+  )
+
+  User.create!(
+    email: "dwhite@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "David",
+    last_name: "White",
+    handle: "dwhite"
+  )
+
+  Review.create!(
+    text: "Amazing beer! This was the best beer I have ever had! 10/10 would recommend. The best",
+    rating: 5,
+    user_id: 2,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This is the worst beer I have ever had. The worst ever. I don't like this style of beer. The worst.",
+    rating: 1.1,
+    user_id: 1,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This beer has a smooth, malty flavor with a hint of caramel. The hops provide a nice balance, making it refreshing and flavorful",
+    rating: 4.6,
+    user_id: 3,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This beer has a rich, hoppy flavor with hints of citrus and pine. It's well-balanced and has a crisp finish.",
+    rating: 4.2,
+    user_id: 1,
+    beer_id: 2
+  )
+
+  Review.create!(
+    text: "A delightful beer with a strong malt presence and a touch of sweetness. The bitterness is just right, making it very drinkable.",
+    rating: 4.5,
+    user_id: 2,
+    beer_id: 3
+  )
+
+  Review.create!(
+    text: "An excellent IPA with bold hop flavors and a lingering aftertaste. It's a bit intense but enjoyable for hop lovers.",
+    rating: 4.7,
+    user_id: 4,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This lager offers a clean, crisp taste with subtle notes of bread and cereal. It's smooth and refreshing, perfect for a hot day.",
+    rating: 4.0,
+    user_id: 5,
+    beer_id: 2
+  )
+
+  Review.create(
+    text: "A robust stout with rich chocolate and coffee notes. It's creamy and satisfying, with a strong, yet smooth, finish.",
+    rating: 4.8,
+    user_id: 6,
+    beer_id: 3
+  )
+
+  address = Address.create!(user: test_user, country: countries.sample)
+
   # Crear usuarios con direcciones asociadas
   users = FactoryBot.create_list(:user, 10) do |user, i|
     user.address.update(country: countries.sample)
@@ -35,9 +166,92 @@ if Rails.env.development?
   end
 
   # Crear eventos asociados a los bares
-  events = bars.map do |bar|
-    FactoryBot.create(:event, bar: bar)
-  end
+  # events = bars.map do |bar|
+  #   FactoryBot.create(:event, bar: bar)
+  # end
+  events = Event.create([
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 1
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 2
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 3
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 4
+    },
+    {
+      name: "Opening Celebration",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 5
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 1
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 2
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 3
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 4
+    },
+    {
+      name: "Happy Hour",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 5
+    }
+
+  ])
 
   # Crear relaciones de amistad entre usuarios
   users.combination(2).to_a.sample(5).each do |user_pair|
@@ -50,5 +264,62 @@ if Rails.env.development?
       FactoryBot.create(:attendance, user: user, event: event, checked_in: [true, false].sample)
     end
   end
+
+  # Creaciones asociadas a nuevos bares buscables (Entrega1.4)
+  # Crear Chile
+  chile = Country.find_or_create_by!(name: 'Chile')
+
+  # Crear cervecerías (breweries) con marcas (brands) y cervezas (beers)
+  # Crear la dirección para el Bar La Providencia
+  la_providencia_address = Address.create!(
+    line1: 'Isabel La Católica 4208',
+    line2: 'Las Condes',
+    city: 'Santiago',
+    country: chile,
+    user: test_user
+  )
+
+  latitude = -33.42628
+  longitude = -70.56437
+
+  # Crear el bar 'Bar La Providencia'
+  bar_la_providencia = Bar.create!(
+    name: 'Bar La Providencia',
+    latitude: latitude,
+    longitude: longitude,
+    address: la_providencia_address
+  )
+
+  # Asignar cervezas aleatorias al bar (puedes modificar el rango)
+  bar_la_providencia.beers << Beer.all.sample(rand(1..3))
+
+  # Crear un evento asociado a 'Bar La Providencia'
+  event = FactoryBot.create(:event, bar: bar_la_providencia)
+
+  # Crear dirección para el Bar Santiago Vitacura
+vitacura_address = Address.create!(
+  line1: 'Av Vitacura 7120',
+  line2: 'Vitacura',
+  city: 'Santiago',
+  country: chile,
+  user: test_user
+)
+
+latitude = -33.38072
+longitude = -70.56469
+
+# Crear el bar 'Bar Santiago Vitacura'
+bar_santiago_vitacura = Bar.create!(
+  name: 'Bar Santiago Vitacura',
+  latitude: latitude,
+  longitude: longitude,
+  address: vitacura_address
+)
+
+# Asignar cervezas aleatorias al bar (puedes modificar el rango)
+bar_santiago_vitacura.beers << Beer.all.sample(rand(1..3))
+
+# Crear un evento asociado a 'Bar Santiago Vitacura'
+event = FactoryBot.create(:event, bar: bar_santiago_vitacura)
 
 end

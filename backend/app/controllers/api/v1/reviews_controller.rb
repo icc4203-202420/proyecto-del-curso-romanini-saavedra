@@ -1,12 +1,14 @@
 class API::V1::ReviewsController < ApplicationController
   respond_to :json
-  before_action :set_user, only: [:index, :create]
   before_action :set_review, only: [:show, :update, :destroy]
+  before_action :verify_jwt_token, only: [:create, :update, :destroy]
 
   def index
-    @reviews = Review.where(user: @user)
-    render json: { reviews: @reviews }, status: :ok
+    beer = Beer.find(params[:beer_id])
+    reviews = beer.reviews
+    render json: reviews, status: :ok
   end
+
 
   def show
     if @review
@@ -17,9 +19,10 @@ class API::V1::ReviewsController < ApplicationController
   end
 
   def create
-    @review = @user.reviews.build(review_params)
+    @review = Review.new(review_params)
+
     if @review.save
-      render json: @review, status: :created, location: api_v1_review_url(@review)
+      render json: { review: @review, message: "Review created succesffuly."}, status: :created
     else
       render json: @review.errors, status: :unprocessable_entity
     end
@@ -45,11 +48,12 @@ class API::V1::ReviewsController < ApplicationController
     render json: { error: "Review not found" }, status: :not_found unless @review
   end
 
-  def set_user
-    @user = User.find(params[:user_id]) 
+  def review_params
+    params.require(:review).permit(:text, :rating, :user_id, :beer_id)
   end
 
-  def review_params
-    params.require(:review).permit(:id, :text, :rating, :beer_id)
+  def verify_jwt_token
+    authenticate_user!
+    head :unauthorized unless current_user
   end
 end
