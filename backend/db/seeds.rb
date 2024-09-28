@@ -23,6 +23,137 @@ if Rails.env.development?
     FactoryBot.create(:brewery_with_brands_with_beers, countries: [country])
   end
 
+  # Crear un usuario para testeo
+  test_user = User.create!(
+    email: 'test@example.com',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Test',
+    last_name: 'User',
+    handle: "testUserHandle"
+  )
+
+  caromanini = User.create!(
+    email: 'caromanini@miuandes.cl',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Chiara',
+    last_name: 'Romanini',
+    handle: "caromanini"
+  )
+
+  fasaavedra = User.create!(
+    email: 'fasaavedra@miuandes.cl',
+    password: 'password123',
+    password_confirmation: 'password123',
+    first_name: 'Fabian',
+    last_name: 'Saavedra',
+    handle: "fasaavedra"
+  )
+
+  User.create!(
+    email: "jdoe@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "John",
+    last_name: "Doe",
+    handle: "jdoe"
+  )
+
+  User.create!(
+    email: "asmith@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "Alice",
+    last_name: "Smith",
+    handle: "asmith"
+  )
+
+  User.create!(
+    email: "browns@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "Bob",
+    last_name: "Brown",
+    handle: "browns"
+  )
+
+  User.create!(
+    email: "cjones@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "Carol",
+    last_name: "Jones",
+    handle: "cjones"
+  )
+
+  User.create!(
+    email: "dwhite@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    first_name: "David",
+    last_name: "White",
+    handle: "dwhite"
+  )
+
+  Review.create!(
+    text: "Amazing beer! This was the best beer I have ever had! 10/10 would recommend. The best",
+    rating: 5,
+    user_id: 2,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This is the worst beer I have ever had. The worst ever. I don't like this style of beer. The worst.",
+    rating: 1.1,
+    user_id: 1,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This beer has a smooth, malty flavor with a hint of caramel. The hops provide a nice balance, making it refreshing and flavorful",
+    rating: 4.6,
+    user_id: 3,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This beer has a rich, hoppy flavor with hints of citrus and pine. It's well-balanced and has a crisp finish.",
+    rating: 4.2,
+    user_id: 1,
+    beer_id: 2
+  )
+
+  Review.create!(
+    text: "A delightful beer with a strong malt presence and a touch of sweetness. The bitterness is just right, making it very drinkable.",
+    rating: 4.5,
+    user_id: 2,
+    beer_id: 3
+  )
+
+  Review.create!(
+    text: "An excellent IPA with bold hop flavors and a lingering aftertaste. It's a bit intense but enjoyable for hop lovers.",
+    rating: 4.7,
+    user_id: 4,
+    beer_id: 1
+  )
+
+  Review.create!(
+    text: "This lager offers a clean, crisp taste with subtle notes of bread and cereal. It's smooth and refreshing, perfect for a hot day.",
+    rating: 4.0,
+    user_id: 5,
+    beer_id: 2
+  )
+
+  Review.create(
+    text: "A robust stout with rich chocolate and coffee notes. It's creamy and satisfying, with a strong, yet smooth, finish.",
+    rating: 4.8,
+    user_id: 6,
+    beer_id: 3
+  )
+
+  address = Address.create!(user: test_user, country: countries.sample)
+
   # Crear usuarios con direcciones asociadas
   users = FactoryBot.create_list(:user, 10) do |user, i|
     user.address.update(country: countries.sample)
