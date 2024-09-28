@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, Typography, Box } from '@mui/material'
@@ -8,6 +8,8 @@ import EventUsers from './EventUsers';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import axios from 'axios';
+import ImageUploader from './ImageUploader';
+import EventPictureGallery from './EventPictureGallery';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
@@ -21,6 +23,12 @@ const Event = () => {
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState('');
+
+    const [images, setImages] = useState([]);
+
+    const handleImageUpload = (newImage) => {
+        setImages((prevImages) => [...prevImages, newImage]);
+    }
 
     const handleTabChange = (event, newValue) => {
         if (!isAuthenticated && (newValue === 1 || newValue === 2)){
@@ -274,9 +282,15 @@ const Event = () => {
                     )}
                     {tabIndex === 1 && (
                         <Box>
-                            <Typography>
-                                There are no photos for this event.
-                            </Typography>
+                            <ImageUploader 
+                                eventId={eventData.event.id} 
+                                userId={user.id}
+                                onImageUpload={handleImageUpload}    
+                            />
+                            <EventPictureGallery 
+                                eventId={eventData.event.id}
+                                images={images}    
+                            />
                         </Box>
                     )}
                     {tabIndex === 2 && (
