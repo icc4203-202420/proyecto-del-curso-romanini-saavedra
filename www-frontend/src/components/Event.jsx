@@ -300,9 +300,11 @@ const Event = () => {
                     )}
                     {tabIndex === 1 && (
                         <Box>
-                            <Button variant="contained" onClick={handleOpenUploadDialog}>
-                                Add Picture
-                            </Button>
+                            <Box sx={{display: 'flex', justifyContent: 'flex-start', marginBottom: 2}}>
+                                <Button variant="contained" onClick={handleOpenUploadDialog}>
+                                    Add Picture
+                                </Button>
+                            </Box>
 
                             <EventPictureGallery eventId={eventData.event.id} eventPictureData={eventPictureData}/>
 
