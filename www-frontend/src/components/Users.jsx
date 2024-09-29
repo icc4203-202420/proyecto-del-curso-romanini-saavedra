@@ -50,7 +50,7 @@ const Users = () => {
     const handleFriendshipCreated = () => {
         // Lógica para cuando la amistad se haya creado (puedes agregar aquí algún refetch o actualización de datos)
         console.log('Friendship created');
-        handleClose(); // Cerrar el diálogo
+        //handleClose(); // Cerrar el diálogo
     };
 
     return (
