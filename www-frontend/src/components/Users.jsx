@@ -4,6 +4,7 @@ import useLocalStorageState from 'use-local-storage-state';
 import { Autocomplete, TextField, List, ListItem, ListItemAvatar, Avatar, ListItemText, Button, Box, Typography, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { Person as PersonIcon, Add as AddIcon } from '@mui/icons-material';
 import { useUser } from '../context/UserContext'; // Para manejar el usuario logueado
+import CreateFriendship from './CreateFriendship'; // Importa el componente CreateFriendship
 
 const Users = () => {
     const { user, isAuthenticated } = useUser(); // Obtener información del usuario y estado de autenticación
@@ -103,7 +104,7 @@ const Users = () => {
                                     startIcon={<AddIcon />}
                                     onClick={() => handleClickOpen(user.id)}
                                 >
-                                Add
+                                    Add
                                 </Button>
                             </ListItem>
                         ))}
@@ -115,13 +116,12 @@ const Users = () => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add Friend</DialogTitle>
                 <DialogContent>
-                    {/* Espacio para el componente CreateFriendship */}
-                    {/* Este componente recibirá el userId del amigo y manejará la creación de la amistad */}
-                    {/* Por ejemplo: */}
-                    {/* <CreateFriendship userId={selectedUserId} onClose={handleClose} onFriendshipCreated={handleFriendshipCreated} /> */}
-                    <Typography variant="body1">
-                        This is where you will add the logic to create a friendship with the selected user.
-                    </Typography>
+                    <CreateFriendship
+                        user_id={user.id} // ID del usuario logueado
+                        friend_id={selectedUserId} // ID del amigo seleccionado
+                        onClose={handleClose}
+                        onFriendshipCreated={handleFriendshipCreated} // Llamar cuando se cree la amistad
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
@@ -132,7 +132,7 @@ const Users = () => {
             <Dialog open={loginPromptOpen} onClose={handleLoginPromptClose}>
                 <DialogTitle>Please Log In</DialogTitle>
                 <DialogContent>
-                    You need to be logged in to add a friend. Please log in or create an account.
+                    <Typography>You need to be logged in to add a friend. Please log in or create an account.</Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleLoginPromptClose}>Close</Button>
