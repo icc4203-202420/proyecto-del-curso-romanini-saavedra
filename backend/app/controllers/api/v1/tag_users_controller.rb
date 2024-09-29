@@ -14,7 +14,7 @@ class API::V1::TagUsersController < ApplicationController
   def create
     @tag_user = TagUser.new(tag_user_params)
 
-    if @etag_user.save
+    if @tag_user.save
       render json: { tag_user: @tag_user, message: "TagUser created successfully."}, status: :created
     else
       render json: @tag_user.errors, status: :unprocessable_entity
@@ -29,6 +29,6 @@ class API::V1::TagUsersController < ApplicationController
   end
 
   def tag_user_params
-    params.require(:tag_user).permit(:tagged_user, :user, :picture)
+    params.require(:tag_user).permit(:tagged_user_id, :user_id, :picture_id)
   end
 end
