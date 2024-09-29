@@ -1,9 +1,14 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
-import { Typography, Card, CardContent, Box, CardMedia } from '@mui/material'
+import { Typography, Card, CardContent, Box, CardMedia, Button } from '@mui/material'
+import { useNavigate, Link } from 'react-router-dom';
 
 const EventImage = ({picture}) => {
-    console.log("PICTURE:", picture)
+    const navigate = useNavigate();
+
+    // const handleButtonClick = () => {
+    //     navigate(`http://127.0.0.1:3001/api/v1/tag_users`)
+    // }
 
     const [{ data: userData, loading, error}] = useAxios({
         url: `http://127.0.0.1:3001/api/v1/users/${picture.user_id}`,
@@ -15,9 +20,23 @@ const EventImage = ({picture}) => {
             <Box sx={{ maxHeight: '500px', overflowY: 'auto' }}>
                 <Card key={picture.id} sx={{ margin: 2 }}>
                         <CardContent>
-                            <Typography variant="subtitle2" color="textSecondary">
-                                Uploaded by: {userData.user.handle}
-                            </Typography>
+                            <Box display="flex" justifyContent="space-between" alignItems="center">
+                                <Typography variant="subtitle2" color="textSecondary" >
+                                    Uploaded by: {userData.user.handle}
+                                </Typography>
+                                
+                                <Button 
+                                    component={Link}
+                                    to={`/tag_users`}
+                                    variant="contained"  
+                                    size="small" 
+                                    color="primary"
+                                >
+                                    Tag
+                                </Button>
+                            
+                            </Box>
+                                
                         </CardContent>
                         <CardMedia
                             component="img"
