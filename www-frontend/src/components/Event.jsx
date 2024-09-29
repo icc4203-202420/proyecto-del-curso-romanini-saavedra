@@ -26,8 +26,20 @@ const Event = () => {
 
     const [images, setImages] = useState([]);
 
+    const [openUploadDialog, setOpenUploadDialog] = useState(false);
+
+    const handleOpenUploadDialog = () => {
+        setOpenUploadDialog(true);
+    };
+
+    const handleCloseUploadDialog = () => {
+        setOpenUploadDialog(false);
+    }
+
     const handleImageUpload = (newImage) => {
         setImages((prevImages) => [...prevImages, newImage]);
+        handleCloseUploadDialog();
+        refetchEventPictureData();
     }
 
     const handleTabChange = (event, newValue) => {
@@ -74,6 +86,12 @@ const Event = () => {
         method: 'GET',
         manual: !eventData 
       });
+
+    const [{ data: eventPictureData, loading: eventPictureDataLoading, error: eventPictureDataError }, refetchEventPictureData] = useAxios({
+        url: eventData ? `http://127.0.0.1:3001/api/v1/event_pictures?event_id=${eventData.event.id}` : null,
+        method: 'GET',
+        manual: !eventData
+    })
 
     const checkAttendanceStatus = () => {
         if (attendanceData && eventData && eventData.event) {
@@ -172,7 +190,7 @@ const Event = () => {
                     Error fetching event data.
                 </Typography>
             )}
-            {eventData && barData && (
+            {eventData && barData && eventPictureData && (
                 <Box
                     sx={{
                         maxWidth: 280,
@@ -282,15 +300,27 @@ const Event = () => {
                     )}
                     {tabIndex === 1 && (
                         <Box>
-                            <ImageUploader 
-                                eventId={eventData.event.id} 
-                                userId={user.id}
-                                onImageUpload={handleImageUpload}    
-                            />
-                            <EventPictureGallery 
-                                eventId={eventData.event.id}
-                                images={images}    
-                            />
+                            <Button variant="contained" onClick={handleOpenUploadDialog}>
+                                Add Picture
+                            </Button>
+
+                            <EventPictureGallery eventId={eventData.event.id} eventPictureData={eventPictureData}/>
+
+                            <Dialog open={openUploadDialog} onClose={handleCloseUploadDialog} fullWidth maxWidth="sm">
+                                <DialogTitle textAlign='center'>Upload a Picture</DialogTitle>
+                                <DialogContent>
+                                    <ImageUploader 
+                                        eventId={eventData.event.id} 
+                                        userId={user.id}
+                                        onImageUpload={handleImageUpload}    
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', flexGrow: 1 }}>
+                                        <Button onClick={handleCloseUploadDialog}>Cancel</Button>
+                                    </Box>
+                                </DialogActions>
+                            </Dialog>
                         </Box>
                     )}
                     {tabIndex === 2 && (

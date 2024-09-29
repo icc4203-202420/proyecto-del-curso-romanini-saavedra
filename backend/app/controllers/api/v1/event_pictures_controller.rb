@@ -7,6 +7,7 @@ class API::V1::EventPicturesController < ApplicationController
     render json: @event_pictures.map { |picture|
       {
         id: picture.id,
+        user_id: picture.user_id,
         description: picture.description,
         created_at: picture.created_at,
         updated_at: picture.updated_at,

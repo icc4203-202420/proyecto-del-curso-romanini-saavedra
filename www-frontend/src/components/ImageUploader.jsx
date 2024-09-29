@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { Button, TextField, Box, Typography } from '@mui/material';
 
 const ImageUploader = ({ eventId, userId, onImageUpload }) => {
     const [file, setFile] = useState(null);
@@ -11,12 +12,6 @@ const ImageUploader = ({ eventId, userId, onImageUpload }) => {
     const canvasRef = useRef(null);
   
     const handleFileChange = (e) => {
-        // const selectedFile = e.target.files[0];
-        // if (selectedFile) {
-        //     setFile(selectedFile);
-        //     setPreview(URL.createObjectURL(selectedFile))
-        // }
-    //   setFile(e.target.files[0]);
         setCapturedPhoto(null);
         setFile(e.target.files[0]);
     };
@@ -36,7 +31,6 @@ const ImageUploader = ({ eventId, userId, onImageUpload }) => {
             canvas.toBlob((blob) => {
                 const fileFromCamera = new File([blob], "captured_image.jpg", {type: 'image/png'});
                 setFile(null);
-                // setPreview(URL.createObjectURL(blob));
                 setCapturedPhoto(fileFromCamera);
             }, 'image/png');
         } catch (error) {
@@ -66,18 +60,19 @@ const ImageUploader = ({ eventId, userId, onImageUpload }) => {
             },
         });
 
+        console.log("API RESPONSE:", response.data);
         const newImage = {
             id: response.data.id, 
             image_url: response.data.image_url, 
             description: description,
+            user_id: userId
         };
 
         setFile(null);
         setCapturedPhoto(null);
         setDescription('');
-        // setPreview(null);
 
-        if (onImageUpload) onImageUpload();
+        if (onImageUpload) onImageUpload(newImage);
 
       } catch (error) {
         if (error.response) {
@@ -102,52 +97,51 @@ const ImageUploader = ({ eventId, userId, onImageUpload }) => {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <video ref={videoRef} autoPlay playsInline width="300" height="200"></video>
-                    <button type="button" onClick={handleCapture}>Take Photo</button>
-                    <canvas ref={canvasRef} width="300" height="200" style={{display: 'none'}}></canvas>
-                </div>
+                <Box sx={{display:'flex', flexDirection: 'column', aligntItems: 'center', margin: 2}}>
+                    <Box sx={{display:'flex', flexDirection: 'column', aligntItems: 'center', marginBottom: 2}}>
+                        <video ref={videoRef} autoPlay playsInline width="250" height="200" style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)' }}></video>
+                        <Button variant="contained" color="primary" onClick={handleCapture} sx={{ marginTop: 1 }}>
+                            Take Photo
+                        </Button>
+                        <canvas ref={canvasRef} width="250" height="200" style={{ display: 'none' }}></canvas>
+                    </Box>
 
-                <input 
-                    type="file" 
-                    accept=".jpg, .jpeg, .png"
-                    onChange={handleFileChange} 
-                    required={!capturedPhoto}
-                />
-                <input
-                    type="text"
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    placeholder="Description"
-                />
-                <button type="submit">Upload Image</button>
+                    <TextField
+                        type="file"
+                        accept=".jpg, .jpeg, .png"
+                        onChange={handleFileChange}
+                        required={!capturedPhoto}
+                        sx={{ marginBottom: 2 }} 
+                    />
+
+                    <TextField
+                        type="text"
+                        value={description}
+                        onChange={handleDescriptionChange}
+                        placeholder="Description"
+                        variant="outlined"
+                        fullWidth
+                        sx={{ marginBottom: 2 }} 
+                    />
+
+                    <Button type="submit" variant="contained" color="success">
+                        Upload Image
+                    </Button>
+
+                </Box>
             </form>
 
             {capturedPhoto && (
-                <div>
-                    {console.log("CAPTURED PHOTO:", capturedPhoto)}
-                    <p>Preview of Captured Photo:</p>
+                <Box sx={{marginTop: 2, textAling: 'center'}}>
+                    <Typography variant="body1">Preview of Captured Photo:</Typography>
                     <img
                         src={URL.createObjectURL(capturedPhoto)}
                         alt="Captured"
-                        style={{width: '300px', height:'200px'}}
+                        style={{width: '250px', height: '200px', borderRadius: '8px', marginTop: '10px'}}
                     />
-                </div>
-            )}
 
-            {/* <div>
-                <h3>Or take a photo:</h3>
-                <video ref={videoRef} width="300" height="200" />
-                <button onClick={startCamera}>Start Camera</button>
-                <button onClick={handleTakePhoto}>Take Photo</button>
-                <canvas ref={canvasRef} width="300" height="200" style={{ display: 'none' }} />
-            </div>
-            {preview && (
-                <div>
-                    <h3>Image Preview:</h3>
-                    <img src={preview} alt="Preview" width="300" />
-                </div>
-            )} */}
+                </Box>
+            )}
         </div>
     );
   };
