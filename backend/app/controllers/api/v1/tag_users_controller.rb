@@ -1,6 +1,6 @@
 class API::V1::TagUsersController < ApplicationController
   respond_to :json
-  before_action :set_tag_user, only: [:show]
+  before_action :set_tag_user, only: [:show, :destroy]
 
   def index
     @tag_users = TagUser.all
@@ -19,6 +19,11 @@ class API::V1::TagUsersController < ApplicationController
     else
       render json: @tag_user.errors, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @tag_user.destroy
+    head :no_content
   end
 
   private
