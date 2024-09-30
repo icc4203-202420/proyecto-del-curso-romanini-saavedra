@@ -208,25 +208,47 @@ const Users = () => {
         )}
         {allUsersData && (
             <List>
-            {(searchKeywords ? filteredUsers : filteredUsers).map((user, index) => (
+            {(searchKeywords ? filteredUsers : allUsersData.users).length === 0 && !isAuthenticated ? 
+                allUsersData.users.map((user, index) => (
                 <ListItem key={index} sx={{ justifyContent: 'space-between' }}>
-                <Box display="flex" alignItems="center">
+                    <Box display="flex" alignItems="center">
                     <ListItemAvatar>
-                    <Avatar>
+                        <Avatar>
                         <PersonIcon />
-                    </Avatar>
+                        </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary={user.handle} />
-                </Box>
-                <Button
+                    </Box>
+                    <Button
                     variant="outlined"
                     startIcon={<AddIcon />}
                     onClick={() => handleClickOpen(user.id)}
-                >
+                    >
                     Add
-                </Button>
+                    </Button>
                 </ListItem>
-            ))}
+                ))
+            :
+                (searchKeywords ? filteredUsers : filteredUsers).map((user, index) => (
+                <ListItem key={index} sx={{ justifyContent: 'space-between' }}>
+                    <Box display="flex" alignItems="center">
+                    <ListItemAvatar>
+                        <Avatar>
+                        <PersonIcon />
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={user.handle} />
+                    </Box>
+                    <Button
+                    variant="outlined"
+                    startIcon={<AddIcon />}
+                    onClick={() => handleClickOpen(user.id)}
+                    >
+                    Add
+                    </Button>
+                </ListItem>
+                ))
+            }
             </List>
         )}
       </Box>
