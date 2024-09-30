@@ -13,19 +13,19 @@ class API::V1::EventsController < ApplicationController
     end
 
     def show
-        if @event.flyer.attached?
-          render json: @event.as_json.merge({ 
-            image_url: url_for(@event.flyer), 
-            thumbnail_url: url_for(@event.thumbnail)}),
-            status: :ok
-        else
-          render json: { event: @event.as_json }, status: :ok
-        end 
+      if @event.flyers.attached?
+        render json: @event.as_json.merge({ 
+          images: @event.flyers.map { |flyer| url_for(flyer) },
+          thumbnails: @event.thumbnails.map { |thumb| url_for(thumb) }
+        }), status: :ok
+      else
+        render json: { event: @event.as_json }, status: :ok
+      end
     end
 
     def create
-        @event = Event.new(event_params.except(:flyer_base64))
-        handle_flyer_attachment if event_params[:flyer_base64]
+        @event = Event.new(event_params.except(:flyers_base64))
+        handle_flyers_attachment if event_params[:flyers_base64]
     
         if @event.save
           render json: { event: @event, message: 'Event created successfully.' }, status: :created
@@ -35,9 +35,9 @@ class API::V1::EventsController < ApplicationController
     end
 
     def update
-        handle_flyer_attachment if event_params[:flyer_base64]
+        handle_flyers_attachment if event_params[:flyers_base64]
     
-        if @event.update(event_params.except(:flyer_base64))
+        if @event.update(event_params.except(:flyers_base64))
           render json: { event: @event, message: 'Event updated successfully.' }, status: :ok
         else
           render json: @event.errors, status: :unprocessable_entity
@@ -57,14 +57,16 @@ class API::V1::EventsController < ApplicationController
     end
 
     def event_params
-        params.require(:event).permit(:name, :description, :bar_id, :date, :start_date, :end_date, :flyer_base64)
+        params.require(:event).permit(:name, :description, :bar_id, :date, :start_date, :end_date, flyers_base64: [])
     end
 
-    def handle_flyer_attachment
-        decoded_flyer = decode_flyer(event_params[:flyer_base64])
-        @event.flyer.attach(io: decoded_flyer[:io], 
-          filename: decoded_flyer[:filename], 
-          content_type: decoded_flyer[:content_type])
+    def handle_flyers_attachment
+      event_params[:flyers_base64].each do |flyer_base64|
+        decoded_flyer = decode_flyer(flyer_base64)
+        @event.flyers.attach(io: decoded_flyer[:io], 
+                             filename: decoded_flyer[:filename], 
+                             content_type: decoded_flyer[:content_type])
+      end
     end
 
     def verify_jwt_token
