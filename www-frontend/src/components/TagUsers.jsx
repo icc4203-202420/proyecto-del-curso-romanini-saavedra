@@ -16,11 +16,12 @@ const TagUsers = ({onTagAdded}) => {
     const queryParams = new URLSearchParams(location.search);
     const userId = queryParams.get('userId')
     const pictureId = queryParams.get('pictureId');
-    // const { userId, pictureId } = location.state || {};
 
     const [searchKeywords, setSearchKeywords] = useState('')
     const [usersData, setUsersData] = useState([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
+
+    const [selectedUser, setSelectedUser] = useState(null);
     
     const [keywordList, setKeywordList] = useLocalStorageState('BeerMates/SearchFriendships/KeywordList', {
         defaultValue: []
@@ -69,13 +70,35 @@ const TagUsers = ({onTagAdded}) => {
         }
     }, [friendshipsData]);
 
+    useEffect(() => {
+        if (searchKeywords) {
+            console.log("ESTO ES USER:", usersData)
+            const filtered = usersData?.filter(user =>
+                user.user.handle.toLowerCase().includes(searchKeywords.toLowerCase())
+            );
+            setFilteredUsers(filtered);
+        } else {
+            setFilteredUsers([]);
+        }
+    }, [searchKeywords, usersData]);
+
     const handleInputChange = (event, newInputValue) => {
         setSearchKeywords(newInputValue);
+
     };
 
     const handleBackClick = () => {
         navigate(-1);
     }
+  
+    const handleUserSelect = (newValue) => {
+        const user = filteredUsers.find(user => user.user.handle === newValue);
+        if (user) {
+            setSelectedUser(user);
+        } else {
+            setSelectedUser(null);
+        }
+    };
     
     console.log("friendships DAta:", friendshipsData)
 
@@ -97,21 +120,19 @@ const TagUsers = ({onTagAdded}) => {
             console.error("Error tagging user:", error);
         }
     };
-    
+
     return (
-        
         <Box display='flex' flexDirection="column" minHeight="100vh">
-            
             <Box display="flex" alignItems="center" mb={2}>
                 <IconButton onClick={handleBackClick}>
                     <ArrowBack/>
-
                 </IconButton>
                 <Autocomplete
                     freeSolo
-                    options={keywordList}
+                    options={filteredUsers.map(user => user.user.handle)}
                     value={searchKeywords}
-                    onInputChange={handleInputChange}
+                    onInputChange={(event, newInputValue) => setSearchKeywords(newInputValue)}
+                    onChange={(event, newValue) => handleUserSelect(newValue)}
                     renderInput={(params) => (
                         <TextField
                             {...params}
@@ -138,13 +159,11 @@ const TagUsers = ({onTagAdded}) => {
                         Error fetching data.
                     </Typography>
                 )}
-                {friendshipsData && (
-                    friendshipsData.map((friendship) => (
-                        <SingleUser 
-                        key={friendship.id} 
-                        userId={friendship.friend_id} 
-                        onTagUser={() => handleTagUser(friendship.friend_id)}/>
-                    ))
+                {selectedUser && (
+                    <SingleUser
+                        userId={selectedUser.user.id}
+                        onTagUser={() => handleTagUser(selectedUser.user.id)}
+                    />
                 )}
             </Box>
         </Box>
