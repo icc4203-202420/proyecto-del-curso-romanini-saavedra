@@ -27,8 +27,8 @@ const TagUsers = ({onTagAdded}) => {
         defaultValue: []
     })
 
-    console.log("userId:", userId)
-    console.log("pictureId:", pictureId)
+    // console.log("userId:", userId)
+    // console.log("pictureId:", pictureId)
 
 
     const aux_token = localStorage.getItem('app-token');
@@ -57,6 +57,7 @@ const TagUsers = ({onTagAdded}) => {
     }, [userId, execute]);
 
     useEffect(() => {
+        console.log("ESTO ES FRIENDSHIP DATA:", friendshipsData)
         if (friendshipsData) {
             const fetchUserDetails = async () => {
                 const usersPromises = friendshipsData.map(friendship => 
@@ -100,7 +101,7 @@ const TagUsers = ({onTagAdded}) => {
         }
     };
     
-    console.log("friendships DAta:", friendshipsData)
+    // console.log("friendships DAta:", friendshipsData)
 
     const handleTagUser = async (friendId) => {
         try {
@@ -155,9 +156,12 @@ const TagUsers = ({onTagAdded}) => {
                     </Typography>
                 )}
                 {error && (
-                    <Typography variant="body1" color="error" margin="noraml">
+                    <Typography variant="body1" color="error" margin="normal">
                         Error fetching data.
                     </Typography>
+                )}
+                {friendshipsData && parseInt(friendshipsData.length) === 0 && (
+                    <Typography>Add some friends so you can tag them!</Typography>
                 )}
                 {selectedUser && (
                     <SingleUser
