@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import {Link} from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import useLocalStorageState from 'use-local-storage-state';
-import { Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
+import { IconButton, Autocomplete, TextField, List, ListItem, ListItemText, Button, Card, CardMedia, CardActions, CardContent, Typography, Box } from '@mui/material'
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { ArrowBack } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
-const TagUsers = () => {
+const TagUsers = ({onTagAdded}) => {
+
+    const navigate = useNavigate();
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -21,8 +25,6 @@ const TagUsers = () => {
     const [keywordList, setKeywordList] = useLocalStorageState('BeerMates/SearchFriendships/KeywordList', {
         defaultValue: []
     })
-
-
 
     console.log("userId:", userId)
     console.log("pictureId:", pictureId)
@@ -44,6 +46,10 @@ const TagUsers = () => {
     );
 
     useEffect(() => {
+        window.scrollTo(0,0)
+    }, []);
+
+    useEffect(() => {
         if (userId) {
             execute();
         }
@@ -63,23 +69,13 @@ const TagUsers = () => {
         }
     }, [friendshipsData]);
 
-    useEffect(() => {
-        if (searchKeywords) {
-            const filtered = usersData.filter(user =>
-                user.handle.toLowerCase().includes(searchKeywords.toLowerCase())
-            );
-            setFilteredUsers(filtered);
-        } else {
-            setFilteredUsers(usersData);
-        }
-    }, [searchKeywords, usersData]);
-
     const handleInputChange = (event, newInputValue) => {
         setSearchKeywords(newInputValue);
     };
 
-
-
+    const handleBackClick = () => {
+        navigate(-1);
+    }
     
     console.log("friendships DAta:", friendshipsData)
 
@@ -94,20 +90,26 @@ const TagUsers = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+            if (onTagAdded) onTagAdded();
             console.log("User tagged successfully:", response.data);
+            
         } catch (error) {
             console.error("Error tagging user:", error);
         }
     };
     
-
     return (
         
         <Box display='flex' flexDirection="column" minHeight="100vh">
-            <Box mb={2}>
+            
+            <Box display="flex" alignItems="center" mb={2}>
+                <IconButton onClick={handleBackClick}>
+                    <ArrowBack/>
+
+                </IconButton>
                 <Autocomplete
                     freeSolo
-                    options={usersData.map(user => user.handle)}
+                    options={keywordList}
                     value={searchKeywords}
                     onInputChange={handleInputChange}
                     renderInput={(params) => (
@@ -139,9 +141,9 @@ const TagUsers = () => {
                 {friendshipsData && (
                     friendshipsData.map((friendship) => (
                         <SingleUser 
-                            key={friendship.id} 
-                            userId={friendship.friend_id} 
-                            onTagUser={() => handleTagUser(friendship.friend_id)}/>
+                        key={friendship.id} 
+                        userId={friendship.friend_id} 
+                        onTagUser={() => handleTagUser(friendship.friend_id)}/>
                     ))
                 )}
             </Box>
