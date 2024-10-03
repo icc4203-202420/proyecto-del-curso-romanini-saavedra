@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import useAxios from 'axios-hooks';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 // import beerIcon from '../assets/images/beer_bottle_icon.png'
 import { 
   View, 
@@ -9,30 +7,21 @@ import {
   StatusBar, 
   StyleSheet,
   Button,
-  FlatList,
-  Platform
+  FlatList
 } from 'react-native';
-
-let localStorage;
-if (Platform.OS === 'web') {
-  localStorage = window.localStorage;
-}
 
 const Beers = () => {
   const [searchKeywords, setSearchKeywords] = useState('');
-  const [keywordList, setKeywordList] = useState([]);
   const [filteredBeers, setFilteredBeers] = useState([]);
   const [beers, setBeers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
 
-  const isWeb = Platform.OS === 'web';
-
   const loadBeers = async () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:3001/api/v1/beers?limit=5&offset=${(page - 1) * 5}`);
+      const response = await fetch(`http://127.0.0.1:3001/api/v1/beers`);
       const data = await response.json();
       console.log("DATA:", data.beers)
       setBeers([...beers, ...data.beers]);
@@ -45,57 +34,15 @@ const Beers = () => {
     }
   }
 
-  const loadKeywords = async () => {
-    try {
-      if (isWeb) {
-        const storedKeywords = localStorage.getItem('BeerMates/SearchBeer/KeywordList');
-        if (storedKeywords !== null) {
-          setKeywordList(JSON.parse(storedKeywords));
-        }
-      } else {
-        const storedKeywords = await AsyncStorage.getItem('BeerMates/SearchBeer/KeywordList');
-        if (storedKeywords !== null) {
-          setKeywordList(JSON.parse(storedKeywords));
-        }
-      }
-    } catch (error) {
-      console.error('Error loading keywords', error);
-    }
-  };
-
-  const storeKeywords = async (newKeywordList) => {
-    try {
-      if (isWeb) {
-        localStorage.setItem('BeerMates/SearchBeer/KeywordList', JSON.stringify(newKeywordList));
-      } else {
-        await AsyncStorage.setItem('BeerMates/SearchBeer/KeywordList', JSON.stringify(newKeywordList));
-      }
-      setKeywordList(newKeywordList);
-    } catch (error) {
-      console.error('Error saving keywords', error);
-    }
-  };
-
   useEffect(() => {
-    // loadKeywords();
     loadBeers();
-    
   }, []);
-
-  // const handleSearch = (searchKeywords) => {
-  //   if (searchKeywords && !keywordList.includes(searchKeywords)) {
-  //     const updatedKeywordList = [...keywordList, searchKeywords];
-  //     storeKeywords(updatedKeywordList);
-  //   }
-  // };
 
   const handleSearch = (text) => {
     setSearchKeywords(text);
     if (text === '') {
-      // Si no hay texto en la barra de búsqueda, mostrar todas las cervezas
       setFilteredBeers(beers);
     } else {
-      // Filtrar las cervezas por el nombre que coincida con el texto ingresado
       const filtered = beers.filter((beer) => 
         beer.name.toLowerCase().includes(text.toLowerCase())
       );
@@ -133,8 +80,6 @@ const Beers = () => {
       />
 
       {loading && <Text>Loading...</Text>}
-
-      {console.log("BEER DATA EN VIEW:", beers)}
 
       <FlatList
         data={filteredBeers}
