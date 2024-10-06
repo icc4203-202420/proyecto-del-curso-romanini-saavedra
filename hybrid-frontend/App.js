@@ -8,6 +8,7 @@ import BarsScreen from './app/bars';
 import ProfileScreen from './app/profile';
 import HomeScreen from './app/home';
 import LoginScreen from './app/auth/LoginScreen';
+import { useUser, UserProvider } from './app/context/UserContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -23,26 +24,47 @@ function MainTabs() {
   );
 }
 
-export default function App() {
+function MainApp() {
+  const { isAuthenticated, logout } = useUser(); // Obtén el estado de autenticación y la función logout
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="MainTabs"
-          component={MainTabs}
-          options={({ navigation }) => ({
-            title: 'My App',
-            headerRight: () => (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MainTabs"
+        component={MainTabs}
+        options={({ navigation }) => ({
+          title: 'My App',
+          headerRight: () => (
+            isAuthenticated ? (
+              <Button
+                onPress={() => {
+                  logout(); // Llama a logout para cambiar el estado de autenticación
+                  navigation.navigate('Home'); // Redirige a Home después de hacer logout
+                }}
+                title="Logout"
+                color="#000"
+              />
+            ) : (
               <Button
                 onPress={() => navigation.navigate('Login')}
                 title="Login"
                 color="#000"
               />
-            ),
-          })}
-        />
-        <Stack.Screen name="Login" component={LoginScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+            )
+          ),
+        })}
+      />
+      <Stack.Screen name="Login" component={LoginScreen} />
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <UserProvider> {/* Envuelve la app con el proveedor del contexto */}
+      <NavigationContainer>
+        <MainApp />
+      </NavigationContainer>
+    </UserProvider>
   );
 }

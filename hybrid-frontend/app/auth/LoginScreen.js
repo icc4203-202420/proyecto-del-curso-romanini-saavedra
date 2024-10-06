@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '../context/UserContext';  // Importa el UserContext para manejar el estado de autenticación
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const { login } = useUser();  // Obtiene la función login desde el contexto
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -33,13 +36,21 @@ const LoginScreen = ({ navigation }) => {
 
       if (response.ok) {
         // Almacena el token JWT en AsyncStorage
-        console.log("response:", response);
-        console.log("data:", data);
+        console.log("Data response:",data);
+        console.log("Token:",data.status.data.token);
         await AsyncStorage.setItem('token', data.status.data.token);
         Alert.alert('Success', 'Logged in successfully');
-        navigation.navigate('Profile'); // Navega a la pantalla de perfil
+        const storedToken = await AsyncStorage.getItem('token');
+        console.log("Token almacenado:", storedToken);
+
+        // Actualiza el contexto de usuario como autenticado
+        login();  // Cambia el estado global a "logueado"
+        console.log("Marcado como loggeado");
+        
+        // Navega a la pantalla de perfil
+        navigation.navigate('Profile'); 
       } else {
-        Alert.alert('Error', data.error || 'Something went wrong, response not ok');
+        Alert.alert('Error', data.error || 'Something went wrong');
       }
     } catch (error) {
       console.error('Login error:', error);
