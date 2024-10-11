@@ -7,10 +7,14 @@ import {
   StatusBar, 
   StyleSheet,
   Button,
-  FlatList
+  FlatList,
+  TouchableOpacity
 } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+
 const Beers = () => {
+  const navigation = useNavigation();
   const [searchKeywords, setSearchKeywords] = useState('');
   const [filteredBeers, setFilteredBeers] = useState([]);
   const [beers, setBeers] = useState([]);
@@ -52,12 +56,16 @@ const Beers = () => {
 
   const renderBeer = ({ item }) => {
     return (
-      <View style={styles.cardContainer}>
-        <View style={styles.card}>
-            <Text>{item.name}</Text>
-            <Text>Style: {item.style}</Text>
-        </View>
-      </View>
+      <TouchableOpacity
+        style={styles.cardContainer}
+        onPress={() => navigation.navigate('BeerDetails', {beer: item})}
+      >
+        
+          <View style={styles.card}>
+              <Text>{item.name}</Text>
+              <Text>Style: {item.style}</Text>
+          </View>
+      </TouchableOpacity>
     );
   }
 
