@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-<<<<<<< HEAD
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Beers from './app/beers'
-=======
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button } from 'react-native';
 import BeersScreen from './app/beers';
->>>>>>> LoginRN
 import BarsScreen from './app/bars';
 import ProfileScreen from './app/profile';
 import HomeScreen from './app/home';
@@ -21,23 +15,12 @@ const Stack = createStackNavigator();
 
 function MainTabs() {
   return (
-<<<<<<< HEAD
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen}/>
-        <Tab.Screen name="Bars" component={BarsScreen} />
-        <Tab.Screen name="Beers" component={Beers} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
-=======
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Bars" component={BarsScreen} />
       <Tab.Screen name="Beers" component={BeersScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
->>>>>>> LoginRN
   );
 }
 
