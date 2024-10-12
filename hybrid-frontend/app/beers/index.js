@@ -7,10 +7,14 @@ import {
   StatusBar, 
   StyleSheet,
   Button,
-  FlatList
+  FlatList,
+  TouchableOpacity
 } from 'react-native';
 
+import { useNavigation } from '@react-navigation/native';
+
 const Beers = () => {
+  const navigation = useNavigation();
   const [searchKeywords, setSearchKeywords] = useState('');
   const [filteredBeers, setFilteredBeers] = useState([]);
   const [beers, setBeers] = useState([]);
@@ -21,7 +25,7 @@ const Beers = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://127.0.0.1:3001/api/v1/beers`);
+      const response = await fetch(`http://192.168.88.245:3000/api/v1/beers`);
       const data = await response.json();
       console.log("DATA:", data.beers)
       setBeers([...beers, ...data.beers]);
@@ -52,24 +56,21 @@ const Beers = () => {
 
   const renderBeer = ({ item }) => {
     return (
-      <View style={styles.cardContainer}>
-        <View style={styles.card}>
-          {/* <Image
-            source={{ beerIcon }} 
-            style={styles.image}
-          /> */}
-          <View style={styles.content}>
-            <Text style={styles.title}>{item.name}</Text>
-            <Text style={styles.subtitle}>{`Style: ${item.style}`}</Text>
+      <TouchableOpacity
+        style={styles.cardContainer}
+        onPress={() => navigation.navigate('BeerDetails', {beer: item})}
+      >
+        
+          <View style={styles.card}>
+              <Text>{item.name}</Text>
+              <Text>Style: {item.style}</Text>
           </View>
-        </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text>Beers Screen</Text>
       <StatusBar style="auto" />
 
       <TextInput
@@ -105,15 +106,15 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     marginBottom: 20,
-    width: '100%',
+    width: 300,
     alignItems: 'center',
   },
   card: {
-    width: '90%', 
+    width: 300, 
     maxWidth: 600,
     height: 170,
     backgroundColor: 'rgb(212, 160, 23)',
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     borderRadius: 8, 
     overflow: 'hidden',
@@ -125,6 +126,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   content: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     padding: 10,
     flex: 1,
   },
