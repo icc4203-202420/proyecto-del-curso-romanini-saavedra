@@ -2,7 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
 import BeersScreen from './app/beers';
 import BeerDetails from './app/beers/BeerDetails';
 import BarsScreen from './app/bars';
@@ -47,18 +47,19 @@ function MainApp() {
                 color="#000"
               />
             ) : (
-              <React.Fragment>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Button
                   onPress={() => navigation.navigate('Login')}
                   title="Login"
                   color="#000"
                 />
+                <View style={{ width: 10 }} />
                 <Button
                   onPress={() => navigation.navigate('SignUp')}
                   title="SignUp"
                   color="#000"
                 />
-              </React.Fragment>
+              </View>
             )
           ),
         })}
