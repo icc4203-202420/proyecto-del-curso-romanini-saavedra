@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     View,
     Text,
@@ -11,6 +11,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Reviews from './Reviews';
 import BarsBeers from './BarsBeers';
 
+import axios from 'axios';
+
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 
 const BeerDetails = ({route}) => {
@@ -21,6 +23,47 @@ const BeerDetails = ({route}) => {
         {key: 'reviews', title: 'Reviews'},
         {key: 'availableAt', title: 'Available at'}
     ]);
+
+    const [brandData, setBrandData] = useState([]);
+    const [breweryData, setBreweryData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const getBrand = async () => {
+        try {
+            const response = await fetch(`http://192.168.88.245:3000/api/v1/brands/${beer.brand_id}`);
+            const json = await response.json();
+
+            setBrandData(json.brand)
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const getBrewery = async () => {
+        if (!brandData) return;
+        try {
+            const response = await fetch(`http://192.168.88.245:3000/api/v1/breweries/${brandData.brewery_id}`);
+            const json = await response.json();
+
+            setBreweryData(json.brewery);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        getBrand();
+    }, []);
+
+    useEffect(() => {
+        if (brandData) {
+            getBrewery();
+        }
+    }, [brandData]);
 
     const renderScene = SceneMap({
         information: () => (
@@ -57,7 +100,9 @@ const BeerDetails = ({route}) => {
                         </Text>
                     </View>
                     <Text style={{fontSize: 36, fontWeight: 'bold'}}>{beer.name}</Text>
-                    <Text style={{fontSize: 18}}>Brewery: Lorem Ipsum Brewery</Text>
+                    <Text style={{fontSize: 18}}>
+                        Brewery: {breweryData ? breweryData.name : 'Loading...'}
+                    </Text>
                     <View style={styles.reviewButtonContainer}>
                         <Button title="Review"/>
                     </View>

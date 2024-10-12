@@ -27,7 +27,6 @@ const Beers = () => {
     try {
       const response = await fetch(`http://192.168.88.245:3000/api/v1/beers`);
       const data = await response.json();
-      console.log("DATA:", data.beers)
       setBeers([...beers, ...data.beers]);
       setFilteredBeers([...beers, ...data.beers]);
       setPage(page + 1);
