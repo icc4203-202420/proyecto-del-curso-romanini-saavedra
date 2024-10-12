@@ -41,11 +41,12 @@ function MainApp() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <MainApp/>
-    </NavigationContainer>
-  )
-
+    <UserProvider>
+      <NavigationContainer>
+        <MainApp />
+      </NavigationContainer>
+    </UserProvider>
+  );
 }
 
 // export default function App() {
