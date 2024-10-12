@@ -69,7 +69,7 @@ Los ponderadores aplican al puntaje máximo del ítem. La nota en escala 1-7 se 
 
 El código con la implementación de la aplicación debe ser entregado en este repositorio. Para la evaluación, se debe realizar un pull request que incluya al ayudante de proyecto asignado.
 
-La fecha límite para la entrega 2.2 es viernes 25/10 a las 23:59 hrs.
+La fecha límite para la entrega 2.2 es martes 29/10 a las 23:59 hrs.
 
 ##
 
