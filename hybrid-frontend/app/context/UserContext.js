@@ -23,7 +23,7 @@ export const UserProvider = ({ children }) => {
     try {
       const token = await AsyncStorage.getItem('token');
       console.log("Token almacenado:", token);
-      const response = await fetch('http://127.0.0.1:3001/api/v1/logout', {
+      const response = await fetch('http://192.168.100.3:3000/api/v1/logout', {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

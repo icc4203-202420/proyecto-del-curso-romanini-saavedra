@@ -19,7 +19,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:3001/api/v1/login', {
+      const response = await fetch('http://192.168.100.3:3000/api/v1/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,3 +105,37 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+
+/* 
+Escribir este comando en consola de windows en modo de administrador:
+
+netsh interface portproxy add v4tov4 listenport=3000 listenaddress=0.0.0.0 connectport=3000 connectaddress=172.31.162.160 (ip WSL)
+
+
+Para buscar el ip de WSL:
+
+hostname -I
+
+
+Para buscar el ip de la máquina host (Windows):
+
+ipconfig
+
+
+El ip de la máquina host esta en: 
+
+Adaptador de LAN inalámbrica WI-FI:
+
+Dirección IPv4. . . . . . . . . . . . . . : 10.33.2.22
+
+
+Los requests a la API se tienen que hacer al ip de la maquina host al puerto 3000, en mi caso es: 10.33.2.22. Ejemplo:
+
+http://10.33.2.22:3000/api/v1/beers
+
+mis IP:
+WSL: 172.17.233.203
+Windows: 192.168.100.3
+netsh interface portproxy add v4tov4 listenport=3000 listenaddress=0.0.0.0 connectport=3000 connectaddress=172.17.233.203
+http://192.168.100.3:3000/api/v1/beers
+*/

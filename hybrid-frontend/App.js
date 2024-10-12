@@ -61,7 +61,7 @@ function MainApp() {
 
 export default function App() {
   return (
-    <UserProvider> {/* Envuelve la app con el proveedor del contexto */}
+    <UserProvider>
       <NavigationContainer>
         <MainApp />
       </NavigationContainer>
