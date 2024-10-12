@@ -11,8 +11,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Reviews from './Reviews';
 import BarsBeers from './BarsBeers';
 
-import axios from 'axios';
-
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 
 const BeerDetails = ({route}) => {
@@ -80,7 +78,7 @@ const BeerDetails = ({route}) => {
             <Reviews/>
         ),
         availableAt: () => (
-            <BarsBeers/>
+            <BarsBeers beer_id={beer.id}/>
         )
     });
 
