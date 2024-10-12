@@ -9,6 +9,7 @@ import BarsScreen from './app/bars';
 import ProfileScreen from './app/profile';
 import HomeScreen from './app/home';
 import LoginScreen from './app/auth/LoginScreen';
+import SignUpScreen from './app/auth/SignUpScreen';
 import { useUser, UserProvider } from './app/context/UserContext';
 
 const Tab = createBottomTabNavigator();
@@ -46,16 +47,24 @@ function MainApp() {
                 color="#000"
               />
             ) : (
-              <Button
-                onPress={() => navigation.navigate('Login')}
-                title="Login"
-                color="#000"
-              />
+              <React.Fragment>
+                <Button
+                  onPress={() => navigation.navigate('Login')}
+                  title="Login"
+                  color="#000"
+                />
+                <Button
+                  onPress={() => navigation.navigate('SignUp')}
+                  title="SignUp"
+                  color="#000"
+                />
+              </React.Fragment>
             )
           ),
         })}
       />
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="BeerDetails" component={BeerDetails} />
 
     </Stack.Navigator>
