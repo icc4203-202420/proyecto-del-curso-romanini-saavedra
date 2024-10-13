@@ -4,7 +4,10 @@ import {
     Text,
     StyleSheet,
     Image,
-    Button
+    Button,
+    Modal,
+    Pressable,
+    Alert
 } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -25,6 +28,8 @@ const BeerDetails = ({route}) => {
     const [brandData, setBrandData] = useState([]);
     const [breweryData, setBreweryData] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     const getBrand = async () => {
         try {
@@ -97,8 +102,36 @@ const BeerDetails = ({route}) => {
                     <Text style={{fontSize: 18}}>
                         Brewery: {breweryData ? breweryData.name : 'Loading...'}
                     </Text>
+                    <View style={styles.centeredView}>
+                        <Modal
+                            animationType="none"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => {
+                                Alert.alert('Modal has been closed.');
+                                setModalVisible(!modalVisible)
+                            }}
+                        >
+                            <View style={styles.centeredView}>
+                                <View style={styles.modalView}>
+                                    <Text style={styles.modalText}>Review this beer</Text>
+                                    <Pressable
+                                        style={[styles.button, styles.buttonClose]}
+                                        onPress={() => setModalVisible(!modalVisible)}
+                                    >
+                                        <Text>Close</Text>
+                                    </Pressable>
+
+                                </View>
+                            </View>
+
+                        </Modal>
+                    </View>
                     <View style={styles.reviewButtonContainer}>
-                        <Button title="Review"/>
+                        <Button 
+                            title="Review"
+                            onPress={() => setModalVisible(true)}
+                        />
                     </View>
                 </View>
             </View>
@@ -151,6 +184,47 @@ const styles = StyleSheet.create({
       subtitle: {
         fontSize: 18,
         marginBottom: 5,
+      },
+      centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+      },
+      buttonOpen: {
+        backgroundColor: '#F194FF',
+      },
+      buttonClose: {
+        backgroundColor: '#2196F3',
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
       },
 })
 
