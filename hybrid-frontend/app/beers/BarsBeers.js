@@ -3,12 +3,8 @@ import {
     View,
     Text,
     StyleSheet,
-    Image,
-    Button,
     FlatList
 } from 'react-native';
-
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 const BarsBeers = ({beer_id}) => {
     const [barsBeers, setBarsBeers] = useState([]);
@@ -21,7 +17,6 @@ const BarsBeers = ({beer_id}) => {
             const response = await fetch(`http://192.168.88.245:3000/api/v1/bars_beers`);
             const json = await response.json();
 
-            console.log("JSON:", json)
             setBarsBeers(json.bars_beers);
         } catch (error) {
             console.error(error);
@@ -84,45 +79,5 @@ const BarsBeers = ({beer_id}) => {
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-      },
-      tabViewContainer: {
-        flex: 1
-      },
-      imageContainer: {
-        position: 'relative',
-        width: '100%',
-        height: 300,
-        flexDirection: 'column'
-      },   
-      reviewButtonContainer: {
-        top: 10,
-        width: 100,
-      },
-      beerImage: {
-        width: '100%',
-        height: 300,
-        opacity: 0.2,
-      },
-      overlayTextContainer: {
-        position: 'absolute',
-        bottom: 90,
-        left: 20,
-        right: 10,
-        flexDirection: 'column'
-      },
-      title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-      },
-      subtitle: {
-        fontSize: 18,
-        marginBottom: 5,
-      },
-})
 
 export default BarsBeers;
