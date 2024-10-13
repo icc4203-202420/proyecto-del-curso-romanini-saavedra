@@ -2,6 +2,7 @@ import React from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import Toast from 'react-native-toast-message';
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required('First name is required').min(2, 'First name must be at least 2 characters long'),
@@ -57,6 +58,11 @@ const SignUpScreen = ({ navigation }) => {
       if (response.ok) {
         Alert.alert('Success', 'Account created successfully');
         navigation.navigate('Login'); // Redirigir a la pantalla de Login después del registro exitoso
+        Toast.show({
+            type: 'success',
+            text1: 'Registro exitoso',
+            text2: 'Tu cuenta ha sido creada!',
+        });
       } else {
         setErrors({ server: data.error || 'Registration error. Please check the submitted data.' });
       }

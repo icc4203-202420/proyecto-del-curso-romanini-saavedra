@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Button, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import BeersScreen from './app/beers';
 import BeerDetails from './app/beers/BeerDetails';
 import BarsScreen from './app/bars';
@@ -40,8 +41,13 @@ function MainApp() {
             isAuthenticated ? (
               <Button
                 onPress={() => {
-                  logout(); // Llama a logout para cambiar el estado de autenticación
-                  navigation.navigate('Home'); // Redirige a Home después de hacer logout
+                  logout();
+                  navigation.navigate('Home');
+                  Toast.show({
+                    type: 'info',
+                    text1: 'Logout exitoso',
+                    text2: 'Has cerrado sesión correctamente.',
+                  });
                 }}
                 title="Logout"
                 color="#000"
@@ -77,6 +83,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <MainApp />
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>
     </UserProvider>
   );

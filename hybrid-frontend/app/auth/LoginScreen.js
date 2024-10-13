@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useUser } from '../context/UserContext';  // Importa el UserContext para manejar el estado de autenticación
+import { useUser } from '../context/UserContext';
+import Toast from 'react-native-toast-message';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -48,7 +49,12 @@ const LoginScreen = ({ navigation }) => {
         console.log("Marcado como loggeado");
         
         // Navega a la pantalla de perfil
-        navigation.navigate('Profile'); 
+        navigation.navigate('Profile');
+        Toast.show({
+          type: 'success',
+          text1: 'Login exitoso',
+          text2: 'Bienvenido de nuevo!',
+        });
       } else {
         Alert.alert('Error', data.error || 'Something went wrong');
       }
