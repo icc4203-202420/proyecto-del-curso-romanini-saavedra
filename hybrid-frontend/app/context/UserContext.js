@@ -5,11 +5,16 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = await AsyncStorage.getItem('token');
+      const storedUserData = await AsyncStorage.getItem('userData');
       setIsAuthenticated(!!token);
+      if (storedUserData) {
+        setUserData(JSON.parse(storedUserData));
+      }
     };
 
     checkAuthStatus();
@@ -22,7 +27,9 @@ export const UserProvider = ({ children }) => {
   const logout = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
+      const userData = await AsyncStorage.getItem('userData');
       console.log("Token almacenado:", token);
+      
       const response = await fetch('http://192.168.88.245:3000/api/v1/logout', {
         method: 'DELETE',
         headers: {
@@ -33,6 +40,7 @@ export const UserProvider = ({ children }) => {
 
       if (response.ok) {
         await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('userData');
         setIsAuthenticated(false);
         console.log('Logout successful');
         console.log('response from back', response);

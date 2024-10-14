@@ -6,12 +6,12 @@ import {
   TextInput, 
   StatusBar, 
   StyleSheet,
-  Button,
   FlatList,
   TouchableOpacity
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Beers = () => {
   const navigation = useNavigation();
@@ -20,6 +20,17 @@ const Beers = () => {
   const [beers, setBeers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
+  const [userData, setUserData] = useState(null);
+
+  const getUserData = async () => {
+    try {
+      const data = await AsyncStorage.getItem('userData');
+      console.log("USER DATA EN BEER INDEX:", data) 
+      setUserData(data);
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   const loadBeers = async () => {
     if (loading) return;
@@ -39,6 +50,7 @@ const Beers = () => {
 
   useEffect(() => {
     loadBeers();
+    getUserData();
   }, []);
 
   const handleSearch = (text) => {

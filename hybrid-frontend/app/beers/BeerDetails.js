@@ -5,14 +5,14 @@ import {
     StyleSheet,
     Image,
     Button,
-    Modal,
-    Pressable,
-    Alert
 } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Reviews from './Reviews';
 import BarsBeers from './BarsBeers';
+import CreateReview from './CreateReview';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 
@@ -25,11 +25,21 @@ const BeerDetails = ({route}) => {
         {key: 'availableAt', title: 'Available at'}
     ]);
 
+    const [beerData, setBeerData] = useState(null);
     const [brandData, setBrandData] = useState([]);
     const [breweryData, setBreweryData] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [modalVisible, setModalVisible] = useState(false);
+    const [userData, setUserData] = useState(null);
+
+    const getUserData = async () => {
+      try {
+        const data = await AsyncStorage.getItem('userData');
+        setUserData(data);
+      } catch (error) {
+        console.error(error)
+      }
+    }
 
     const getBrand = async () => {
         try {
@@ -58,8 +68,21 @@ const BeerDetails = ({route}) => {
         }
     }
 
+    const getBeerData = async () => {
+        try {
+            const response = await fetch(`http://192.168.88.245:3000/api/v1/beers/${beer.id}`);
+            const json = await response.json();
+
+            setBeerData(json.beer);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
+        getBeerData();
         getBrand();
+        getUserData();
     }, []);
 
     useEffect(() => {
@@ -94,41 +117,18 @@ const BeerDetails = ({route}) => {
                 <View style={styles.overlayTextContainer}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons name="star" size={20} color="gold" />
-                        <Text style={{ marginLeft: 5 }}>
-                            {beer.avg_rating !== null ? beer.avg_rating : '0.0'}
-                        </Text>
+                            {beerData && (
+                                <Text style={{marginLeft: 5}}>
+                                    {beerData.avg_rating !== null ? (beerData.avg_rating).toFixed(1) : 'No reviews yet'}
+                                </Text>
+                            )}
                     </View>
                     <Text style={{fontSize: 36, fontWeight: 'bold'}}>{beer.name}</Text>
                     <Text style={{fontSize: 18}}>
                         Brewery: {breweryData ? breweryData.name : 'Loading...'}
                     </Text>
-                    <View style={styles.centeredView}>
-                        <Modal
-                            animationType="none"
-                            transparent={true}
-                            visible={modalVisible}
-                            onRequestClose={() => {
-                                Alert.alert('Modal has been closed.');
-                                setModalVisible(!modalVisible)
-                            }}
-                        >
-                            <View style={styles.centeredView}>
-                                <View style={styles.modalView}>
-                                    <Text style={styles.modalText}>Review this beer</Text>
-                                    <Pressable
-                                        style={[styles.button, styles.buttonClose]}
-                                        onPress={() => setModalVisible(!modalVisible)}
-                                    >
-                                        <Text>Close</Text>
-                                    </Pressable>
-
-                                </View>
-                            </View>
-
-                        </Modal>
-                    </View>
                     <View style={styles.reviewButtonContainer}>
-                        <Button 
+                        <Button
                             title="Review"
                             onPress={() => setModalVisible(true)}
                         />
@@ -143,6 +143,13 @@ const BeerDetails = ({route}) => {
                     initialLayout={{ width: 300 }}
                 />
             </View>
+            <CreateReview
+                userId={userData}
+                beerId={beer.id}
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                onReviewCreated={getBeerData}
+            />
         </View>
     )
 }
