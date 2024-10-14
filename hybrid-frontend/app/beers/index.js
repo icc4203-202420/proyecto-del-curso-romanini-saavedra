@@ -36,7 +36,7 @@ const Beers = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://192.168.88.245:3000/api/v1/beers`);
+      const response = await fetch(`http://10.33.0.134:3000/api/v1/beers`);
       const data = await response.json();
       setBeers([...beers, ...data.beers]);
       setFilteredBeers([...beers, ...data.beers]);

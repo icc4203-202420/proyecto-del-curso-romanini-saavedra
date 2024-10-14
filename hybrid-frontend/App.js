@@ -2,13 +2,15 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button } from 'react-native';
+import { Button, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import BeersScreen from './app/beers';
 import BeerDetails from './app/beers/BeerDetails';
 import BarsScreen from './app/bars';
 import ProfileScreen from './app/profile';
 import HomeScreen from './app/home';
 import LoginScreen from './app/auth/LoginScreen';
+import SignUpScreen from './app/auth/SignUpScreen';
 import { useUser, UserProvider } from './app/context/UserContext';
 
 const Tab = createBottomTabNavigator();
@@ -39,23 +41,37 @@ function MainApp() {
             isAuthenticated ? (
               <Button
                 onPress={() => {
-                  logout(); // Llama a logout para cambiar el estado de autenticación
-                  navigation.navigate('Home'); // Redirige a Home después de hacer logout
+                  logout();
+                  navigation.navigate('Home');
+                  Toast.show({
+                    type: 'info',
+                    text1: 'Logout exitoso',
+                    text2: 'Has cerrado sesión correctamente.',
+                  });
                 }}
                 title="Logout"
                 color="#000"
               />
             ) : (
-              <Button
-                onPress={() => navigation.navigate('Login')}
-                title="Login"
-                color="#000"
-              />
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Button
+                  onPress={() => navigation.navigate('Login')}
+                  title="Login"
+                  color="#000"
+                />
+                <View style={{ width: 10 }} />
+                <Button
+                  onPress={() => navigation.navigate('SignUp')}
+                  title="SignUp"
+                  color="#000"
+                />
+              </View>
             )
           ),
         })}
       />
       <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="BeerDetails" component={BeerDetails} />
 
     </Stack.Navigator>
@@ -67,6 +83,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <MainApp />
+        <Toast ref={(ref) => Toast.setRef(ref)} />
       </NavigationContainer>
     </UserProvider>
   );
