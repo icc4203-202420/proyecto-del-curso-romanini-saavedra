@@ -25,7 +25,7 @@ const reviewsReducer = (state, action) => {
     }
 };
 
-const Reviews = ({beerId}) => {
+const Reviews = ({beerId, userId}) => {
     const [state, dispatch] = useReducer(reviewsReducer, initialState);
     const [userNames, setUserNames] = useState({});
 
@@ -34,9 +34,15 @@ const Reviews = ({beerId}) => {
         try {
             const response = await fetch(`http://192.168.88.245:3000/api/v1/beers/${beerId}/reviews`);
             const json = await response.json();
-            dispatch({ type: 'FETCH_REVIEWS_SUCCESS', payload: json });
 
-            fetchUserNames(json);
+            const sortedReviews = json.sort((a, b) => {
+                if (a.user_id === userId) return -1;
+                if (b.user_id === userId) return 1;
+                return 0;
+            });
+
+            dispatch({ type: 'FETCH_REVIEWS_SUCCESS', payload: sortedReviews });
+            fetchUserNames(sortedReviews);
         } catch (error) {
             dispatch({ type: 'FETCH_REVIEWS_FAILURE', error: 'Failed to fetch reviews' });
         }

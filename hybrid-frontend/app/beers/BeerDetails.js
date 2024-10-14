@@ -102,7 +102,7 @@ const BeerDetails = ({route}) => {
                 <Text style={{color: 'black'}}>Malts: {beer.malts}</Text>
             </View>
         ), 
-        reviews: () => <Reviews beerId={beer.id}/>,
+        reviews: () => <Reviews beerId={beer.id} userId={userData}/>,
         availableAt: () => <BarsBeers beer_id={beer.id}/>
     });
 

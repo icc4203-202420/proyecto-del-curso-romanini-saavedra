@@ -72,9 +72,6 @@ const CreateReview = ({userId, beerId, modalVisible, setModalVisible, onReviewCr
 
     return (
         <View style={styles.centeredView}>
-          {userId && beerId && (
-            <Text>UserId: {userId}. BeerID: {beerId}</Text>
-          )}
             <Modal
                 animationType="none"
                 transparent={true}
