@@ -41,7 +41,7 @@ const LoginScreen = ({ navigation }) => {
         console.log("Token:",data.status.data.token);
 
         await AsyncStorage.setItem('token', data.status.data.token);
-        Alert.alert('Success', 'Logged in successfully');
+        // Alert.alert('Success', 'Logged in successfully');
         const storedToken = await AsyncStorage.getItem('token');
         console.log("Token almacenado:", storedToken);
 
@@ -57,8 +57,8 @@ const LoginScreen = ({ navigation }) => {
         navigation.navigate('Profile');
         Toast.show({
           type: 'success',
-          text1: 'Login exitoso',
-          text2: 'Bienvenido de nuevo!',
+          text1: 'Successful Login',
+          text2: 'Welcome back!',
         });
       } else {
         Alert.alert('Error', data.error || 'Something went wrong');

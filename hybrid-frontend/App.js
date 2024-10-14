@@ -45,8 +45,8 @@ function MainApp() {
                   navigation.navigate('Home');
                   Toast.show({
                     type: 'info',
-                    text1: 'Logout exitoso',
-                    text2: 'Has cerrado sesión correctamente.',
+                    text1: 'Sucessful Logout',
+                    text2: 'You have successfully logged out.',
                   });
                 }}
                 title="Logout"

@@ -56,12 +56,12 @@ const SignUpScreen = ({ navigation }) => {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert('Success', 'Account created successfully');
+        // Alert.alert('Success', 'Account created successfully');
         navigation.navigate('Login'); // Redirigir a la pantalla de Login después del registro exitoso
         Toast.show({
             type: 'success',
-            text1: 'Registro exitoso',
-            text2: 'Tu cuenta ha sido creada!',
+            text1: 'Successful Signup',
+            text2: 'Your account has been created!',
         });
       } else {
         setErrors({ server: data.error || 'Registration error. Please check the submitted data.' });

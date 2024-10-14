@@ -43,7 +43,7 @@ const BeerDetails = ({route}) => {
 
     const getBrand = async () => {
         try {
-            const response = await fetch(`http://192.168.100.3:3000/api/v1/brands/${beer.brand_id}`);
+            const response = await fetch(`http://10.33.0.134:3000/api/v1/brands/${beer.brand_id}`);
             const json = await response.json();
 
             setBrandData(json.brand)
@@ -70,7 +70,7 @@ const BeerDetails = ({route}) => {
 
     const getBeerData = async () => {
         try {
-            const response = await fetch(`http://192.168.88.245:3000/api/v1/beers/${beer.id}`);
+            const response = await fetch(`http://10.33.0.134:3000/api/v1/beers/${beer.id}`);
             const json = await response.json();
 
             setBeerData(json.beer);
