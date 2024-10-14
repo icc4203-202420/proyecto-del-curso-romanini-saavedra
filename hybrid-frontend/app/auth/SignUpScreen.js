@@ -31,7 +31,7 @@ const initialValues = {
 const SignUpScreen = ({ navigation }) => {
   const handleSignUp = async (values, { setSubmitting, setErrors }) => {
     try {
-      const response = await fetch('http://192.168.100.3:3000/api/v1/signup', {
+      const response = await fetch('http://10.33.0.134:3000/api/v1/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
