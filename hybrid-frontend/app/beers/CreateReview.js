@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Slider from '@react-native-community/slider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BACKEND_URL } from '@env';
 
 const CreateReview = ({userId, beerId, modalVisible, setModalVisible, onReviewCreated}) => {
     const [reviewText, setReviewText] = useState('');
@@ -45,7 +46,7 @@ const CreateReview = ({userId, beerId, modalVisible, setModalVisible, onReviewCr
 		};
 
         try {
-            const response = await fetch(`http://10.33.0.134:3000/api/v1/beers/${beerId}/reviews`, {
+            const response = await fetch(`${BACKEND_URL}/api/v1/beers/${beerId}/reviews`, {
                 method: 'POST',
                 headers: {
                   Accept: 'application/json',

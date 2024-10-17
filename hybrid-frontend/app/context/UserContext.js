@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BACKEND_URL } from '@env';
 
 const UserContext = createContext();
 
@@ -29,7 +30,7 @@ export const UserProvider = ({ children }) => {
       const token = await AsyncStorage.getItem('token');
       const userData = await AsyncStorage.getItem('userData');
       console.log("Token almacenado:", token);
-      const response = await fetch('http://10.33.0.134:3000/api/v1/logout', {
+      const response = await fetch(`${BACKEND_URL}/api/v1/logout`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

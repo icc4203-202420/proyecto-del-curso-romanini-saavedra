@@ -12,6 +12,7 @@ import {
 
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BACKEND_URL } from '@env';
 
 const Beers = () => {
   const navigation = useNavigation();
@@ -36,7 +37,7 @@ const Beers = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://10.33.0.134:3000/api/v1/beers`);
+      const response = await fetch(`${BACKEND_URL}/api/v1/beers`);
       const data = await response.json();
       setBeers([...beers, ...data.beers]);
       setFilteredBeers([...beers, ...data.beers]);

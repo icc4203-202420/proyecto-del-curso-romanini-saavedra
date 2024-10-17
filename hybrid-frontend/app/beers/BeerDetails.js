@@ -11,7 +11,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Reviews from './Reviews';
 import BarsBeers from './BarsBeers';
 import CreateReview from './CreateReview';
-
+import { BACKEND_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
@@ -43,7 +43,7 @@ const BeerDetails = ({route}) => {
 
     const getBrand = async () => {
         try {
-            const response = await fetch(`http://10.33.0.134:3000/api/v1/brands/${beer.brand_id}`);
+            const response = await fetch(`${BACKEND_URL}/api/v1/brands/${beer.brand_id}`);
             const json = await response.json();
 
             setBrandData(json.brand)
@@ -57,7 +57,7 @@ const BeerDetails = ({route}) => {
     const getBrewery = async () => {
         if (!brandData) return;
         try {
-            const response = await fetch(`http://10.33.0.134:3000/api/v1/breweries/${brandData.brewery_id}`);
+            const response = await fetch(`${BACKEND_URL}/api/v1/breweries/${brandData.brewery_id}`);
             const json = await response.json();
 
             setBreweryData(json.brewery);
@@ -70,7 +70,7 @@ const BeerDetails = ({route}) => {
 
     const getBeerData = async () => {
         try {
-            const response = await fetch(`http://10.33.0.134:3000/api/v1/beers/${beer.id}`);
+            const response = await fetch(`${BACKEND_URL}/api/v1/beers/${beer.id}`);
             const json = await response.json();
 
             setBeerData(json.beer);

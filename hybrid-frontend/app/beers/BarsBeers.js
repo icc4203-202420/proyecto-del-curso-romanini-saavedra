@@ -5,6 +5,7 @@ import {
     StyleSheet,
     FlatList
 } from 'react-native';
+import { BACKEND_URL } from '@env';
 
 const BarsBeers = ({beer_id}) => {
     const [barsBeers, setBarsBeers] = useState([]);
@@ -14,7 +15,7 @@ const BarsBeers = ({beer_id}) => {
 
     const getBarsBeers = async () => {
         try{
-            const response = await fetch(`http://10.33.0.134:3000/api/v1/bars_beers`);
+            const response = await fetch(`${BACKEND_URL}/api/v1/bars_beers`);
             const json = await response.json();
 
             setBarsBeers(json.bars_beers);
@@ -27,7 +28,7 @@ const BarsBeers = ({beer_id}) => {
 
     const getBarDetails = async (barId) => {
         try {
-            const response = await fetch(`http://10.33.0.134:3000/api/v1/bars/${barId}`);
+            const response = await fetch(`${BACKEND_URL}/api/v1/bars/${barId}`);
             const json = await response.json();
 
             setBarsDetails(prevDetails => ({

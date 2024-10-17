@@ -3,6 +3,7 @@ import { View, TextInput, Button, Text, StyleSheet, Alert, ScrollView } from 're
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
+import { BACKEND_URL } from '@env';
 
 const validationSchema = Yup.object({
   firstName: Yup.string().required('First name is required').min(2, 'First name must be at least 2 characters long'),
@@ -31,7 +32,7 @@ const initialValues = {
 const SignUpScreen = ({ navigation }) => {
   const handleSignUp = async (values, { setSubmitting, setErrors }) => {
     try {
-      const response = await fetch('http://10.33.0.134:3000/api/v1/signup', {
+      const response = await fetch(`${BACKEND_URL}/api/v1/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
