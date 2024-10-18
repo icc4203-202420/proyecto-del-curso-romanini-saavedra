@@ -46,6 +46,7 @@ export const UserProvider = ({ children }) => {
         console.log('response from back', response);
       } else {
         console.error('Logout failed');
+        console.error(response)
       }
     } catch (error) {
       console.error('Network error during logout:', error);

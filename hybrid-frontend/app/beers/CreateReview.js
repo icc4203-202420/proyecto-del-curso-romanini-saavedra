@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
       },
       button: {
-        borderRadius: 20,
+        borderRadius: 5,
         padding: 10,
         elevation: 2,
       },
@@ -210,6 +210,8 @@ const styles = StyleSheet.create({
       modalText: {
         marginBottom: 15,
         textAlign: 'center',
+        fontWeight: 'bold',
+        fontSize: 24
       },
 })
 

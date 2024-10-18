@@ -59,8 +59,10 @@ const BarsBeers = ({beer_id}) => {
     const renderBar = ({item}) => {
         const bar = barsDetails[item.bar_id];
         return (
-            <View>
-                <Text>{bar ? bar.name : 'Loading bar...'}</Text>
+            <View style={styles.barsBeersContainer}>
+                <View style={styles.card}>
+                    <Text style={{fontSize: 16, fontWeight: 'bold'}}>{bar ? bar.name : 'Loading bar...'}</Text>
+                </View>
             </View>
         )
     }
@@ -80,5 +82,26 @@ const BarsBeers = ({beer_id}) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    barsBeersContainer: {
+        flex: 1,
+        padding: 10,
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        top: 10,
+    },
+    card: {
+        width: 200,
+        height: 100,
+        backgroundColor: 'rgb(212, 160, 23)',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8,
+        overflow: 'hidden',
+    }
+})
 
 export default BarsBeers;

@@ -36,9 +36,9 @@ const Reviews = ({beerId, userId}) => {
             const response = await fetch(`${BACKEND_URL}/api/v1/beers/${beerId}/reviews`);
             const json = await response.json();
 
-            const sortedReviews = json.sort((a, b) => {
-                if (a.user_id === userId) return -1;
-                if (b.user_id === userId) return 1;
+            const sortedReviews = await json.sort((a, b) => {
+                if (parseInt(a.user_id) === parseInt(userId)) return -1;
+                if (parseInt(b.user_id) === parseInt(userId)) return 1;
                 return 0;
             });
 
@@ -108,7 +108,6 @@ const Reviews = ({beerId, userId}) => {
                     data={state.reviewsData}
                     renderItem={renderReview}
                     keyExtractor={(item) => item.id.toString()}
-                    initialNumToRender={3}
                 />
             )}
         </View>

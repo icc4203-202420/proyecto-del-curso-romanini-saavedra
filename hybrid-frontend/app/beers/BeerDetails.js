@@ -6,7 +6,7 @@ import {
     Image,
     Button,
 } from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Reviews from './Reviews';
 import BarsBeers from './BarsBeers';
@@ -15,6 +15,15 @@ import { BACKEND_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
+
+const renderTabBar = props => (
+  <TabBar
+        {...props}
+        // style={{ backgroundColor: 'black' }}
+        labelStyle={{ color: 'white' }}
+        indicatorStyle={{backgroundColor: 'rgb(212, 160, 23)'}}
+  />
+)
 
 const BeerDetails = ({route}) => {
     const { beer } = route.params;  
@@ -93,13 +102,13 @@ const BeerDetails = ({route}) => {
 
     const renderScene = SceneMap({
         information: () => (
-            <View style={{padding: 10}}>
-                <Text style={{fontweight: 'bold', color:'black'}}>Style: {beer.style}</Text>
-                <Text style={{color: 'black'}}>Alcohol: {beer.alcohol}</Text>
-                <Text style={{color: 'black'}}>Hops: {beer.hop}</Text>
-                <Text style={{color: 'black'}}>IBU: {beer.ibu}</Text>
-                <Text style={{color: 'black'}}>Yeast: {beer.yeast}</Text>
-                <Text style={{color: 'black'}}>Malts: {beer.malts}</Text>
+            <View style={styles.infoContainer}>
+                <Text style={{color:'black'}}>Style: {beer.style}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>Alcohol: {beer.alcohol}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>Hops: {beer.hop}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>IBU: {beer.ibu}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>Yeast: {beer.yeast}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>Malts: {beer.malts}</Text>
             </View>
         ), 
         reviews: () => <Reviews beerId={beer.id} userId={userData}/>,
@@ -141,6 +150,7 @@ const BeerDetails = ({route}) => {
                     renderScene={renderScene}
                     onIndexChange={setIndex}
                     initialLayout={{ width: 300 }}
+                    renderTabBar={renderTabBar}
                 />
             </View>
             <CreateReview
@@ -157,82 +167,87 @@ const BeerDetails = ({route}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    infoContainer: {
+      padding: 16,
+      height: '100%',
+      left: 10
+    },
+    tabViewContainer: {
+      flex: 1
+    },
+    imageContainer: {
+      position: 'relative',
+      width: '100%',
+      height: 300,
+      flexDirection: 'column'
+    },   
+    reviewButtonContainer: {
+      top: 10,
+      width: 100,
+    },
+    beerImage: {
+      width: '100%',
+      height: 300,
+      opacity: 0.2,
+    },
+    overlayTextContainer: {
+      position: 'absolute',
+      bottom: 50,
+      left: 20,
+      right: 10,
+      flexDirection: 'column'
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    subtitle: {
+      fontSize: 18,
+      marginBottom: 5,
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 22,
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
       },
-      tabViewContainer: {
-        flex: 1
-      },
-      imageContainer: {
-        position: 'relative',
-        width: '100%',
-        height: 300,
-        flexDirection: 'column'
-      },   
-      reviewButtonContainer: {
-        top: 10,
-        width: 100,
-      },
-      beerImage: {
-        width: '100%',
-        height: 300,
-        opacity: 0.2,
-      },
-      overlayTextContainer: {
-        position: 'absolute',
-        bottom: 90,
-        left: 20,
-        right: 10,
-        flexDirection: 'column'
-      },
-      title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 10,
-      },
-      subtitle: {
-        fontSize: 18,
-        marginBottom: 5,
-      },
-      centeredView: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 22,
-      },
-      modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-      },
-      button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
-      },
-      buttonOpen: {
-        backgroundColor: '#F194FF',
-      },
-      buttonClose: {
-        backgroundColor: '#2196F3',
-      },
-      textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-      },
-      modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
-      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    buttonOpen: {
+      backgroundColor: '#F194FF',
+    },
+    buttonClose: {
+      backgroundColor: '#2196F3',
+    },
+    textStyle: {
+      color: 'white',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: 'center',
+    },
 })
 
 export default BeerDetails;

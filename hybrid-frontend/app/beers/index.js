@@ -74,7 +74,7 @@ const Beers = () => {
       >
         
           <View style={styles.card}>
-              <Text>{item.name}</Text>
+              <Text style={{fontWeight: 'bold', fontSize: 24}}>{item.name}</Text>
               <Text>Style: {item.style}</Text>
           </View>
       </TouchableOpacity>
@@ -127,9 +127,11 @@ const styles = StyleSheet.create({
     height: 170,
     backgroundColor: 'rgb(212, 160, 23)',
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8, 
     overflow: 'hidden',
+    padding: 10
   },
   image: {
     width: 100,
