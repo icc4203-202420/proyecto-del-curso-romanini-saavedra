@@ -21,11 +21,20 @@ La dirección IPv4 se encuentra en:
 Adaptador de LAN inalámbrica WI-FI:
 Dirección IPv4. . . . . . . . . . . . . . : 10.33.2.22
 ```
+O bien en:
+```
+Adaptador de Ethernet Ethernet:
+Dirección IPv4. . . . . . . . . . . . . . : 192.168.100.3
+```
 
 4. Agregar un archivo .env en la carpeta "hybrid-frontend". En este archivo, hay que agregar lo siguiente:
 ```
 BACKEND_URL=http://{Dirección IPv4 Windows}:3000
 ```
 
+5. Para correr el backend utilizar:
+```
+rails s -b 0.0.0.0
+```
 
-En caso de estar usando linux/Mac, solo hay que seguir el paso 4. 
+En caso de estar usando linux/Mac, solo hay que seguir el paso 4 y 5. 
