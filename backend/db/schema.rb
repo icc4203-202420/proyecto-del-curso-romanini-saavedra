@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_09_155040) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_29_211732) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -181,6 +181,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_09_155040) do
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
+  create_table "tag_users", force: :cascade do |t|
+    t.integer "tagged_user_id", null: false
+    t.integer "user_id", null: false
+    t.integer "picture_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["picture_id"], name: "index_tag_users_on_picture_id"
+    t.index ["tagged_user_id"], name: "index_tag_users_on_tagged_user_id"
+    t.index ["user_id"], name: "index_tag_users_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -219,4 +230,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_09_155040) do
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "reviews", "beers", on_delete: :cascade
   add_foreign_key "reviews", "users"
+  add_foreign_key "tag_users", "event_pictures", column: "picture_id"
+  add_foreign_key "tag_users", "users"
+  add_foreign_key "tag_users", "users", column: "tagged_user_id"
 end
