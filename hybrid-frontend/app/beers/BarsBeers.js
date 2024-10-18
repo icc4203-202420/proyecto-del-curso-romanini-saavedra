@@ -70,7 +70,7 @@ const BarsBeers = ({beer_id}) => {
     return (
         <View>
             {parseInt(barsFiltered.length) === 0 ? (
-                <Text>No bars serve this beer.</Text>
+                <Text style={styles.noBarsText}>No bars serve this beer.</Text>
             ) : (
                 <FlatList
                     data={barsFiltered}
@@ -101,6 +101,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 8,
         overflow: 'hidden',
+    },
+    noBarsText: {
+      textAlign: 'center',
+      top: 20
     }
 })
 

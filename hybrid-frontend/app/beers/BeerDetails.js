@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Image,
     Button,
+    Alert
 } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -13,6 +14,7 @@ import BarsBeers from './BarsBeers';
 import CreateReview from './CreateReview';
 import { BACKEND_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 
@@ -40,6 +42,8 @@ const BeerDetails = ({route}) => {
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const [userData, setUserData] = useState(null);
+
+    console.log("USER DATA:", userData)
 
     const getUserData = async () => {
       try {
@@ -139,7 +143,13 @@ const BeerDetails = ({route}) => {
                     <View style={styles.reviewButtonContainer}>
                         <Button
                             title="Review"
-                            onPress={() => setModalVisible(true)}
+                            onPress={() => {
+                              if (!userData) {
+                                Alert.alert('Please Log In', 'You must be logged in to write a review.');
+                              } else {
+                                setModalVisible(true);
+                              }
+                            }}
                         />
                     </View>
                 </View>
@@ -248,6 +258,10 @@ const styles = StyleSheet.create({
       marginBottom: 15,
       textAlign: 'center',
     },
+    notLoggedInText: {
+      textAlign: 'center',
+      top: 20
+    }
 })
 
 export default BeerDetails;
