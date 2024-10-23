@@ -7,12 +7,12 @@ import barImage from '../assets/images/FondoBar.jpg';
 const BarEvents = () => {
   const { bar_id } = useParams();
   const [{ data: barData, loading, error }] = useAxios({
-    url: `http://127.0.0.1:3001/api/v1/bars/${bar_id}`,
+    url: `http://127.0.0.1:3000/api/v1/bars/${bar_id}`,
     method: 'GET'
   });
 
   const [{ data: eventsData }] = useAxios({
-    url: `http://127.0.0.1:3001/api/v1/bars/${bar_id}/events`,
+    url: `http://127.0.0.1:3000/api/v1/bars/${bar_id}/events`,
     method: 'GET'
   });
 

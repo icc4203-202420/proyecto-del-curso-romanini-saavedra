@@ -22,7 +22,7 @@ const LoginForm = ({ tokenHandler }) => {
   // Definir el hook para la petición POST
   const [{ data, loading, error }, executePost] = useAxios(
     {
-      url: 'http://127.0.0.1:3001/api/v1/login',
+      url: 'http://127.0.0.1:3000/api/v1/login',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     },

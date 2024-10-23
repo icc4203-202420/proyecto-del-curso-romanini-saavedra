@@ -54,7 +54,7 @@ const ImageUploader = ({ eventId, userId, onImageUpload }) => {
       formData.append('event_picture[description]', description);
   
       try {
-        const response = await axios.post('http://127.0.0.1:3001/api/v1/event_pictures', formData, {
+        const response = await axios.post('http://127.0.0.1:3000/api/v1/event_pictures', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },

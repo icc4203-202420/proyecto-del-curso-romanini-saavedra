@@ -69,7 +69,7 @@ const BarsMap = () => {
   useEffect(() => {
 
     const fetchCities = async () => {
-      const url = 'http://127.0.0.1:3001/api/v1/bars'
+      const url = 'http://127.0.0.1:3000/api/v1/bars'
       const response = await fetch(url)
       const dataParsed = await response.json()
       const dataParsedFiltered = await dataParsed.bars

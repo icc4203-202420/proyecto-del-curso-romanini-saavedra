@@ -4,7 +4,7 @@ import {Typography, Card, CardContent, Box} from '@mui/material'
 
 const BarsBeers = ({beer_id}) => {
     const [{ data: barsBeersData, loading: barsLoading, error: barsError }] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/bars_beers`,
+        url: `http://127.0.0.1:3000/api/v1/bars_beers`,
         method: 'GET'
     })
 
@@ -39,7 +39,7 @@ const BarsBeers = ({beer_id}) => {
 
 const SingleBar = ({barId}) => {
     const [{data: barData, loading, error}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/bars/${barId}`,
+        url: `http://127.0.0.1:3000/api/v1/bars/${barId}`,
         method: 'GET'
     });
 

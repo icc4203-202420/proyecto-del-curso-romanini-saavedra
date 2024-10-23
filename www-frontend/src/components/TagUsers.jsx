@@ -37,7 +37,7 @@ const TagUsers = ({onTagAdded}) => {
 
     const [{data: friendshipsData, loading, error}, execute] = useAxios(
         {
-            url: `http://127.0.0.1:3001/api/v1/users/${userId}/friendships`,
+            url: `http://127.0.0.1:3000/api/v1/users/${userId}/friendships`,
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ const TagUsers = ({onTagAdded}) => {
         if (friendshipsData) {
             const fetchUserDetails = async () => {
                 const usersPromises = friendshipsData.map(friendship => 
-                    axios.get(`http://127.0.0.1:3001/api/v1/users/${friendship.friend_id}`)
+                    axios.get(`http://127.0.0.1:3000/api/v1/users/${friendship.friend_id}`)
                 );
                 const usersResponses = await Promise.all(usersPromises);
                 const users = usersResponses.map(response => response.data);
@@ -105,7 +105,7 @@ const TagUsers = ({onTagAdded}) => {
 
     const handleTagUser = async (friendId) => {
         try {
-            const response = await axios.post(`http://127.0.0.1:3001/api/v1/tag_users`, {
+            const response = await axios.post(`http://127.0.0.1:3000/api/v1/tag_users`, {
                 tagged_user_id: friendId,
                 user_id: userId,
                 picture_id: pictureId
@@ -176,7 +176,7 @@ const TagUsers = ({onTagAdded}) => {
 
 const SingleUser = ({userId, onTagUser}) => {
     const [{data: userData, loading, error}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/users/${userId}`,
+        url: `http://127.0.0.1:3000/api/v1/users/${userId}`,
         method: 'GET'
     });
 

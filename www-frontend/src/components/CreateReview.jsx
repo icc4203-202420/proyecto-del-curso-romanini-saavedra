@@ -19,7 +19,7 @@ const CreateReview = ({beer_id, onClose, onReviewCreated}) => {
 
     const [{ loading, error}, executePost] = useAxios(
         {
-            url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
+            url: `http://127.0.0.1:3000/api/v1/beers/${beer_id}/reviews`,
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,

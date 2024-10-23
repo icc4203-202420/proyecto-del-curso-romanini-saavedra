@@ -13,17 +13,17 @@ const Bars = () => {
     const [keywordList, setKeywordList] = useLocalStorageState('BeerMates/SearchBar/KeywordList', { defaultValue: [] });
 
     const [{ data: allBarsData, loading, error }] = useAxios({
-        url: 'http://127.0.0.1:3001/api/v1/bars',
+        url: 'http://127.0.0.1:3000/api/v1/bars',
         method: 'GET'
     });
 
     const [{ data: addressData }] = useAxios({
-        url: 'http://127.0.0.1:3001/api/v1/addresses',
+        url: 'http://127.0.0.1:3000/api/v1/addresses',
         method: 'GET'
     });
 
     const [{ data: countryData }] = useAxios({
-        url: 'http://127.0.0.1:3001/api/v1/countries',
+        url: 'http://127.0.0.1:3000/api/v1/countries',
         method: 'GET'
     });
 

@@ -4,7 +4,7 @@ import {Typography, Card, CardContent, Box} from '@mui/material'
 
 const EventUsers = ({event_id}) => {
     const [{ data: attendanceData, loading: attendancesLoading, error: attendancesError }] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/attendances`,
+        url: `http://127.0.0.1:3000/api/v1/attendances`,
         method: 'GET'
     })
 
@@ -39,7 +39,7 @@ const EventUsers = ({event_id}) => {
 
 const SingleUser = ({userId}) => {
     const [{data: userData, loading, error}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/users/${userId}`,
+        url: `http://127.0.0.1:3000/api/v1/users/${userId}`,
         method: 'GET'
     });
 

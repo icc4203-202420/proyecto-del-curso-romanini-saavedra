@@ -26,7 +26,7 @@ const Reviews = ({reviewsData}) => {
     const [state, dispatch] = useReducer(reviewsReducer, initialState);
 
     const [{ data: userData, loading, error}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/users/${reviewsData.user_id}`,
+        url: `http://127.0.0.1:3000/api/v1/users/${reviewsData.user_id}`,
         method: 'GET'
     })
 

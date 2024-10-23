@@ -49,22 +49,22 @@ const Beer = () => {
     };
 
     const [{ data: beerData, loading, error }, refetchBeerData] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}`,
+        url: `http://127.0.0.1:3000/api/v1/beers/${beer_id}`,
         method: 'GET'
       });
 
     const [{ data: brandData}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/brands`,
+        url: `http://127.0.0.1:3000/api/v1/brands`,
         method: 'GET'
     })
 
     const [{ data: breweryData}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/breweries`,
+        url: `http://127.0.0.1:3000/api/v1/breweries`,
         method: 'GET'
     })
 
     const [{ data: reviewsData }, refetchReviews] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/beers/${beer_id}/reviews`,
+        url: `http://127.0.0.1:3000/api/v1/beers/${beer_id}/reviews`,
         method: 'GET'
     })
 

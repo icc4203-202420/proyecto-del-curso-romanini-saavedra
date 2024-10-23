@@ -11,7 +11,7 @@ const EventImage = ({picture}) => {
     const [tagsData, setTagsData] = useState([]);
 
     const [{ data: userData, loading, error}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/users/${picture.user_id}`,
+        url: `http://127.0.0.1:3000/api/v1/users/${picture.user_id}`,
         method: 'GET'
     })
 
@@ -21,7 +21,7 @@ const EventImage = ({picture}) => {
     // })
 
     const fetchTagsData = async () => {
-        const response = await axios.get(`http://127.0.0.1:3001/api/v1/tag_users`);
+        const response = await axios.get(`http://127.0.0.1:3000/api/v1/tag_users`);
         setTagsData(response.data);
     }
 
@@ -102,12 +102,12 @@ const EventImage = ({picture}) => {
 
 const GetTaggedUsers = ({userId, taggedUserId}) => {
     const [{ data: userData}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/users/${userId}`,
+        url: `http://127.0.0.1:3000/api/v1/users/${userId}`,
         method: 'GET'
     })
 
     const [{ data: taggedUserData}] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/users/${taggedUserId}`,
+        url: `http://127.0.0.1:3000/api/v1/users/${taggedUserId}`,
         method: 'GET'
     })
 

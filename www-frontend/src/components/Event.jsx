@@ -72,23 +72,23 @@ const Event = () => {
     }
 
     const [{ data: eventData, loading: eventLoading, error: eventError }, refetchEventData] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/events/${event_id}`,
+        url: `http://127.0.0.1:3000/api/v1/events/${event_id}`,
         method: 'GET'
     })
 
     const [{ data: attendanceData }, refetchAttendanceData] = useAxios({
-        url: `http://127.0.0.1:3001/api/v1/attendances`,
+        url: `http://127.0.0.1:3000/api/v1/attendances`,
         method: 'GET'
     })
 
     const [{ data: barData, loading: barLoading, error: barError }] = useAxios({
-        url: eventData ? `http://127.0.0.1:3001/api/v1/bars/${eventData.event.bar_id}` : null,
+        url: eventData ? `http://127.0.0.1:3000/api/v1/bars/${eventData.event.bar_id}` : null,
         method: 'GET',
         manual: !eventData 
       });
 
     const [{ data: eventPictureData, loading: eventPictureDataLoading, error: eventPictureDataError }, refetchEventPictureData] = useAxios({
-        url: eventData ? `http://127.0.0.1:3001/api/v1/event_pictures?event_id=${eventData.event.id}` : null,
+        url: eventData ? `http://127.0.0.1:3000/api/v1/event_pictures?event_id=${eventData.event.id}` : null,
         method: 'GET',
         manual: !eventData
     })
@@ -123,7 +123,7 @@ const Event = () => {
         const token = aux_token.replace(/"/g, '');
         setLoading(true);
 
-        axios.post(`http://127.0.0.1:3001/api/v1/attendances`, {
+        axios.post(`http://127.0.0.1:3000/api/v1/attendances`, {
             attendance: {
                 user_id: user.id,
                 event_id: eventData.event.id
@@ -155,7 +155,7 @@ const Event = () => {
         const token = aux_token.replace(/"/g, '');
         setLoading(true);
 
-        axios.delete(`http://127.0.0.1:3001/api/v1/attendances/${attendanceId}`, {
+        axios.delete(`http://127.0.0.1:3000/api/v1/attendances/${attendanceId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

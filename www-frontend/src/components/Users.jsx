@@ -29,7 +29,7 @@ const Users = () => {
   });
 
   const [{ data: allUsersData, loading, error }] = useAxios({
-    url: 'http://127.0.0.1:3001/api/v1/users',
+    url: 'http://127.0.0.1:3000/api/v1/users',
     method: 'GET'
   });
 
@@ -40,7 +40,7 @@ const Users = () => {
     if (user && user.id) {
         const aux_token = localStorage.getItem('app-token');
         const token = aux_token.replace(/"/g, '');
-        axios.get(`http://127.0.0.1:3001/api/v1/users/${user.id}/friendships`, {
+        axios.get(`http://127.0.0.1:3000/api/v1/users/${user.id}/friendships`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             }
@@ -65,7 +65,7 @@ const Users = () => {
   const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
   const [{ data: barData }] = useAxios({
-    url: 'http://127.0.0.1:3001/api/v1/bars',
+    url: 'http://127.0.0.1:3000/api/v1/bars',
     method: 'GET'
   });
 
@@ -78,7 +78,7 @@ const Users = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       if (selectedBar) {
-        const response = await axios.get(`http://127.0.0.1:3001/api/v1/bars/${selectedBar.id}/events`);
+        const response = await axios.get(`http://127.0.0.1:3000/api/v1/bars/${selectedBar.id}/events`);
         setEventOptions(response.data);
       }
     };
@@ -115,7 +115,7 @@ const Users = () => {
         const aux_token = localStorage.getItem('app-token');
         const token = aux_token.replace(/"/g, '');
         try {
-          const response = await axios.get(`http://127.0.0.1:3001/api/v1/users/${user.id}/friendships`, {
+          const response = await axios.get(`http://127.0.0.1:3000/api/v1/users/${user.id}/friendships`, {
             headers: {
               Authorization: `Bearer ${token}`,
             }
@@ -141,7 +141,7 @@ const Users = () => {
     }
 
     try {
-        const response = await axios.post('http://127.0.0.1:3001/api/v1/friendships', {
+        const response = await axios.post('http://127.0.0.1:3000/api/v1/friendships', {
           friendship: {
             user_id: user.id,
             friend_id: selectedUserId,

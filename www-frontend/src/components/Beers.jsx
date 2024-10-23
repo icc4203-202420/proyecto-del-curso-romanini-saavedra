@@ -14,7 +14,7 @@ const Beers = () => {
 
     const [{ data: allBeersData, loading, error}, refetch] = useAxios(
         {
-            url: 'http://127.0.0.1:3001/api/v1/beers',
+            url: 'http://127.0.0.1:3000/api/v1/beers',
             method: 'GET'
         }
     );
