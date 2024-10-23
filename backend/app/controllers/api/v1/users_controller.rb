@@ -6,12 +6,17 @@ class API::V1::UsersController < ApplicationController
   before_action :set_user_friendship, only: [:index_friendships, :create_friendship]
   before_action :verify_jwt_token, only: [:index_friendships, :create_friendship]
 
-  def index
-    @users = User.includes(:reviews, :address).all 
+  # def index
+  #   @users = User.includes(:reviews, :address).all 
+  # end
+
+  def index 
+    @users = User.all
+    render json: { users: @users }, status: :ok
   end
 
   def show
-  
+    render json: { user: @user.as_json }, status: :ok
   end
 
   def create

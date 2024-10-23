@@ -3,14 +3,15 @@ class Event < ApplicationRecord
   has_many :attendances
   has_many :users, through: :attendances
 
-  has_one_attached :flyer
+  has_many_attached :flyers
+  has_many :event_pictures, dependent: :destroy
 
   validates :name, presence: true
-  validates :flyer, content_type: { in: ['image/png', 'image/jpg', 'image/jpeg'],
+  validates :flyers, content_type: { in: ['image/png', 'image/jpg', 'image/jpeg'],
                                     message: 'must be a valid image format' },
                     size: { less_than: 5.megabytes } 
 
   def thumbnail
-    flyer.variant(resize_to_limit: [200, nil]).processed
+    flyers.map { |flyer| flyer.variant(resize_to_limit: [200, nil]).processed }
   end  
 end
