@@ -14,8 +14,6 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BACKEND_URL } from '@env';
 
-import BarItem from './BarItem';
-
 const Bars = () => {
   const navigation = useNavigation();
   const [searchKeywords, setSearchKeywords] = useState('');
@@ -69,7 +67,19 @@ const Bars = () => {
   };
 
   const renderBar = ({ item }) => {
-    return <BarItem bar={item}/>
+    return (
+      <TouchableOpacity onPress={() => navigation.navigate('Events', {bar: item})}>
+        <View style={styles.cardContainer}>
+          <View style={styles.card}>
+            <Text style={{ fontWeight: 'bold', fontSize: 24 }}>{item.name}</Text>
+                <View>
+                    <Text>{item.address.line1}, {item.address.line2}</Text>
+                    <Text>{item.address.city}, {item.address.country.name}</Text>
+                </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
   }
 
   return (

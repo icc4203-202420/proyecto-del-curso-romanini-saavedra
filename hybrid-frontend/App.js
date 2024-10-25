@@ -11,6 +11,8 @@ import ProfileScreen from './app/profile';
 import HomeScreen from './app/home';
 import LoginScreen from './app/auth/LoginScreen';
 import SignUpScreen from './app/auth/SignUpScreen';
+import Events from './app/events';
+import EventDetails from './app/events/EventDetails';
 import { useUser, UserProvider } from './app/context/UserContext';
 
 const Tab = createBottomTabNavigator();
@@ -73,6 +75,8 @@ function MainApp() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="BeerDetails" component={BeerDetails} />
+      <Stack.Screen name="Events" component={Events} />
+      <Stack.Screen name="EventDetails" component={EventDetails} />
 
     </Stack.Navigator>
   );
