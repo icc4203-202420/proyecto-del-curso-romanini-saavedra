@@ -14,6 +14,8 @@ import SignUpScreen from './app/auth/SignUpScreen';
 import Events from './app/events';
 import EventDetails from './app/events/EventDetails';
 import { useUser, UserProvider } from './app/context/UserContext';
+import { NotificationsProvider } from './app/context/NotificationsContext';
+import * as Notifications from 'expo-notifications';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -83,12 +85,23 @@ function MainApp() {
 }
 
 export default function App() {
+  React.useEffect(() => {
+    Notifications.addNotificationResponseReceivedListener(response => {
+      const eventId = response.notification.request.content.data.eventId;
+      if (eventId) {
+        navigation.navigate('EventDetails', { eventId });
+      }
+    });
+  }, []);
+
   return (
     <UserProvider>
-      <NavigationContainer>
-        <MainApp />
-        <Toast ref={(ref) => Toast.setRef(ref)} />
-      </NavigationContainer>
+      <NotificationsProvider>
+        <NavigationContainer>
+          <MainApp />
+          <Toast ref={(ref) => Toast.setRef(ref)} />
+        </NavigationContainer>
+      </NotificationsProvider>
     </UserProvider>
   );
 }
