@@ -38,7 +38,7 @@ function MainApp() {
         name="MainTabs"
         component={MainTabs}
         options={({ navigation }) => ({
-          title: 'My App',
+          title: '',
           headerRight: () => (
             isAuthenticated ? (
               <Button

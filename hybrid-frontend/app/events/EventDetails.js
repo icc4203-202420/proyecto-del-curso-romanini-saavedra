@@ -13,8 +13,12 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { BACKEND_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import Attendees from './Attendees';
+import Photos from './Photos';
+import CreateAttendance from './CreateAttendance';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
+const barBackground = require('../../assets/images/FondoBar.jpg');
 
 const renderTabBar = props => (
   <TabBar
@@ -32,35 +36,105 @@ const EventDetails = ({route}) => {
     const [routes] = useState([
         {key: 'information', title: 'Information'},
         {key: 'photos', title: 'Photos'},
-        {key: 'People', title: 'People'}
+        {key: 'people', title: 'People'}
     ]);
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [userData, setUserData] = useState(null);
+    const [attendanceData, setAttendaceData] = useState([]);
+
+    const getUserData = async () => {
+      try {
+        const data = await AsyncStorage.getItem('userData');
+        setUserData(data);
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    const getAttendanceData = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/v1/attendances`);
+        const json = await response.json();
+        const filteredAttendances = json.attendances.filter(attendance => attendance.event_id === event.id);
+
+        setAttendaceData(filteredAttendances);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    useEffect(() => {
+      getUserData();
+      getAttendanceData();
+    }, []);
+
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      
+      return date.toLocaleDateString('es-ES', options);
+    }
 
     const renderScene = SceneMap({
         information: () => (
             <View style={styles.infoContainer}>
                 <Text style={{color:'black'}}>Name: {event.name}</Text>
                 <Text style={{color: 'black', fontSize: 15}}>Description: {event.description}</Text>
-                <Text style={{color: 'black', fontSize: 15}}>Start Date: {event.start_date}</Text>
-                <Text style={{color: 'black', fontSize: 15}}>End Date: {event.end_date}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>Start Date: {formatDate(event.start_date)}</Text>
+                <Text style={{color: 'black', fontSize: 15}}>End Date: {formatDate(event.end_date)}</Text>
             </View>
         ), 
-        photos: () => <Text>Photos</Text>,
-        people: () => <Text>People</Text>
+        photos: () => <Photos/>,
+        people: () => <Attendees/>
     });
 
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
+                <Image
+                    source={barBackground}
+                    style={styles.beerImage}
+                />
                 <View style={styles.overlayTextContainer}>
                     <Text style={{fontSize: 36, fontWeight: 'bold'}}>{event.name}</Text>
                     <Text style={{fontSize: 18}}>Bar: {bar.name}</Text>
                     <View style={styles.reviewButtonContainer}>
                         <Button
                             title="Confirm Attendance"
+                            onPress={() => {
+                              if (!userData) {
+                                Alert.alert('Please Log In', 'You must be logged in to confirm attendace to an event.');
+                              } else {
+                                setModalVisible(true);
+                              }
+                            }}
                         />
                     </View>
                 </View>
             </View>
+            <View style={styles.tabViewContainer}>
+                <TabView
+                    navigationState={{ index, routes }}
+                    renderScene={renderScene}
+                    onIndexChange={setIndex}
+                    initialLayout={{ width: 300 }}
+                    renderTabBar={renderTabBar}
+                />
+            </View>
+            <CreateAttendance
+              userId={userData}
+              eventId={event.id}
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              onAttendanceCreated={getAttendanceData}
+            />
         </View>
     )
 }
