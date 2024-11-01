@@ -9,6 +9,7 @@ import BeerDetails from './app/beers/BeerDetails';
 import BarsScreen from './app/bars';
 import ProfileScreen from './app/profile';
 import HomeScreen from './app/home';
+import FindMatesScreen from './app/home/FindMates';
 import LoginScreen from './app/auth/LoginScreen';
 import SignUpScreen from './app/auth/SignUpScreen';
 import Events from './app/events';
@@ -77,6 +78,7 @@ function MainApp() {
       <Stack.Screen name="BeerDetails" component={BeerDetails} />
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="EventDetails" component={EventDetails} />
+      <Stack.Screen name="FindMates" component={FindMatesScreen} />
 
     </Stack.Navigator>
   );
