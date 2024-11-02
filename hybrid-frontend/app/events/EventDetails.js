@@ -5,7 +5,8 @@ import {
     StyleSheet,
     Image,
     Button,
-    Alert
+    Alert,
+    Pressable
 } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -14,8 +15,9 @@ import { BACKEND_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import Attendees from './Attendees';
-import Photos from './Photos';
+import ImageUploader from './ImageUploader';
 import CreateAttendance from './CreateAttendance';
+import EventPictureGallery from './EventPictureGallery';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 const barBackground = require('../../assets/images/FondoBar.jpg');
@@ -42,6 +44,7 @@ const EventDetails = ({route}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [userData, setUserData] = useState(null);
     const [attendanceData, setAttendaceData] = useState([]);
+    const [picturesData, setPicturesData] = useState([]);
 
     const getUserData = async () => {
       try {
@@ -64,9 +67,26 @@ const EventDetails = ({route}) => {
       }
     }
 
+    const getPicturesData = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/v1/event_pictures?event_id=${event.id}`);
+        const json = await response.json();
+        const sortedImages = json.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+        setPicturesData(sortedImages)
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    const handleNewImageUpload = (newImage) => {
+      setPicturesData((prevImages) => [...prevImages, newImage]);
+    };
+
     useEffect(() => {
       getUserData();
       getAttendanceData();
+      getPicturesData();
     }, []);
 
     const formatDate = (dateString) => {
@@ -91,7 +111,15 @@ const EventDetails = ({route}) => {
                 <Text style={{color: 'black', fontSize: 15}}>End Date: {formatDate(event.end_date)}</Text>
             </View>
         ), 
-        photos: () => <Photos/>,
+        // photos: () => <ImageUploader userId={userData} eventId={event.id}/>,
+        photos: () => (
+          <EventPictureGallery 
+            initialImages={picturesData} 
+            userId={userData} 
+            eventId={event.id} 
+            onNewImage={handleNewImageUpload}
+            />
+        ),
         people: () => <Attendees/>
     });
 
@@ -106,16 +134,18 @@ const EventDetails = ({route}) => {
                     <Text style={{fontSize: 36, fontWeight: 'bold'}}>{event.name}</Text>
                     <Text style={{fontSize: 18}}>Bar: {bar.name}</Text>
                     <View style={styles.reviewButtonContainer}>
-                        <Button
-                            title="Confirm Attendance"
-                            onPress={() => {
-                              if (!userData) {
-                                Alert.alert('Please Log In', 'You must be logged in to confirm attendace to an event.');
-                              } else {
-                                setModalVisible(true);
-                              }
-                            }}
-                        />
+                        <Pressable 
+                          style={styles.uploadButton} 
+                          onPress={() => {
+                            if (!userData) {
+                              Alert.alert('Please Log In', 'You must be logge in to confirm attendance to an event.');
+                            } else {
+                              setModalVisible(true);
+                            }
+                          }}
+                        >
+                            <Text style={styles.buttonText}>CONFIRM ATTENDANCE</Text>
+                        </Pressable>
                     </View>
                 </View>
             </View>
@@ -226,6 +256,19 @@ const styles = StyleSheet.create({
     notLoggedInText: {
       textAlign: 'center',
       top: 20
+    },
+    uploadButton: {
+      width: 175,
+      height: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#2196F3',
+      borderRadius: 5,
+      marginBottom: 10
+    },
+    buttonText: {
+      color: 'white',
+      fontWeight: 'bold'
     }
 })
 

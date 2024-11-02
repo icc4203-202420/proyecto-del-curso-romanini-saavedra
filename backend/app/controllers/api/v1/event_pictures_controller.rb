@@ -1,6 +1,6 @@
 class API::V1::EventPicturesController < ApplicationController
   respond_to :json
-  before_action :set_review, only: [:show, :destroy]
+  before_action :set_event_picture, only: [:show, :destroy]
 
   def index
     @event_pictures = EventPicture.where(event_id: params[:event_id])
@@ -24,15 +24,36 @@ class API::V1::EventPicturesController < ApplicationController
     end
   end
 
+  # def create
+  #   @event_picture = EventPicture.new(event_picture_params)
+
+  #   if @event_picture.save
+  #     render json: { event_picture: @event_picture, message: "Event picture created successfully."}, status: :created
+  #   else
+  #     render json: @event_picture.errors, status: :unprocessable_entity
+  #   end
+  # end
+
   def create
     @event_picture = EventPicture.new(event_picture_params)
-
+  
     if @event_picture.save
-      render json: { event_picture: @event_picture, message: "Event picture created successfully."}, status: :created
+      render json: { 
+        event_picture: {
+          id: @event_picture.id,
+          user_id: @event_picture.user_id,
+          description: @event_picture.description,
+          created_at: @event_picture.created_at,
+          updated_at: @event_picture.updated_at,
+          image_url: url_for(@event_picture.image) # Añadido aquí
+        },
+        message: "Event picture created successfully."
+      }, status: :created
     else
-      render json: @event_picture.errors, status: :unprocessable_entity
+      render json: { errors: @event_picture.errors.full_messages }, status: :unprocessable_entity
     end
   end
+  
 
   def destroy
     @event_picture.destroy
