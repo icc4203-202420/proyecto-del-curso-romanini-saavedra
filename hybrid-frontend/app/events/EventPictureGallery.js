@@ -13,18 +13,38 @@ import ImageUploader from './ImageUploader';
 const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     const [images, setImages] = useState(initialImages);
     const [usernames, setUsernames] = useState({});
+    const [taggedUsers, setTaggedUsers] = useState([]);
     
     const handleNewImage = (response) => {
-        // Extraer la nueva imagen del objeto de respuesta
         const newImage = response.event_picture;
         
-        // Verificar que la nueva imagen tenga un id antes de agregarla
         if (newImage && newImage.id) {
             setImages((prevImages) => [newImage, ...prevImages]);
         } else {
             console.error("La nueva imagen no tiene una propiedad 'id'.", newImage);
         }
     };
+
+    useEffect(() => {
+        const fetchTaggedUsers = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/v1/tag_users`);
+                const data = await response.json();
+                setTaggedUsers(data.tag_users);
+
+                const taggedUserIds = [...new Set(data.tag_users.map(tag => tag.tagged_user_id))];
+                taggedUserIds.forEach(user_id => {
+                    if (!usernames[user_id]) {
+                        fetchUsername(user_id);
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching tagged users:", error);
+            }
+        };
+
+        fetchTaggedUsers();
+    }, []);
 
     useEffect(() => {
         const userIds = [...new Set(images.map(image => image.user_id))];
@@ -46,6 +66,8 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     }
 
     const renderImage = ({item}) => {
+        const tagsForImage = taggedUsers.filter(tag => tag.picture_id === item.id)
+        const taggedUsernames = tagsForImage.map(tag => usernames[tag.tagged_user_id])
         return (
             <View style={styles.imageContainer}>
                 <Text>Uploaded by: {usernames[item.user_id] || 'Loading...'}</Text>
@@ -55,6 +77,9 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
                     resizeMode='contain'
                 />
                 <Text style={styles.description}>{item.description}</Text>
+                {taggedUsernames.length > 0 && (
+                    <Text>Tagged: {taggedUsernames.join(', ')}</Text>
+                )}
             </View>
         )
     }
@@ -101,7 +126,7 @@ const styles = StyleSheet.create({
     },
     image: {
       width: '100%',
-      height: 200, // Ajusta la altura según tus necesidades
+      height: 200, 
       resizeMode: 'cover',
     },
     description: {

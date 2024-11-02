@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Alert,
   Button, 
@@ -15,24 +15,59 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 import { BACKEND_URL } from '@env';
-import { createVideoFromImages } from './videoUtils';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ImageUploader = ({userId, eventId, onNewImage, showSummaryButton, images}) => {
-  // console.log("ESTAMOS EN IMAGEUPLOADER");
+const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [description, setDescription] = useState('');
+  const [friends, setFriends] = useState([]); 
+  const [taggedFriends, setTaggedFriends] = useState([]);
+  const [friendDetails, setFriendDetails] = useState([]);
+
+  useEffect(() => {
+    if (modalVisible) {
+      fetchFriendships();
+    }
+  }, [modalVisible]);
+
+  const fetchFriendships = async () => {
+    try {
+      const storedToken = await AsyncStorage.getItem('token');
+		  const token = storedToken.replace(/"/g, '')
+
+      const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+        headers: {
+          'Authorization': `Bearer ${storedToken}`,
+        },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Error fetching friendships');
+      }
+
+      setFriends(data); 
+
+      const friendIds = data.map(friend => friend.friend_id);
+      const detailsPromises = friendIds.map(id => fetch(`${BACKEND_URL}/api/v1/users/${id}`)); 
+      const detailsResponses = await Promise.all(detailsPromises);
+      const detailsData = await Promise.all(detailsResponses.map(res => res.json()));
+
+      setFriendDetails(detailsData);
+
+    } catch (error) {
+      console.error("Error fetching friendships:", error);
+    }
+  };
 
   const handleChooseImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       Alert.alert("Permission to access camera roll is required!");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync();
-
     if (!result.cancelled) {
       setSelectedImage(result.assets[0].uri);
     }
@@ -40,14 +75,11 @@ const ImageUploader = ({userId, eventId, onNewImage, showSummaryButton, images})
 
   const handleTakePicture = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
+    if (!permissionResult.granted) {
       Alert.alert("Permission to use camera is required!");
       return;
     }
-
     const result = await ImagePicker.launchCameraAsync();
-
     if (!result.cancelled) {
       setSelectedImage(result.assets[0].uri);
     }
@@ -70,25 +102,46 @@ const ImageUploader = ({userId, eventId, onNewImage, showSummaryButton, images})
     formData.append('event_picture[event_id]', eventId);
 
     try {
-      // print("SUBIENDO NUEVA FOTO!!!!");
       const response = await axios.post(`${BACKEND_URL}/api/v1/event_pictures`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      // console.log("Image uploaded successfully", response.data);
-      // console.log("RESPONSE DE IMAGE UPLOAD:", response);
 
-      // console.log("URL DE IMAGEN:", response.data.image_url);
+      const pictureId = response.data.event_picture.id; 
 
-      onNewImage(response.data)
-
+      await tagFriends(pictureId);
+      
+      onNewImage(response.data);
       setModalVisible(false);
       setSelectedImage(null);
       setDescription('');
+      setTaggedFriends([]);
     } catch (error) {
       console.error("Error uploading image:", error);
     }
+  };
+
+  const tagFriends = async (pictureId) => {
+    try {
+      const tagUsersArray = taggedFriends.map(friendId => ({
+        user_id: parseInt(userId),
+        tagged_user_id: parseInt(friendId),
+        picture_id: parseInt(pictureId),
+      }));
+
+      const response = await axios.post(`${BACKEND_URL}/api/v1/tag_users`, {
+        tag_users: tagUsersArray
+      });
+    } catch (error) {
+      console.error("Error tagging friends:", error);
+    }
+  };
+
+  const handleTagFriend = (friendId) => {
+    setTaggedFriends((prev) =>
+      prev.includes(friendId) ? prev.filter((id) => id !== friendId) : [...prev, friendId]
+    );
   };
 
   const handleGenerateSummary = async () => {
@@ -103,21 +156,17 @@ const ImageUploader = ({userId, eventId, onNewImage, showSummaryButton, images})
     }
   };
 
-
   return (
     <View>
-      {/* <Button title="Upload Image" onPress={() => setModalVisible(true)} /> */}
       <View style={styles.buttonContainer}>
         <Pressable style={styles.uploadButton} onPress={() => setModalVisible(true)}>
             <Text style={styles.buttonText}>UPLOAD IMAGE</Text>
         </Pressable>
         {showSummaryButton && (
-          <Pressable style={styles.uploadButton} onPress={() => handleGenerateSummary()}>
+          <Pressable style={styles.uploadButton} onPress={handleGenerateSummary}>
             <Text style={styles.buttonText}>SUMMARY</Text>
           </Pressable>
         )}
-        
-
       </View>
 
       <Modal visible={modalVisible} animationType="slide">
@@ -134,6 +183,28 @@ const ImageUploader = ({userId, eventId, onNewImage, showSummaryButton, images})
                 onChangeText={setDescription}
                 style={styles.descriptionInput}
               />
+              <Text style={styles.tagTitle}>Tag Friends:</Text>
+              {friends && friends.length > 0 ? ( 
+                friends.map((friend, index) => {
+                  const friendDetail = friendDetails.find(detail => detail.user.id === friend.friend_id);
+                  return (
+                    <Pressable
+                      key={friend.friend_id}
+                      onPress={() => handleTagFriend(friend.friend_id)}
+                      style={[
+                        styles.friendButton,
+                        taggedFriends.includes(friend.friend_id) && styles.selectedFriendButton
+                      ]}
+                    >
+                      <Text style={styles.friendButtonText}>
+                        {friendDetail ? friendDetail.user.handle : 'Loading...'} {taggedFriends.includes(friend.friend_id) ? "(Tagged)" : ""}
+                      </Text>
+                    </Pressable>
+                  )
+                })
+              ) : (
+                <Text>No friends available to tag.</Text>
+              )}
             </ScrollView>
           )}
 
@@ -180,13 +251,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
     borderRadius: 5,
     marginBottom: 10,
-    marginRight: 10,
-    marginLeft: 10
+    marginHorizontal: 10,
   },
   buttonText: {
     color: 'white',
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
+  tagTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  friendButton: {
+    padding: 10,
+    backgroundColor: '#eee',
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  selectedFriendButton: {
+    backgroundColor: '#b3d9ff',
+  },
+  friendButtonText: {
+    fontSize: 16,
+  },
 });
 
 export default ImageUploader;

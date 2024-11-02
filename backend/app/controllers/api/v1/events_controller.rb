@@ -49,6 +49,12 @@ class API::V1::EventsController < ApplicationController
         head :no_content
     end    
 
+    def generate_event
+      event = Event.find(params[:id])
+      GenerateEventSummaryJob.perform_later(event.id)
+      render json: { message: 'Video generating in process'}
+    end
+
     private
 
     def set_event
