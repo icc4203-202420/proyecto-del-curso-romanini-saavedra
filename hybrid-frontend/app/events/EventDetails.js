@@ -33,6 +33,9 @@ const renderTabBar = props => (
 
 const EventDetails = ({route}) => {
     const {event} = route.params;
+
+    console.log("EVENTO:", event);
+
     const {bar} = route.params;
     const [index, setIndex] = useState(0);
     const [routes] = useState([
@@ -72,6 +75,8 @@ const EventDetails = ({route}) => {
         const response = await fetch(`${BACKEND_URL}/api/v1/event_pictures?event_id=${event.id}`);
         const json = await response.json();
         const sortedImages = json.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+        console.log("PICTURES:", sortedImages);
 
         setPicturesData(sortedImages)
       } catch (error) {
@@ -116,7 +121,7 @@ const EventDetails = ({route}) => {
           <EventPictureGallery 
             initialImages={picturesData} 
             userId={userData} 
-            eventId={event.id} 
+            event={event} 
             onNewImage={handleNewImageUpload}
             />
         ),

@@ -15,8 +15,9 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 import { BACKEND_URL } from '@env';
+import { createVideoFromImages } from './videoUtils';
 
-const ImageUploader = ({userId, eventId, onNewImage}) => {
+const ImageUploader = ({userId, eventId, onNewImage, showSummaryButton, images}) => {
   // console.log("ESTAMOS EN IMAGEUPLOADER");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -90,6 +91,19 @@ const ImageUploader = ({userId, eventId, onNewImage}) => {
     }
   };
 
+  const handleGenerateSummary = async () => {
+    setIsGenerating(true);
+    try {
+      await fetch(`${BACKEND_URL}/events/${eventId}/generate_summary`, { method: 'POST' });
+      Alert.alert('Resumen en proceso', 'Se te notificará cuando el video esté listo.');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'No se pudo iniciar la generación del video.');
+      setIsGenerating(false);
+    }
+  };
+
+
   return (
     <View>
       {/* <Button title="Upload Image" onPress={() => setModalVisible(true)} /> */}
@@ -97,6 +111,12 @@ const ImageUploader = ({userId, eventId, onNewImage}) => {
         <Pressable style={styles.uploadButton} onPress={() => setModalVisible(true)}>
             <Text style={styles.buttonText}>UPLOAD IMAGE</Text>
         </Pressable>
+        {showSummaryButton && (
+          <Pressable style={styles.uploadButton} onPress={() => handleGenerateSummary()}>
+            <Text style={styles.buttonText}>SUMMARY</Text>
+          </Pressable>
+        )}
+        
 
       </View>
 
@@ -149,7 +169,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   uploadButton: {
     width: 130,
@@ -158,7 +179,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#2196F3',
     borderRadius: 5,
-    marginBottom: 10
+    marginBottom: 10,
+    marginRight: 10,
+    marginLeft: 10
   },
   buttonText: {
     color: 'white',

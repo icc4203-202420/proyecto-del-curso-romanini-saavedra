@@ -6,11 +6,13 @@ import {
     StyleSheet, 
     FlatList
 } from 'react-native';
+import { BACKEND_URL } from '@env';
 
 import ImageUploader from './ImageUploader';
 
-const EventPictureGallery = ({ initialImages, userId, eventId, onNewImage }) => {
+const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     const [images, setImages] = useState(initialImages);
+    const [usernames, setUsernames] = useState({});
     
     const handleNewImage = (response) => {
         // Extraer la nueva imagen del objeto de respuesta
@@ -24,11 +26,29 @@ const EventPictureGallery = ({ initialImages, userId, eventId, onNewImage }) => 
         }
     };
 
-    const renderImage = ({item}) => {
-        // console.log("ITEM:", item);
-        return (
+    useEffect(() => {
+        const userIds = [...new Set(images.map(image => image.user_id))];
+        userIds.forEach(user_id => {
+            if (!usernames[user_id]) {
+                fetchUsername(user_id);
+            }
+        })
+    }, [images]);
 
+    const fetchUsername = async (user_id) => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/v1/users/${user_id}`);
+            const data = await response.json();
+            setUsernames((prev) => ({ ...prev, [user_id]: data.user.handle }));
+        } catch (error) {
+            console.error("Error fetching username:", error);
+        } 
+    }
+
+    const renderImage = ({item}) => {
+        return (
             <View style={styles.imageContainer}>
+                <Text>Uploaded by: {usernames[item.user_id] || 'Loading...'}</Text>
                 <Image
                     source={{uri: item.image_url}}
                     style={styles.image}
@@ -39,6 +59,13 @@ const EventPictureGallery = ({ initialImages, userId, eventId, onNewImage }) => 
         )
     }
 
+    const handleSummaryPress = () => {
+        console.log("SE APRETO EL BOTON DE SUMMARY");
+    }
+
+    const isEventEnded = new Date() > new Date(event.end_date);
+    console.log("EVENT ENDED?", isEventEnded)
+
     return (
         <View style={styles.container}>
             <FlatList
@@ -47,7 +74,13 @@ const EventPictureGallery = ({ initialImages, userId, eventId, onNewImage }) => 
                 renderItem={renderImage}
                 contentContainerStyle={{paddingBottom: 20}}
                 ListHeaderComponent={
-                    <ImageUploader userId={userId} eventId={eventId} onNewImage={handleNewImage}/>
+                    <ImageUploader 
+                        userId={userId} 
+                        eventId={event.id} 
+                        onNewImage={handleNewImage} 
+                        showSummaryButton={isEventEnded}
+                        images={images}
+                    />
                 }
             />
         </View>
