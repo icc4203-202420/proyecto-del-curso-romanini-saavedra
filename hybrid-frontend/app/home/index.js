@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, Button, StatusBar, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomeScreen() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text>Welcome to BeerMates!</Text>
+      <Button
+        title="Find Mates"
+        onPress={() => navigation.navigate('FindMates')}
+      />
       <StatusBar style="auto" />
     </View>
   );

@@ -160,7 +160,7 @@ if Rails.env.development?
   end
 
   # Crear bares con direcciones y cervezas asociadas
-  bars = FactoryBot.create_list(:bar, 5) do |bar|
+  bars = FactoryBot.create_list(:bar, 6) do |bar|
     bar.address.update(country: countries.sample)
     bar.beers << Beer.all.sample(rand(1..3))
   end
@@ -171,7 +171,7 @@ if Rails.env.development?
   # end
   events = Event.create([
     {
-      name: "Opening Celebration",
+      name: "Opening Celebration 1",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -179,7 +179,7 @@ if Rails.env.development?
       bar_id: 1
     },
     {
-      name: "Opening Celebration",
+      name: "Opening Celebration 2",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -187,7 +187,7 @@ if Rails.env.development?
       bar_id: 2
     },
     {
-      name: "Opening Celebration",
+      name: "Opening Celebration 3",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -195,7 +195,7 @@ if Rails.env.development?
       bar_id: 3
     },
     {
-      name: "Opening Celebration",
+      name: "Opening Celebration 4",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -203,7 +203,7 @@ if Rails.env.development?
       bar_id: 4
     },
     {
-      name: "Opening Celebration",
+      name: "Opening Celebration 5",
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -211,7 +211,15 @@ if Rails.env.development?
       bar_id: 5
     },
     {
-      name: "Happy Hour",
+      name: "Opening Celebration 6",
+      description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 6
+    },
+    {
+      name: "Happy Hour 1",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -219,7 +227,7 @@ if Rails.env.development?
       bar_id: 1
     },
     {
-      name: "Happy Hour",
+      name: "Happy Hour 2",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -227,7 +235,7 @@ if Rails.env.development?
       bar_id: 2
     },
     {
-      name: "Happy Hour",
+      name: "Happy Hour 3",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -235,7 +243,7 @@ if Rails.env.development?
       bar_id: 3
     },
     {
-      name: "Happy Hour",
+      name: "Happy Hour 4",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
@@ -243,12 +251,20 @@ if Rails.env.development?
       bar_id: 4
     },
     {
-      name: "Happy Hour",
+      name: "Happy Hour 5",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now + 1.week,
       start_date: DateTime.now + 1.week,
       end_date: DateTime.now + 1.week + 4.hours,
       bar_id: 5
+    },
+    {
+      name: "Happy Hour 6",
+      description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
+      date: DateTime.now + 1.week,
+      start_date: DateTime.now + 1.week,
+      end_date: DateTime.now + 1.week + 4.hours,
+      bar_id: 6
     }
 
   ])
