@@ -8,8 +8,11 @@ export default function FindMatesScreen() {
   const [handle, setHandle] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [bars, setBars] = useState([]);
-  const [allBars, setAllBars] = useState([]);  // Almacena la lista completa de bares
+  const [allBars, setAllBars] = useState([]);
   const [selectedBar, setSelectedBar] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [error, setError] = useState(null);
   const [isBarModalVisible, setBarModalVisible] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -17,6 +20,12 @@ export default function FindMatesScreen() {
   useEffect(() => {
     fetchBars();
   }, []);
+
+  useEffect(() => {
+    if (selectedBar) {
+      fetchEvents(selectedBar.id);
+    }
+  }, [selectedBar]);
 
   const fetchBars = async () => {
     try {
@@ -28,9 +37,25 @@ export default function FindMatesScreen() {
       });
       const data = await response.json();
       setBars(data.bars || []);
-      setAllBars(data.bars || []); // Guarda todos los bares para futuras búsquedas
+      setAllBars(data.bars || []);
     } catch (err) {
       console.error("Error al cargar bares:", err);
+    }
+  };
+
+  const fetchEvents = async (barId) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await fetch(`${BACKEND_URL}/api/v1/bars/${barId}/events`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      setEvents(data || []);
+      setAllEvents(data || []);
+    } catch (err) {
+      console.error("Error al cargar eventos:", err);
     }
   };
 
@@ -139,7 +164,6 @@ export default function FindMatesScreen() {
               placeholder="Buscar bar..."
               onChangeText={(text) => {
                 if (text === '') {
-                  // Restaurar todos los bares cuando el campo de búsqueda esté vacío
                   setBars(allBars);
                 } else {
                   const filteredBars = allBars.filter((bar) =>
@@ -149,14 +173,56 @@ export default function FindMatesScreen() {
                 }
               }}
             />
-            <ScrollView>
+            <ScrollView style={styles.barListContainer}>
               {bars.map((bar) => (
                 <TouchableOpacity
                   key={bar.id}
-                  style={styles.barOption}
+                  style={[
+                    styles.barOption,
+                    selectedBar && selectedBar.id === bar.id && styles.selectedOption,
+                  ]}
                   onPress={() => setSelectedBar(bar)}
                 >
-                  <Text style={styles.barName}>{bar.name}</Text>
+                  <Text style={[
+                    styles.barName,
+                    selectedBar && selectedBar.id === bar.id && styles.selectedText
+                  ]}>
+                    {bar.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <Text style={styles.modalTitle}>Seleccione un evento del bar</Text>
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Buscar evento..."
+              onChangeText={(text) => {
+                if (text === '') {
+                  setEvents(allEvents);
+                } else {
+                  const filteredEvents = allEvents.filter((event) =>
+                    event.name.toLowerCase().includes(text.toLowerCase())
+                  );
+                  setEvents(filteredEvents);
+                }
+              }}
+            />
+            <ScrollView style={styles.barListContainer}>
+              {events.map((event) => (
+                <TouchableOpacity
+                  key={event.id}
+                  style={[
+                    styles.barOption,
+                    selectedEvent && selectedEvent.id === event.id && styles.selectedOption,
+                  ]}
+                  onPress={() => setSelectedEvent(event)}
+                >
+                  <Text style={[
+                    styles.barName,
+                    selectedEvent && selectedEvent.id === event.id && styles.selectedText
+                  ]}>
+                    {event.name}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -224,10 +290,9 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    padding: 20,
     backgroundColor: 'white',
+    padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 18,
@@ -235,20 +300,28 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   searchBar: {
-    width: '100%',
-    padding: 10,
     marginVertical: 10,
-    borderColor: '#ccc',
+    padding: 10,
+    borderColor: '#ddd',
     borderWidth: 1,
     borderRadius: 5,
   },
+  barListContainer: {
+    maxHeight: 200,
+  },
   barOption: {
-    paddingVertical: 10,
+    padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#ccc',
+  },
+  selectedOption: {
+    backgroundColor: '#e0e0e0',
   },
   barName: {
     fontSize: 16,
-    textAlign: 'center',
+  },
+  selectedText: {
+    fontWeight: 'bold',
+    color: '#007AFF',
   },
 });
