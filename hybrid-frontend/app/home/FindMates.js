@@ -3,6 +3,8 @@ import { View, Text, TextInput, Button, Alert, StyleSheet, ScrollView, Touchable
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { BACKEND_URL } from '@env';
+import { useUser } from '../context/UserContext';
+
 
 export default function FindMatesScreen() {
   const [handle, setHandle] = useState('');
@@ -16,6 +18,9 @@ export default function FindMatesScreen() {
   const [error, setError] = useState(null);
   const [isBarModalVisible, setBarModalVisible] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [friendshipsData, setFriendshipsData] = useState(null);
+
+  const { isAuthenticated } = useUser();
 
   useEffect(() => {
     fetchBars();
@@ -26,6 +31,29 @@ export default function FindMatesScreen() {
       fetchEvents(selectedBar.id);
     }
   }, [selectedBar]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUserFriends();
+    }
+  }, [isAuthenticated]);
+
+  const fetchUserFriends = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const userId = await AsyncStorage.getItem('userData');
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log("response from fetchUserFriends: ", data);
+      setFriendshipsData(data);
+    } catch (err) {
+      console.error("Error al cargar amigos:", err);
+    }
+  };
 
   const fetchBars = async () => {
     try {
@@ -62,6 +90,7 @@ export default function FindMatesScreen() {
   const handleSearch = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
+      const userId = await AsyncStorage.getItem('userData');
       if (!token) {
         setError('No se encontró el token de autenticación');
         return;
@@ -79,9 +108,15 @@ export default function FindMatesScreen() {
       }
 
       const data = await response.json();
-      const filteredUsers = data.users.filter((user) =>
-        user.handle.toLowerCase().includes(handle.toLowerCase())
+      const friendsIds = friendshipsData.map(friend => friend.friend_id);
+      console.log("lista de ids amigos: ", friendsIds);
+      const filteredUsers = data.users.filter(
+        (user) =>
+          user.handle.toLowerCase().includes(handle.toLowerCase()) &&
+          !friendsIds.includes(user.id) &&
+          user.id !== parseInt(userId)
       );
+      console.log("usuarios filtrados: ", filteredUsers);
       setSearchResults(filteredUsers);
     } catch (err) {
       setError('Ocurrió un error al buscar usuarios');
