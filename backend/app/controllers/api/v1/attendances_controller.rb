@@ -52,10 +52,17 @@ class API::V1::AttendancesController < ApplicationController
 
   def notify_friends(user, event)
     friends = user.friends.where.not(expo_push_token: nil)
+    message = "#{user.handle} is attending #{event.name}!"
+    data = { eventId: event.id, type: "attendance" }
 
     friends.each do |friend|
       begin
-        ExpoPushNotificationService.send_notification(friend.expo_push_token, "#{user.handle} is attending #{event.name}!", { eventId: event.id })
+        ExpoPushNotificationService.send_notification(
+          friend.expo_push_token, 
+          message, 
+          data, 
+          "New Event Attendance!"
+        )
       rescue => e
         puts "Error sending notification to #{friend.handle}: #{e.message}"
       end

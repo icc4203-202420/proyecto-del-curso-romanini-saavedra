@@ -5,7 +5,7 @@ require 'json'
 class ExpoPushNotificationService
   EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send'.freeze
 
-  def self.send_notification(token, message, data = {})
+  def self.send_notification(token, message, data = {}, title)
     return unless token
 
     uri = URI.parse(EXPO_PUSH_URL)
@@ -13,7 +13,7 @@ class ExpoPushNotificationService
     body = {
       to: token,
       sound: 'default',
-      title: 'New Event Attendance!',
+      title: title,
       body: message,
       data: data
     }.to_json

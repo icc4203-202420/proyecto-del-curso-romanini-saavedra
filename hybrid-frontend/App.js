@@ -109,10 +109,24 @@ export default function App() {
     });
     
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const eventId = response.notification.request.content.data.eventId;
-      console.log("EVENT ID DE NOTIFICACION:", eventId);
-      if (eventId && navigationRef.isReady()) {
-        navigationRef.navigate('EventDetails', {eventId});
+      const { data } = response.notification.request.content;
+
+      switch (data.type) {
+        case 'attendance':
+          const eventId = data.eventId;
+          console.log("EVENT ID DE NOTIFICACION:", eventId);
+          if (eventId && navigationRef.isReady()) {
+            navigationRef.navigate('EventDetails', { eventId });
+          }
+          break;
+        
+        case 'tagged_image':
+          const pictureId = data.pictureId;
+          console.log("NOTIFICACION DE TAGGED USERS");
+          break;
+
+        default: 
+          console.log("Unkown Notificaction Type:", data.type);
       }
     });
 
