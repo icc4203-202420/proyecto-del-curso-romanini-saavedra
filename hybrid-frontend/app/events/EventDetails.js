@@ -18,6 +18,7 @@ import Attendees from './Attendees';
 import ImageUploader from './ImageUploader';
 import CreateAttendance from './CreateAttendance';
 import EventPictureGallery from './EventPictureGallery';
+import VideoPlayer from './VideoPlayer';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 const barBackground = require('../../assets/images/FondoBar.jpg');
@@ -34,16 +35,17 @@ const renderTabBar = props => (
 const EventDetails = ({route}) => {
     const {event} = route.params;
 
-    console.log("EVENTO:", event);
+    // console.log("EVENTO:", event);
 
     const {bar} = route.params;
 
-    console.log("BAR:", bar);
+    // console.log("BAR:", bar);
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         {key: 'information', title: 'Information'},
         {key: 'photos', title: 'Photos'},
-        {key: 'people', title: 'People'}
+        {key: 'people', title: 'People'},
+        {key: 'video', title: 'Video'}
     ]);
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -127,7 +129,9 @@ const EventDetails = ({route}) => {
             onNewImage={handleNewImageUpload}
             />
         ),
-        people: () => <Attendees/>
+        people: () => <Attendees/>,
+        // video: () => <VideoPlayer eventId={event.id}/>
+        video: () => <Text>Estamos en Video</Text>
     });
 
     return (

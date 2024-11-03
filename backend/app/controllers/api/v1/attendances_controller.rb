@@ -2,6 +2,7 @@ class API::V1::AttendancesController < ApplicationController
   respond_to :json
   before_action :set_attendance, only: [:update, :destroy]
   before_action :verify_jwt_token, only: [:create, :update, :destroy]
+  before_action :set_url_options
 
   def index
     @attendances = Attendance.all
@@ -67,5 +68,9 @@ class API::V1::AttendancesController < ApplicationController
         puts "Error sending notification to #{friend.handle}: #{e.message}"
       end
     end
+  end
+
+  def set_url_options
+    ActiveStorage::Current.url_options = { host: request.host, port: request.port }
   end
 end

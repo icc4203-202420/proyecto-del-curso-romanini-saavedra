@@ -55,6 +55,26 @@ class API::V1::EventsController < ApplicationController
       render json: { message: 'Video generating in process'}
     end
 
+    def generate_summary
+      event = Event.find(params[:id])
+      GenerateEventVideoJob.perform_later(event.id)
+
+      render json: { message: "Video is generating. You will receive a notification when it's ready."}
+    end
+
+    def video
+      event = Event.find(params[:id])
+
+      if event.video.attached?
+        video_url = url_for(event.video)
+        render json: { video_url: video_url}
+      else
+        render json: { message: "Video is not available."}, status: :not_found
+      end
+    end
+
+    
+
     private
 
     def set_event

@@ -36,9 +36,9 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
       const storedToken = await AsyncStorage.getItem('token');
 		  const token = storedToken.replace(/"/g, '')
 
-      const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+      const response = await fetch(`${BACKEND_URL}/api/v1/users`, {
         headers: {
-          'Authorization': `Bearer ${storedToken}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
       const data = await response.json();
@@ -47,14 +47,9 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
         throw new Error(data.error || 'Error fetching friendships');
       }
 
-      setFriends(data); 
+      const allUsers = data.users.filter(user => parseInt(user.id) !== parseInt(userId));
 
-      const friendIds = data.map(friend => friend.friend_id);
-      const detailsPromises = friendIds.map(id => fetch(`${BACKEND_URL}/api/v1/users/${id}`)); 
-      const detailsResponses = await Promise.all(detailsPromises);
-      const detailsData = await Promise.all(detailsResponses.map(res => res.json()));
-
-      setFriendDetails(detailsData);
+      setFriends(allUsers); 
 
     } catch (error) {
       console.error("Error fetching friendships:", error);
@@ -144,17 +139,41 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
     );
   };
 
+  // const handleGenerateSummary = async () => {
+  //   setIsGenerating(true);
+  //   try {
+  //     await fetch(`${BACKEND_URL}/events/${eventId}/generate_summary`, { method: 'POST' });
+  //     Alert.alert('Resumen en proceso', 'Se te notificará cuando el video esté listo.');
+  //   } catch (error) {
+  //     console.error(error);
+  //     Alert.alert('Error', 'No se pudo iniciar la generación del video.');
+  //     setIsGenerating(false);
+  //   }
+  // };
+
   const handleGenerateSummary = async () => {
-    setIsGenerating(true);
     try {
-      await fetch(`${BACKEND_URL}/events/${eventId}/generate_summary`, { method: 'POST' });
-      Alert.alert('Resumen en proceso', 'Se te notificará cuando el video esté listo.');
+      const response = await fetch(`${BACKEND_URL}/api/v1/events/${eventId}/generate_summary`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate video.");
+      }
+
+      const data = await response.json();
+      console.log("DATA DE VIDEO:", data)
+
+      Alert.alert("Video Summary Generation", data.message);
     } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'No se pudo iniciar la generación del video.');
-      setIsGenerating(false);
+      console.error("Error generating video:", error);
     }
-  };
+    
+  }
+
+  // const handleGenerateSummary = () => {
+  //   console.log("SUMMARY BUTTON")
+  // }
 
   return (
     <View>
@@ -186,24 +205,23 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
               <Text style={styles.tagTitle}>Tag Friends:</Text>
               {friends && friends.length > 0 ? ( 
                 friends.map((friend, index) => {
-                  const friendDetail = friendDetails.find(detail => detail.user.id === friend.friend_id);
                   return (
                     <Pressable
-                      key={friend.friend_id}
-                      onPress={() => handleTagFriend(friend.friend_id)}
+                      key={friend.id}
+                      onPress={() => handleTagFriend(friend.id)}
                       style={[
                         styles.friendButton,
-                        taggedFriends.includes(friend.friend_id) && styles.selectedFriendButton
+                        taggedFriends.includes(friend.id) && styles.selectedFriendButton
                       ]}
                     >
                       <Text style={styles.friendButtonText}>
-                        {friendDetail ? friendDetail.user.handle : 'Loading...'} {taggedFriends.includes(friend.friend_id) ? "(Tagged)" : ""}
+                        {friend ? friend.handle : 'Loading...'} {taggedFriends.includes(friend.id) ? "(Tagged)" : ""}
                       </Text>
                     </Pressable>
                   )
                 })
               ) : (
-                <Text>No friends available to tag.</Text>
+                <Text>No users available to tag.</Text>
               )}
             </ScrollView>
           )}
