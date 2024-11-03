@@ -10,8 +10,11 @@ class API::V1::AttendancesController < ApplicationController
 
   def create
       @attendance = Attendance.new(attendance_params)
-  
+      user = User.find(@attendance.user_id)
+      event = Event.find(@attendance.event_id)
+
       if @attendance.save
+        notify_friends(user, event)
         render json: { attendance: @attendance, message: 'Attendance created successfully.' }, status: :created
       else
         render json: @attendance.errors, status: :unprocessable_entity
@@ -45,5 +48,17 @@ class API::V1::AttendancesController < ApplicationController
   def verify_jwt_token
       authenticate_user!
       head :unauthorized unless current_user
+  end
+
+  def notify_friends(user, event)
+    friends = user.friends.where.not(expo_push_token: nil)
+
+    friends.each do |friend|
+      begin
+        ExpoPushNotificationService.send_notification(friend.expo_push_token, "#{user.handle} is attending #{event.name}!", { eventId: event.id })
+      rescue => e
+        puts "Error sending notification to #{friend.handle}: #{e.message}"
+      end
+    end
   end
 end

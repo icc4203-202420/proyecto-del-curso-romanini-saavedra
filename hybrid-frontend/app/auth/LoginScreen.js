@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../context/UserContext';
 import Toast from 'react-native-toast-message';
 import { BACKEND_URL } from '@env';
+import * as Notifications from 'expo-notifications';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -53,6 +54,8 @@ const LoginScreen = ({ navigation }) => {
         // Actualiza el contexto de usuario como autenticado
         login();  // Cambia el estado global a "logueado"
         console.log("Marcado como loggeado");
+
+        await storeExpoToken(storedToken, storedUserData);
         
         // Navega a la pantalla de perfil
         navigation.navigate('Profile');
@@ -71,6 +74,31 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  const storeExpoToken = async (userToken, userId) => {
+    const expoToken = (await Notifications.getExpoPushTokenAsync()).data;
+    const token = userToken.replace(/"/g, '')
+    // console.log("GUARDANDO EXPO TOKEN:", expoToken)
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/v1/users/update_token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ expo_push_token: expoToken }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error updating Expo token');
+      }
+
+      const data = await response.json();
+      // console.log("TOKEN ACTUALIZADO:", data);
+    } catch (error) {
+      console.error('Error storing Expo token:', error);
+    }
+  } 
 
   return (
     <View style={styles.container}>

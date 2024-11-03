@@ -37,6 +37,8 @@ const EventDetails = ({route}) => {
     console.log("EVENTO:", event);
 
     const {bar} = route.params;
+
+    console.log("BAR:", bar);
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         {key: 'information', title: 'Information'},

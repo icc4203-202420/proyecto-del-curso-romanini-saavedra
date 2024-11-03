@@ -37,6 +37,17 @@ class API::V1::UsersController < ApplicationController
     end
   end
 
+  def update_token
+    @user = current_user
+    # puts "USUARIO ACTUAL: #{current_user}"
+
+    if @user.update(expo_push_token: params[:expo_push_token])
+      render json: { message: 'Token updated successfully '}, status: :ok
+    else
+      render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
   def index_friendships
     friendships = @user.friendships.includes(:friend)
 

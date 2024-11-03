@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,9 +15,13 @@ import SignUpScreen from './app/auth/SignUpScreen';
 import Events from './app/events';
 import EventDetails from './app/events/EventDetails';
 import { useUser, UserProvider } from './app/context/UserContext';
+import { NotificationsProvider } from './app/context/NotificationsContext';
+import * as Notifications from 'expo-notifications';
+import { createNavigationContainerRef } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const navigationRef = createNavigationContainerRef();
 
 function MainTabs() {
   return (
@@ -83,12 +88,46 @@ function MainApp() {
 }
 
 export default function App() {
+  // const testNotification = async () => {
+  //   await Notifications.scheduleNotificationAsync({
+  //     content: {
+  //       title: 'Nuevo Evento',
+  //       body: '¡No te pierdas nuestro próximo evento!',
+  //       data: { eventId: '123' }, 
+  //     },
+  //     trigger: { seconds: 5 }, 
+  //   });
+  // };
+
+  useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+    
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const eventId = response.notification.request.content.data.eventId;
+      console.log("EVENT ID DE NOTIFICACION:", eventId);
+      if (eventId && navigationRef.isReady()) {
+        navigationRef.navigate('EventDetails', {eventId});
+      }
+    });
+
+    // testNotification();
+    return () => subscription.remove();
+  }, []);
+
   return (
     <UserProvider>
-      <NavigationContainer>
-        <MainApp />
-        <Toast ref={(ref) => Toast.setRef(ref)} />
-      </NavigationContainer>
+      <NotificationsProvider>
+        <NavigationContainer ref={navigationRef}>
+          <MainApp />
+          <Toast ref={(ref) => Toast.setRef(ref)} />
+        </NavigationContainer>
+      </NotificationsProvider>
     </UserProvider>
   );
 }
