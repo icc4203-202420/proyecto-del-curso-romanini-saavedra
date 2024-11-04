@@ -6,10 +6,11 @@ import {
     StyleSheet, 
     FlatList,
     Pressable,
-    Alert
+    Alert,
+    ActivityIndicator
 } from 'react-native';
 import { BACKEND_URL } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 import ImageUploader from './ImageUploader';
 
@@ -18,6 +19,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     const [usernames, setUsernames] = useState({});
     const [taggedUsers, setTaggedUsers] = useState([]);
     const [friendships, setFriendships] = useState([]);
+    const [isLoadingImage, setIsLoadingImage] = useState(true);
     
     const handleNewImage = (response) => {
         const newImage = response.event_picture;
@@ -70,8 +72,8 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     }
 
     const getFriendships = async () => {
-        const currentUserId = await AsyncStorage.getItem('userData');
-        const token = await AsyncStorage.getItem('token');
+        const currentUserId = await SecureStore.getItemAsync('userData');
+        const token = await SecureStore.getItemAsync('token');
         try {
             const response = await fetch(`${BACKEND_URL}/api/v1/users/${currentUserId}/friendships`, {
                 headers: {
@@ -87,13 +89,13 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     }
 
     useEffect(() => {
-        getFriendships();
+        getFriendships().then(() => console.log("Friendships:", friendships));
     }, [])
 
     const handleAddUser = async (friendId) => {
         try {
-          const token = await AsyncStorage.getItem('token');
-          const userId = await AsyncStorage.getItem('userData');
+          const token = await SecureStore.getItemAsync('token');
+          const userId = await SecureStore.getItemAsync('userData');
     
           const response = await fetch(`${BACKEND_URL}/api/v1/friendships`, {
             method: 'POST',
@@ -112,7 +114,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     
           const result = await response.json();
 
-          setFriendships(prev => [...prev, result.friendship]);
+          setFriendships((prev) => Array.isArray(prev) ? [...prev, result.friendship] : [result.friendship]);
 
           Alert.alert('Success', 'User added successfully!');
         } catch (err) {
@@ -129,28 +131,34 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
 
         return (
             <View style={styles.imageContainer}>
-                <Text>Uploaded by: {usernames[item.user_id] || 'Loading...'}</Text>
+                <View style={styles.header}>
+                    <Text style={styles.uploaderText}>Uploaded by: {usernames[item.user_id] || 'Loading...'}</Text>
+
+                </View>
+
+                {isLoadingImage && <ActivityIndicator size='small' color='#888' style={styles.loadingIndicator}/>}
                 <Image
                     // source={{uri: item.image_url}}
                     source={{ uri: `${item.image_url}?t=${new Date().getTime()}`}}
                     style={styles.image}
                     resizeMode='contain'
+                    onLoadEnd={() => setIsLoadingImage(false)}
                 />
                 <Text style={styles.description}>{item.description}</Text>
                 {taggedUsernames.length > 0 && (
                     <View style={styles.taggedContainer}>
-                        <Text>Tagged Users:</Text>
+                        <Text style={styles.taggedTitle}>Tagged Users:</Text>
                         {taggedUsernames.map(({id, username}) => {
-                            const isFriend = friendships.some(friendship => 
+                            const isFriend = (id) => Array.isArray(friendships) && friendships.some(friendship => 
                                 friendship.friend_id === id
                             );
 
                             return (
                                 <View key={id} style={styles.tagContainer}>
-                                    <Text>{username}</Text>
-                                    {!isFriend && (
-                                        <Pressable onPress={() => handleAddUser(id)}>
-                                            <Text style={styles.tagButton}>Add</Text>
+                                    <Text style={[styles.taggedText, isFriend(id) && styles.friendText]}>{username}</Text>
+                                    {!isFriend(id) && (
+                                        <Pressable onPress={() => handleAddUser(id)} style={styles.addButton}>
+                                            <Text style={styles.addButtonText}>Add</Text>
                                         </Pressable>
                                     )}
 
@@ -193,11 +201,29 @@ const styles = StyleSheet.create({
       padding: 10,
     },
     imageContainer: {
+      backgroundColor: '#fff',
+      borderRadius: 10,
       marginBottom: 15,
+      padding: 10,
       borderWidth: 1,
       borderColor: '#ddd',
-      borderRadius: 8,
-      overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2},
+      shadowOpacity: 0.2,
+      shadowRadius: 5
+    },
+    header: {
+        marginBottom: 5,
+    },
+    uploaderText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    loadingIndicator: {
+        position: 'absolute',
+        alignSelf: 'center',
+        top: 100
     },
     image: {
       width: '100%',
@@ -212,10 +238,36 @@ const styles = StyleSheet.create({
     taggedContainer: {
         marginTop: 10,
     },
+    taggedTitle: {
+        fontSize: 14, 
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 5
+    },
     tagContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 5,
+        marginVertical: 3
+    },
+    taggedText: {
+        fontSize: 14,
+        color: '#444'
+    },
+    friendText: {
+        fontWeight: 'bold',
+        color: '#2a9d8f'
+    },
+    addButton: {
+        marginLeft: 10,
+        paddingVertical: 3,
+        paddingHorizontal: 8,
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+    },
+    addButtonText: {
+        color: '#fff',
+        fontSize: 12,
     },
     tagButton: {
         marginLeft: 10,

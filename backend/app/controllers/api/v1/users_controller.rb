@@ -2,7 +2,7 @@ class API::V1::UsersController < ApplicationController
   include Authenticable
 
   respond_to :json
-  before_action :set_user, only: [:show, :update]  
+  before_action :set_user, only: [:show, :update, :update_token]  
   before_action :set_user_friendship, only: [:index_friendships, :create_friendship]
   before_action :verify_jwt_token, only: [:index_friendships, :create_friendship]
 
@@ -38,7 +38,7 @@ class API::V1::UsersController < ApplicationController
   end
 
   def update_token
-    @user = current_user
+    # @user = current_user
     # puts "USUARIO ACTUAL: #{current_user}"
 
     if @user.update(expo_push_token: params[:expo_push_token])

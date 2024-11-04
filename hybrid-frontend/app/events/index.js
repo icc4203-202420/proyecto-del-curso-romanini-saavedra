@@ -12,7 +12,6 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { BACKEND_URL } from '@env';
 
-
 const Events = ({route}) => {
   const {bar} = route.params;
   const [eventsData, setEventsData] = useState([]);
@@ -37,14 +36,14 @@ const Events = ({route}) => {
     const date = new Date(dateString);
 
     const options = {
-      day: '2-digit',
+      day: 'numeric',
       month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     };
     
-    return date.toLocaleDateString('es-ES', options);
+    return date.toLocaleDateString('es-GB', options);
   }
 
   const renderEvent = ({item}) => {
@@ -54,11 +53,9 @@ const Events = ({route}) => {
       >
         <View style={styles.cardContainer}>
           <View style={styles.card}>
-            <Text>{item.name}</Text>
-            <Text>{item.description}</Text>
-            <Text>{formatDate(item.start_date)}</Text>
-            <Text>{formatDate(item.end_date)}</Text>
-
+            <Text style={{fontWeight: 'bold', fontSize: 24}}>{item.name}</Text>
+            <Text>Start: {formatDate(item.start_date)}</Text>
+            <Text>End: {formatDate(item.end_date)}</Text>
           </View>
         </View>
       </TouchableOpacity>

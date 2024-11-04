@@ -79,7 +79,7 @@ const LoginScreen = ({ navigation }) => {
     const token = userToken.replace(/"/g, '');
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/users/update_token`, {
+      const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/update_token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

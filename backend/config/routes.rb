@@ -31,8 +31,8 @@ Rails.application.routes.draw do
         resources :reviews, only: [:create, :index, :show, :update, :destroy]
       end
       resources :users do
-        collection do 
-          post 'update_token', to: 'users#update_token'
+        member do 
+          post 'update_token'
         end
         # resources :reviews, only: [:index, :update, :destroy]
         # post 'reviews', to: 'reviews#create'
