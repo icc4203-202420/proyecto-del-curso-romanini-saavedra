@@ -4,9 +4,12 @@ import {
     Text, 
     Image, 
     StyleSheet, 
-    FlatList
+    FlatList,
+    Pressable,
+    Alert
 } from 'react-native';
 import { BACKEND_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import ImageUploader from './ImageUploader';
 
@@ -14,6 +17,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     const [images, setImages] = useState(initialImages);
     const [usernames, setUsernames] = useState({});
     const [taggedUsers, setTaggedUsers] = useState([]);
+    const [friendships, setFriendships] = useState([]);
     
     const handleNewImage = (response) => {
         const newImage = response.event_picture;
@@ -65,9 +69,64 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
         } 
     }
 
+    const getFriendships = async () => {
+        const currentUserId = await AsyncStorage.getItem('userData');
+        const token = await AsyncStorage.getItem('token');
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/v1/users/${currentUserId}/friendships`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            const data = await response.json()
+            
+            setFriendships(data)
+        } catch (error) {
+            console.error("Error fetching friendships:", error)
+        }
+    }
+
+    useEffect(() => {
+        getFriendships();
+    }, [])
+
+    const handleAddUser = async (friendId) => {
+        try {
+          const token = await AsyncStorage.getItem('token');
+          const userId = await AsyncStorage.getItem('userData');
+    
+          const response = await fetch(`${BACKEND_URL}/api/v1/friendships`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              friendship: {
+                user_id: userId,
+                friend_id: friendId,
+                bar_id: event.bar_id,
+              },
+            }),
+          });
+    
+          const result = await response.json();
+
+          setFriendships(prev => [...prev, result.friendship]);
+
+          Alert.alert('Success', 'User added successfully!');
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
     const renderImage = ({item}) => {
         const tagsForImage = taggedUsers.filter(tag => tag.picture_id === item.id)
-        const taggedUsernames = tagsForImage.map(tag => usernames[tag.tagged_user_id])
+        const taggedUsernames = tagsForImage.map(tag => ({
+            id: tag.tagged_user_id,
+            username: usernames[tag.tagged_user_id]
+        }));
+
         return (
             <View style={styles.imageContainer}>
                 <Text>Uploaded by: {usernames[item.user_id] || 'Loading...'}</Text>
@@ -79,7 +138,27 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
                 />
                 <Text style={styles.description}>{item.description}</Text>
                 {taggedUsernames.length > 0 && (
-                    <Text>Tagged: {taggedUsernames.join(', ')}</Text>
+                    <View style={styles.taggedContainer}>
+                        <Text>Tagged Users:</Text>
+                        {taggedUsernames.map(({id, username}) => {
+                            const isFriend = friendships.some(friendship => 
+                                friendship.friend_id === id
+                            );
+
+                            return (
+                                <View key={id} style={styles.tagContainer}>
+                                    <Text>{username}</Text>
+                                    {!isFriend && (
+                                        <Pressable onPress={() => handleAddUser(id)}>
+                                            <Text style={styles.tagButton}>Add</Text>
+                                        </Pressable>
+                                    )}
+
+                                </View>
+                            )
+                        })}
+
+                    </View>
                 )}
             </View>
         )
@@ -130,6 +209,18 @@ const styles = StyleSheet.create({
       fontSize: 16,
       color: '#333',
     },
+    taggedContainer: {
+        marginTop: 10,
+    },
+    tagContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 5,
+    },
+    tagButton: {
+        marginLeft: 10,
+        color: 'blue'
+    }
   });
 
 export default EventPictureGallery;

@@ -9,7 +9,6 @@ class API::V1::EventsController < ApplicationController
     def index
       bar = Bar.find(params[:bar_id])
       events = bar.events
-      puts "EVENTOS BACKEND: #{events.inspect}"
 
       events_with_video_urls = events.map do |event|
         event_data = event.as_json
@@ -21,18 +20,6 @@ class API::V1::EventsController < ApplicationController
       end
 
       render json: events_with_video_urls, status: :ok
-
-      # events.each do |event|
-      #   puts "EVENTO: #{event}"
-
-      #   if event.video.attached?
-      #     puts "URL VIDEO: #{url_for(event.video)}"
-      #   else
-      #     puts "No hay video"
-      #   end
-      # end
-      
-      # render json: events, status: :ok
     end
 
     def show

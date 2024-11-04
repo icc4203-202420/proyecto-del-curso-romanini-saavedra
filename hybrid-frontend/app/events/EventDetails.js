@@ -4,23 +4,17 @@ import {
     Text,
     StyleSheet,
     Image,
-    Button,
     Alert,
     Pressable
 } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { BACKEND_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Toast from 'react-native-toast-message';
 import Attendees from './Attendees';
-import ImageUploader from './ImageUploader';
 import CreateAttendance from './CreateAttendance';
 import EventPictureGallery from './EventPictureGallery';
-import VideoPlayer from './VideoPlayer';
 
-const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 const barBackground = require('../../assets/images/FondoBar.jpg');
 
 const renderTabBar = props => (
@@ -37,7 +31,6 @@ const EventDetails = ({route}) => {
     const {bar} = route.params;
     const {fromNotification} = route.params;
 
-  
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         {key: 'information', title: 'Information'},
