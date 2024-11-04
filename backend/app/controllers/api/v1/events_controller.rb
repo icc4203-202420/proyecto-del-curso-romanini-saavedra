@@ -9,17 +9,45 @@ class API::V1::EventsController < ApplicationController
     def index
       bar = Bar.find(params[:bar_id])
       events = bar.events
-      render json: events, status: :ok
+      puts "EVENTOS BACKEND: #{events.inspect}"
+
+      events_with_video_urls = events.map do |event|
+        event_data = event.as_json
+        if event.video.attached?
+          event_data.merge(video_url: url_for(event.video))
+        else
+          event_data.merge(video_url: nil)
+        end
+      end
+
+      render json: events_with_video_urls, status: :ok
+
+      # events.each do |event|
+      #   puts "EVENTO: #{event}"
+
+      #   if event.video.attached?
+      #     puts "URL VIDEO: #{url_for(event.video)}"
+      #   else
+      #     puts "No hay video"
+      #   end
+      # end
+      
+      # render json: events, status: :ok
     end
 
     def show
       if @event.flyers.attached?
         render json: @event.as_json.merge({ 
           images: @event.flyers.map { |flyer| url_for(flyer) },
-          thumbnails: @event.thumbnails.map { |thumb| url_for(thumb) }
+          thumbnails: @event.thumbnails.map { |thumb| url_for(thumb) },
+          video_url: @event.video.attached? ? url_for(@event.video) : nil
         }), status: :ok
-      else
-        render json: { event: @event.as_json }, status: :ok
+      elsif @event.video.attached?
+        render json: { 
+          event: @event.as_json.merge({
+            video_url: url_for(@event.video)
+          }) 
+        }, status: :ok
       end
     end
 
@@ -54,6 +82,26 @@ class API::V1::EventsController < ApplicationController
       GenerateEventSummaryJob.perform_later(event.id)
       render json: { message: 'Video generating in process'}
     end
+
+    def generate_summary
+      event = Event.find(params[:id])
+      GenerateEventVideoJob.perform_later(event.id)
+
+      render json: { message: "Video is generating. You will receive a notification when it's ready."}
+    end
+
+    def video
+      event = Event.find(params[:id])
+
+      if event.video.attached?
+        video_url = url_for(event.video)
+        render json: { video_url: video_url}
+      else
+        render json: { message: "Video is not available."}, status: :not_found
+      end
+    end
+
+
 
     private
 

@@ -5,6 +5,7 @@ class Event < ApplicationRecord
 
   has_many_attached :flyers
   has_many :event_pictures, dependent: :destroy
+  has_one_attached :video
 
   validates :name, presence: true
   validates :flyers, content_type: { in: ['image/png', 'image/jpg', 'image/jpeg'],

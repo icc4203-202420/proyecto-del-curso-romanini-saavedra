@@ -15,6 +15,7 @@ import LoginScreen from './app/auth/LoginScreen';
 import SignUpScreen from './app/auth/SignUpScreen';
 import Events from './app/events';
 import EventDetails from './app/events/EventDetails';
+import VideoPlayer from './app/events/VideoPlayer';
 import { useUser, UserProvider } from './app/context/UserContext';
 import { NotificationsProvider } from './app/context/NotificationsContext';
 import * as Notifications from 'expo-notifications';
@@ -84,28 +85,18 @@ function MainApp() {
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="EventDetails" component={EventDetails} />
       <Stack.Screen name="FindMates" component={FindMatesScreen} />
+      <Stack.Screen name="VideoPlayer" component={VideoPlayer} />
 
     </Stack.Navigator>
   );
 }
 
 export default function App() {
-  // const testNotification = async () => {
-  //   await Notifications.scheduleNotificationAsync({
-  //     content: {
-  //       title: 'Nuevo Evento',
-  //       body: '¡No te pierdas nuestro próximo evento!',
-  //       data: { eventId: '123' }, 
-  //     },
-  //     trigger: { seconds: 5 }, 
-  //   });
-  // };
-
   useEffect(() => {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: true,
+        shouldPlaySound: false,
         shouldSetBadge: true,
       }),
     });
@@ -113,26 +104,35 @@ export default function App() {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const { data } = response.notification.request.content;
 
-      switch (data.type) {
-        case 'attendance':
-          const eventId = data.eventId;
-          console.log("EVENT ID DE NOTIFICACION:", eventId);
-          if (eventId && navigationRef.isReady()) {
-            navigationRef.navigate('EventDetails', { eventId });
-          }
-          break;
-        
-        case 'tagged_image':
-          const pictureId = data.pictureId;
-          console.log("NOTIFICACION DE TAGGED USERS");
-          break;
-
-        default: 
-          console.log("Unkown Notificaction Type:", data.type);
+      if (navigationRef.isReady()) {
+        switch (data.type) {
+          case 'attendance':
+            const eventId = data.eventId;
+            console.log("EVENT ID DE NOTIFICACION:", eventId);
+            if (eventId) {
+              navigationRef.navigate('EventDetails', { eventId });
+            }
+            break;
+          
+          case 'tagged_image':
+            const pictureId = data.pictureId;
+            console.log("NOTIFICACION DE TAGGED USERS");
+            break;
+  
+          case 'video_generated':
+            const videoEvent = data.event;
+            if (videoEvent) {
+              navigationRef.navigate('VideoPlayer', { event: videoEvent });
+            }
+            break;
+  
+          default: 
+            console.log("Unkown Notificaction Type:", data.type);
+        }
       }
+
     });
 
-    // testNotification();
     return () => subscription.remove();
   }, []);
 

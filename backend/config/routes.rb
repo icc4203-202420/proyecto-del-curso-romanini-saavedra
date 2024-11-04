@@ -22,7 +22,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       resources :bars do
-        resources :events, only: [:index, :update, :destroy] 
+        resources :events, only: [:index, :update, :destroy, :generate_summary, :video] 
       end
 
       resources :event_pictures, only: [:create, :index]
@@ -42,7 +42,12 @@ Rails.application.routes.draw do
 
       resources :tag_users, only: [:index, :create, :show, :destroy]
       resources :attendances, only: [:index, :show, :create, :destroy]
-      resources :events, only: [:show, :create, :update, :destroy]
+      resources :events, only: [:show, :create, :update, :destroy] do 
+        member do 
+          post :generate_summary
+          get :video
+        end
+      end
       # resources :reviews, only: [:show, :create, :update, :destroy]
       resources :brands, only: [:index, :show]
       resources :addresses, only: [:index, :show]

@@ -2,6 +2,7 @@ class API::V1::AttendancesController < ApplicationController
   respond_to :json
   before_action :set_attendance, only: [:update, :destroy]
   before_action :verify_jwt_token, only: [:create, :update, :destroy]
+  before_action :set_url_options
 
   def index
     @attendances = Attendance.all
@@ -52,7 +53,8 @@ class API::V1::AttendancesController < ApplicationController
 
   def notify_friends(user, event)
     friends = user.friends.where.not(expo_push_token: nil)
-    message = "#{user.handle} is attending #{event.name}!"
+    bar = Bar.where(id: event.bar_id)
+    message = "#{user.handle} is attending #{event.name} at #{bar.name}!"
     data = { eventId: event.id, type: "attendance" }
 
     friends.each do |friend|
@@ -67,5 +69,9 @@ class API::V1::AttendancesController < ApplicationController
         puts "Error sending notification to #{friend.handle}: #{e.message}"
       end
     end
+  end
+
+  def set_url_options
+    ActiveStorage::Current.url_options = { host: request.host, port: request.port }
   end
 end
