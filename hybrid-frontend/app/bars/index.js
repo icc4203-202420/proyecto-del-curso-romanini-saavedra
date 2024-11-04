@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 
 const Bars = () => {
@@ -22,17 +22,6 @@ const Bars = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   const [userData, setUserData] = useState(null);
-
-
-  // const getUserData = async () => {
-  //   try {
-  //     const data = await AsyncStorage.getItem('userData');
-  //     console.log("USER DATA EN BEER INDEX:", data) 
-  //     setUserData(data);
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }
 
   const loadBars = async () => {
     if (loading) return;

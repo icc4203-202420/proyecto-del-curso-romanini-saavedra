@@ -12,7 +12,7 @@ import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { BACKEND_URL } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import Toast from 'react-native-toast-message';
 import Attendees from './Attendees';
 import ImageUploader from './ImageUploader';
@@ -53,7 +53,7 @@ const EventDetails = ({route}) => {
 
     const getUserData = async () => {
       try {
-        const data = await AsyncStorage.getItem('userData');
+        const data = await SecureStore.getItemAsync('userData');
         setUserData(data);
       } catch (error) {
         console.error(error)

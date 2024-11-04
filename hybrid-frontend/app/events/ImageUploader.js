@@ -15,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 
 import { BACKEND_URL } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,7 +33,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
 
   const fetchFriendships = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem('token');
+      const storedToken = await SecureStore.getItemAsync('token');
 		  const token = storedToken.replace(/"/g, '')
 
       const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/friendships`, {

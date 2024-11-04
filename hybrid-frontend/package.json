@@ -28,6 +28,7 @@
     "expo-notifications": "~0.28.19",
     "expo-permissions": "^14.4.0",
     "expo-router": "^3.5.23",
+    "expo-secure-store": "^13.0.2",
     "expo-status-bar": "~1.12.1",
     "ffmpeg-kit-react-native": "^6.0.2",
     "formik": "^2.4.6",

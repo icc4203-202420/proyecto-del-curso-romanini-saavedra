@@ -7,13 +7,13 @@ import {
     Pressable,
     Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 import Toast from 'react-native-toast-message';
 
 const CreateAttendance = ({ userId, eventId, modalVisible, setModalVisible, onAttendanceCreated }) => {
     const handleSubmitAttendance = async () => {
-        const storedToken = await AsyncStorage.getItem('token');
+        const storedToken = await SecureStore.getItemAsync('token');
         const token = storedToken.replace(/"/g, '');
 
         const body = {

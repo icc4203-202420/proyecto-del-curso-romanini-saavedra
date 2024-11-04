@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 
 const UserContext = createContext();
@@ -10,8 +10,8 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const token = await AsyncStorage.getItem('token');
-      const storedUserData = await AsyncStorage.getItem('userData');
+      const token = await SecureStore.getItemAsync('token');
+      const storedUserData = await SecureStore.getItemAsync('userData');
       setIsAuthenticated(!!token);
       if (storedUserData) {
         setUserData(JSON.parse(storedUserData));
@@ -27,9 +27,10 @@ export const UserProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const userData = await AsyncStorage.getItem('userData');
+      const token = await SecureStore.getItemAsync('token');
+      const storedUserData = await SecureStore.getItemAsync('userData');
       console.log("Token almacenado:", token);
+
       const response = await fetch(`${BACKEND_URL}/api/v1/logout`, {
         method: 'DELETE',
         headers: {
@@ -39,14 +40,14 @@ export const UserProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        await AsyncStorage.removeItem('token');
-        await AsyncStorage.removeItem('userData');
+        await SecureStore.deleteItemAsync('token');
+        await SecureStore.deleteItemAsync('userData');
         setIsAuthenticated(false);
         console.log('Logout successful');
         console.log('response from back', response);
       } else {
         console.error('Logout failed');
-        console.error(response)
+        console.error(response);
       }
     } catch (error) {
       console.error('Network error during logout:', error);

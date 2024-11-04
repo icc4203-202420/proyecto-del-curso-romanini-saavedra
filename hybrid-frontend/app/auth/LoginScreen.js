@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { useUser } from '../context/UserContext';
 import Toast from 'react-native-toast-message';
 import { BACKEND_URL } from '@env';
@@ -11,7 +11,7 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { login } = useUser();  // Obtiene la función login desde el contexto
+  const { login } = useUser();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -38,21 +38,20 @@ const LoginScreen = ({ navigation }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Almacena el token JWT en AsyncStorage
-        console.log("Data response:",data);
-        console.log("Token:",data.status.data.token);
+        // Almacena el token y userData en SecureStore
+        console.log("Data response:", data);
+        console.log("Token:", data.status.data.token);
 
-        await AsyncStorage.setItem('token', data.status.data.token);
-        // Alert.alert('Success', 'Logged in successfully');
-        const storedToken = await AsyncStorage.getItem('token');
+        await SecureStore.setItemAsync('token', data.status.data.token);
+        await SecureStore.setItemAsync('userData', JSON.stringify(data.status.data.user.id));
+
+        const storedToken = await SecureStore.getItemAsync('token');
+        const storedUserData = await SecureStore.getItemAsync('userData');
         console.log("Token almacenado:", storedToken);
-
-        AsyncStorage.setItem('userData', JSON.stringify(data.status.data.user.id))
-        const storedUserData = await AsyncStorage.getItem('userData')
         console.log("USER DATA:", storedUserData);
 
         // Actualiza el contexto de usuario como autenticado
-        login();  // Cambia el estado global a "logueado"
+        login();
         console.log("Marcado como loggeado");
 
         await storeExpoToken(storedToken, storedUserData);
@@ -77,8 +76,8 @@ const LoginScreen = ({ navigation }) => {
 
   const storeExpoToken = async (userToken, userId) => {
     const expoToken = (await Notifications.getExpoPushTokenAsync()).data;
-    const token = userToken.replace(/"/g, '')
-    // console.log("GUARDANDO EXPO TOKEN:", expoToken)
+    const token = userToken.replace(/"/g, '');
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/v1/users/update_token`, {
         method: 'POST',
@@ -94,11 +93,10 @@ const LoginScreen = ({ navigation }) => {
       }
 
       const data = await response.json();
-      // console.log("TOKEN ACTUALIZADO:", data);
     } catch (error) {
       console.error('Error storing Expo token:', error);
     }
-  } 
+  };
 
   return (
     <View style={styles.container}>
@@ -145,6 +143,7 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+
 
 /* 
 Escribir este comando en consola de windows en modo de administrador:
