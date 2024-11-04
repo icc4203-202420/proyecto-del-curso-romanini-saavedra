@@ -53,9 +53,9 @@ class API::V1::AttendancesController < ApplicationController
 
   def notify_friends(user, event)
     friends = user.friends.where.not(expo_push_token: nil)
-    bar = Bar.where(id: event.bar_id)
+    bar = Bar.where(id: event.bar_id).first
     message = "#{user.handle} is attending #{event.name} at #{bar.name}!"
-    data = { eventId: event.id, type: "attendance" }
+    data = { event: event, bar: bar, type: "attendance" }
 
     friends.each do |friend|
       begin

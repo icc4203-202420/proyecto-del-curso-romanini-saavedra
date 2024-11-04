@@ -4,7 +4,9 @@ class API::V1::TagUsersController < ApplicationController
 
   def index
     @tag_users = TagUser.all
-    render json: { tag_users: @tag_users}, status: :ok
+    render json: { 
+      tag_users: @tag_users.as_json(methods: :event_id)
+    }, status: :ok
   end
 
   def show
@@ -14,8 +16,15 @@ class API::V1::TagUsersController < ApplicationController
   def create
     ActiveRecord::Base.transaction do
       tag_users_params[:tag_users].each do |tag_user|
-        puts "TAGGED USERS EN BACKEND: #{tag_user}"
-        notify_tagged_users(tag_user)
+        picture = EventPicture.find(tag_user[:picture_id])
+        event_id = picture.event_id
+
+        tag_user_with_event = tag_user.merge(event_id: event_id)
+
+
+
+        puts "TAGGED USERS EN BACKEND: #{tag_user_with_event}"
+        notify_tagged_users(tag_user_with_event)
         tag_user_record = TagUser.new(
           tagged_user_id: tag_user[:tagged_user_id],
           user_id: tag_user[:user_id],
@@ -54,11 +63,16 @@ class API::V1::TagUsersController < ApplicationController
   def notify_tagged_users(tagged_user)
     user = User.find(tagged_user["user_id"])
     tagged_user_obj = User.find(tagged_user["tagged_user_id"])
+    event = Event.find(tagged_user["event_id"])
+    bar = Bar.find(event.bar_id)
 
     return unless tagged_user_obj.expo_push_token
 
-    message = "#{user.handle} tagged you in an image!"
-    data = { pictureId: tagged_user["picture_id"], type: "tagged_image" }
+    puts "TAGGED USER OBJ: #{tagged_user.inspect}"
+
+    message = "#{user.handle} tagged you in a picture"
+    # data = { pictureId: tagged_user["picture_id"], type: "tagged_image" }
+    data = { event: event, bar: bar, type: "tagged_image"}
 
     begin
       ExpoPushNotificationService.send_notification(

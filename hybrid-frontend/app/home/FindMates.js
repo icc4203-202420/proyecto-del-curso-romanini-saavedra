@@ -51,7 +51,7 @@ export default function FindMatesScreen() {
       console.log("response from fetchUserFriends: ", data);
       setFriendshipsData(data);
     } catch (err) {
-      console.error("Error al cargar amigos:", err);
+      console.error("Error loading friendships:", err);
     }
   };
 
@@ -67,7 +67,7 @@ export default function FindMatesScreen() {
       setBars(data.bars || []);
       setAllBars(data.bars || []);
     } catch (err) {
-      console.error("Error al cargar bares:", err);
+      console.error("Error loading bars:", err);
     }
   };
 
@@ -83,7 +83,7 @@ export default function FindMatesScreen() {
       setEvents(data || []);
       setAllEvents(data || []);
     } catch (err) {
-      console.error("Error al cargar eventos:", err);
+      console.error("Error loading events:", err);
     }
   };
 
@@ -92,7 +92,7 @@ export default function FindMatesScreen() {
       const token = await SecureStore.getItemAsync('token');
       const userId = await SecureStore.getItemAsync('userData');
       if (!token) {
-        setError('No se encontró el token de autenticación');
+        setError('Authentication token not found.');
         return;
       }
 
@@ -103,7 +103,7 @@ export default function FindMatesScreen() {
       });
 
       if (!response.ok) {
-        setError('Error en la búsqueda de usuarios');
+        setError('Error searching users');
         return;
       }
 
@@ -119,7 +119,7 @@ export default function FindMatesScreen() {
       console.log("usuarios filtrados: ", filteredUsers);
       setSearchResults(filteredUsers);
     } catch (err) {
-      setError('Ocurrió un error al buscar usuarios');
+      setError('An error ocurred searching for users');
       console.error(err);
     }
   };
@@ -150,16 +150,16 @@ export default function FindMatesScreen() {
       });
 
       if (!response.ok) {
-        setError('Error al agregar amistad');
+        setError('Error adding friendship');
         return;
       }
 
       const result = await response.json();
       console.log('Amistad creada:', result);
       setBarModalVisible(false);
-      Alert.alert('Éxito', 'Amigo agregado con éxito');
+      Alert.alert('Success', 'User added successfully');
     } catch (err) {
-      setError('Ocurrió un error al agregar la amistad');
+      setError('An error ocurred adding new friendship');
       console.error(err);
     }
   };
@@ -176,7 +176,7 @@ export default function FindMatesScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Buscar usuarios por handle</Text>
+      <Text>Search users by handle</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter handle"
@@ -193,10 +193,10 @@ export default function FindMatesScreen() {
       <Modal visible={isBarModalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Selecciona el bar donde se conocieron</Text>
+            <Text style={styles.modalTitle}>Select the bar where you met</Text>
             <TextInput
               style={styles.searchBar}
-              placeholder="Buscar bar..."
+              placeholder="Search bar..."
               onChangeText={(text) => {
                 if (text === '') {
                   setBars(allBars);
@@ -227,10 +227,10 @@ export default function FindMatesScreen() {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <Text style={styles.modalTitle}>Seleccione un evento del bar</Text>
+            <Text style={styles.modalTitle}>Select an event from the bar</Text>
             <TextInput
               style={styles.searchBar}
-              placeholder="Buscar evento..."
+              placeholder="Search event..."
               onChangeText={(text) => {
                 if (text === '') {
                   setEvents(allEvents);
@@ -261,8 +261,8 @@ export default function FindMatesScreen() {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <Button title="Confirmar" onPress={addFriend} disabled={!selectedBar} />
-            <Button title="Cancelar" onPress={() => setBarModalVisible(false)} />
+            <Button title="Confirm" onPress={addFriend} disabled={!selectedBar} />
+            <Button title="Cancel" onPress={() => setBarModalVisible(false)} />
           </View>
         </View>
       </Modal>

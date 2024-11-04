@@ -24,16 +24,6 @@ class API::V1::EventPicturesController < ApplicationController
     end
   end
 
-  # def create
-  #   @event_picture = EventPicture.new(event_picture_params)
-
-  #   if @event_picture.save
-  #     render json: { event_picture: @event_picture, message: "Event picture created successfully."}, status: :created
-  #   else
-  #     render json: @event_picture.errors, status: :unprocessable_entity
-  #   end
-  # end
-
   def create
     @event_picture = EventPicture.new(event_picture_params)
   

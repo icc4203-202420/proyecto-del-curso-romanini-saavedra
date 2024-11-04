@@ -108,7 +108,8 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
 
       await tagFriends(pictureId);
       
-      onNewImage(response.data);
+      onNewImage();
+      // onNewImage(response.data);
       setModalVisible(false);
       setSelectedImage(null);
       setDescription('');
@@ -162,9 +163,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
       if (!response.ok) {
         throw new Error("Failed to generate video.");
       }
-
       const data = await response.json();
-      console.log("DATA DE VIDEO:", data)
 
       Alert.alert("Video Summary Generation", data.message);
     } catch (error) {

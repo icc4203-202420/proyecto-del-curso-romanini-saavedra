@@ -4,23 +4,17 @@ import {
     Text,
     StyleSheet,
     Image,
-    Button,
     Alert,
     Pressable
 } from 'react-native';
 import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
-import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { BACKEND_URL } from '@env';
 import * as SecureStore from 'expo-secure-store';
-import Toast from 'react-native-toast-message';
 import Attendees from './Attendees';
-import ImageUploader from './ImageUploader';
 import CreateAttendance from './CreateAttendance';
 import EventPictureGallery from './EventPictureGallery';
-import VideoPlayer from './VideoPlayer';
 
-const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
 const barBackground = require('../../assets/images/FondoBar.jpg');
 
 const renderTabBar = props => (
@@ -34,13 +28,9 @@ const renderTabBar = props => (
 
 const EventDetails = ({route}) => {
     const {event} = route.params;
-
-    // console.log("EVENTO:", event);
-    console.log("EVENT ID:", event.id)
-
     const {bar} = route.params;
+    const {fromNotification} = route.params;
 
-    // console.log("BAR:", bar);
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         {key: 'information', title: 'Information'},
@@ -86,15 +76,26 @@ const EventDetails = ({route}) => {
       }
     }
 
-    const handleNewImageUpload = (newImage) => {
-      setPicturesData((prevImages) => [...prevImages, newImage]);
+    const handleNewImageUpload = () => {
+      // setPicturesData((prevImages) => [...prevImages, newImage]);
+      getPicturesData();
     };
 
     useEffect(() => {
       getUserData();
       getAttendanceData();
       getPicturesData();
+
+      if (fromNotification) {
+        setIndex(routes.findIndex(route => route.key === 'photos'));
+      }
     }, []);
+
+    useEffect(() => {
+      if (index === routes.findIndex(route => route.key === 'photos')) {
+        getPicturesData();
+      }
+    }, [index]);
 
     const formatDate = (dateString) => {
       const date = new Date(dateString);
