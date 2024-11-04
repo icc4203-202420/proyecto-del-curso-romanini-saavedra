@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 
 const Beers = () => {
@@ -25,7 +25,7 @@ const Beers = () => {
 
   const getUserData = async () => {
     try {
-      const data = await AsyncStorage.getItem('userData');
+      const data = await SecureStore.getItemAsync('userData');
       console.log("USER DATA EN BEER INDEX:", data) 
       setUserData(data);
     } catch (error) {

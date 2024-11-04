@@ -9,7 +9,7 @@ import {
     TextInput
 } from 'react-native';
 import Slider from '@react-native-community/slider';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 
 const CreateReview = ({userId, beerId, modalVisible, setModalVisible, onReviewCreated}) => {
@@ -33,7 +33,7 @@ const CreateReview = ({userId, beerId, modalVisible, setModalVisible, onReviewCr
 			return;
 		}
 
-		const storedToken = await AsyncStorage.getItem('token');
+		const storedToken = await SecureStore.getItemAsync('token');
 		const token = storedToken.replace(/"/g, '')
 
 		const body = {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { BACKEND_URL } from '@env';
 import { useUser } from '../context/UserContext';
@@ -39,8 +39,8 @@ export default function FindMatesScreen() {
   }, [isAuthenticated]);
 
   const fetchUserFriends = async () => {
-    const token = await AsyncStorage.getItem('token');
-    const userId = await AsyncStorage.getItem('userData');
+    const token = await SecureStore.getItemAsync('token');
+    const userId = await SecureStore.getItemAsync('userData');
     try {
       const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
         headers: {
@@ -57,7 +57,7 @@ export default function FindMatesScreen() {
 
   const fetchBars = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await SecureStore.getItemAsync('token');
       const response = await fetch(`${BACKEND_URL}/api/v1/bars`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ export default function FindMatesScreen() {
 
   const fetchEvents = async (barId) => {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await SecureStore.getItemAsync('token');
       const response = await fetch(`${BACKEND_URL}/api/v1/bars/${barId}/events`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -89,8 +89,8 @@ export default function FindMatesScreen() {
 
   const handleSearch = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const userId = await AsyncStorage.getItem('userData');
+      const token = await SecureStore.getItemAsync('token');
+      const userId = await SecureStore.getItemAsync('userData');
       if (!token) {
         setError('No se encontró el token de autenticación');
         return;
@@ -131,8 +131,8 @@ export default function FindMatesScreen() {
 
   const addFriend = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const userId = await AsyncStorage.getItem('userData');
+      const token = await SecureStore.getItemAsync('token');
+      const userId = await SecureStore.getItemAsync('userData');
 
       const response = await fetch(`${BACKEND_URL}/api/v1/friendships`, {
         method: 'POST',

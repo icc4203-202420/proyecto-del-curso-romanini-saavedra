@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 const NotificationsContext = createContext();
 
@@ -15,7 +15,7 @@ export const NotificationsProvider = ({ children }) => {
         const token = (await Notifications.getExpoPushTokenAsync()).data;
         setExpoPushToken(token);
         // console.log('Expo Push Token:', token);
-        const userToken = await AsyncStorage.getItem('token');
+        const userToken = await SecureStore.getItemAsync('token');
       } else {
         alert('Permission for notifications was denied');
       }

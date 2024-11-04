@@ -13,7 +13,7 @@ import Reviews from './Reviews';
 import BarsBeers from './BarsBeers';
 import CreateReview from './CreateReview';
 import { BACKEND_URL } from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import Toast from 'react-native-toast-message';
 
 const beerBottleIcon = require('../../assets/images/beer_bottle_icon.png');
@@ -47,7 +47,7 @@ const BeerDetails = ({route}) => {
 
     const getUserData = async () => {
       try {
-        const data = await AsyncStorage.getItem('userData');
+        const data = await SecureStore.getItemAsync('userData');
         setUserData(data);
       } catch (error) {
         console.error(error)
