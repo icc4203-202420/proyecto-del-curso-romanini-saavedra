@@ -14,6 +14,7 @@ import LoginScreen from './app/auth/LoginScreen';
 import SignUpScreen from './app/auth/SignUpScreen';
 import Events from './app/events';
 import EventDetails from './app/events/EventDetails';
+import VideoPlayer from './app/events/VideoPlayer';
 import { useUser, UserProvider } from './app/context/UserContext';
 import { NotificationsProvider } from './app/context/NotificationsContext';
 import * as Notifications from 'expo-notifications';
@@ -82,6 +83,7 @@ function MainApp() {
       <Stack.Screen name="BeerDetails" component={BeerDetails} />
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="EventDetails" component={EventDetails} />
+      <Stack.Screen name="VideoPlayer" component={VideoPlayer} />
 
     </Stack.Navigator>
   );
@@ -123,6 +125,13 @@ export default function App() {
         case 'tagged_image':
           const pictureId = data.pictureId;
           console.log("NOTIFICACION DE TAGGED USERS");
+          break;
+
+        case 'video_generated':
+          const videoEvent = data.event;
+          if (videoEventId && navigationRef.isReady()) {
+            navigationRef.navigate('VideoPlayer', { event: videoEvent });
+          }
           break;
 
         default: 

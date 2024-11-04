@@ -72,7 +72,8 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
             <View style={styles.imageContainer}>
                 <Text>Uploaded by: {usernames[item.user_id] || 'Loading...'}</Text>
                 <Image
-                    source={{uri: item.image_url}}
+                    // source={{uri: item.image_url}}
+                    source={{ uri: `${item.image_url}?t=${new Date().getTime()}`}}
                     style={styles.image}
                     resizeMode='contain'
                 />

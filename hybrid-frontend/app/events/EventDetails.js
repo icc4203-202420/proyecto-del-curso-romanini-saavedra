@@ -36,6 +36,7 @@ const EventDetails = ({route}) => {
     const {event} = route.params;
 
     // console.log("EVENTO:", event);
+    console.log("EVENT ID:", event.id)
 
     const {bar} = route.params;
 
@@ -45,7 +46,7 @@ const EventDetails = ({route}) => {
         {key: 'information', title: 'Information'},
         {key: 'photos', title: 'Photos'},
         {key: 'people', title: 'People'},
-        {key: 'video', title: 'Video'}
+        // {key: 'video', title: 'Video'}
     ]);
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -131,7 +132,7 @@ const EventDetails = ({route}) => {
         ),
         people: () => <Attendees/>,
         // video: () => <VideoPlayer eventId={event.id}/>
-        video: () => <Text>Estamos en Video</Text>
+        // video: () => <Text>Estamos en Video</Text>
     });
 
     return (

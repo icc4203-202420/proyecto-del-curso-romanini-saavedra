@@ -29,6 +29,7 @@ class GenerateEventVideoJob < ApplicationJob
     image_files.each { |file| File.delete(file) }
 
     puts "Finalizada generacion de video para evento: #{event_id}"
+    notify_attendees(event)
   end
 
   private
@@ -82,6 +83,32 @@ class GenerateEventVideoJob < ApplicationJob
     # Eliminar el archivo de lista
     File.delete(file_list_path)
     puts "Video generado exitosamente en: #{output_path}"
+
+    # Aca tiene que estar todo lo de notificar a las personas que son parte del evento 
+  end
+
+  def notify_attendees(event)
+    attendees = Attendance.where(event_id: event.id)
+    bar = Bar.where(id: event.bar_id)
+    puts "BAAAR!!! => #{bar.inspect}"
+    puts "NOMBRE DEL BAAAR !!!!!!! => #{bar.name}"
+    attendees.each do |attendance|
+      user = User.find(attendance.user_id)
+      message = "The highlight video for event #{event.name} at #{bar.name} is now available!"
+      data = { event: event, type: "video_generated"}
+
+      begin
+        ExpoPushNotificationService.send_notification(
+          user.expo_push_token,
+          message, 
+          data,
+          "Event Highlight Video is Ready to Watch!"
+        )
+      rescue => e
+        puts "Error sending notification to #{user.handle}: #{e.message}"
+      end
+    end
+
   end
 
 end

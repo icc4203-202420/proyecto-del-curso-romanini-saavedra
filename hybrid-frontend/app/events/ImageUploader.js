@@ -24,6 +24,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
   const [friends, setFriends] = useState([]); 
   const [taggedFriends, setTaggedFriends] = useState([]);
   const [friendDetails, setFriendDetails] = useState([]);
+  const [hasGeneratedSummary, setHasGeneratedSummary] = useState(false);
 
   useEffect(() => {
     if (modalVisible) {
@@ -152,6 +153,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
   // };
 
   const handleGenerateSummary = async () => {
+    setHasGeneratedSummary(true);
     try {
       const response = await fetch(`${BACKEND_URL}/api/v1/events/${eventId}/generate_summary`, {
         method: 'POST',
@@ -171,10 +173,6 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
     
   }
 
-  // const handleGenerateSummary = () => {
-  //   console.log("SUMMARY BUTTON")
-  // }
-
   return (
     <View>
       <View style={styles.buttonContainer}>
@@ -182,8 +180,12 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
             <Text style={styles.buttonText}>UPLOAD IMAGE</Text>
         </Pressable>
         {showSummaryButton && (
-          <Pressable style={styles.uploadButton} onPress={handleGenerateSummary}>
-            <Text style={styles.buttonText}>SUMMARY</Text>
+          <Pressable 
+            style={[styles.uploadButton, hasGeneratedSummary && styles.disabledButton]} 
+            onPress={hasGeneratedSummary ? null : handleGenerateSummary}
+            disbled={hasGeneratedSummary}
+          >
+            <Text style={styles.buttonText}>{hasGeneratedSummary ? "Summary Generated" : "SUMMARY"}</Text>
           </Pressable>
         )}
       </View>
@@ -292,6 +294,9 @@ const styles = StyleSheet.create({
   friendButtonText: {
     fontSize: 16,
   },
+  disabledButton: {
+    backgroundColor: '#aaa'
+  }
 });
 
 export default ImageUploader;
