@@ -183,7 +183,16 @@ export default function FindMatesScreen() {
         value={handle}
         onChangeText={setHandle}
       />
-      <Button title="Search" onPress={handleSearch} />
+      <Button 
+        title="Search" 
+        onPress={() => {
+          if (isAuthenticated) {
+            handleSearch();
+          } else {
+            Alert.alert('Please Log In', 'You must be logged in to find mates.');
+          }
+        }}
+      />
       {error && <Text style={styles.error}>{error}</Text>}
       <ScrollView style={styles.resultsList}>
         {searchResults.map(renderUserItem)}
