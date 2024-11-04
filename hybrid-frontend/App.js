@@ -96,7 +96,7 @@ export default function App() {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: false,
+        shouldPlaySound: true,
         shouldSetBadge: true,
       }),
     });
@@ -124,6 +124,10 @@ export default function App() {
             if (videoEvent) {
               navigationRef.navigate('VideoPlayer', { event: videoEvent });
             }
+            break;
+
+          case 'friendship_created':
+            navigationRef.navigate('Home')
             break;
   
           default: 

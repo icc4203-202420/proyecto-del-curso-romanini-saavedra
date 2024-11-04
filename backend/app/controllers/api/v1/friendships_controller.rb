@@ -22,6 +22,8 @@ class API::V1::FriendshipsController < ApplicationController
     # POST /friendships
     def create
       @friendship = Friendship.new(friendship_params)
+
+      notify_friendship(@friendship.friend_id)
   
       if @friendship.save
         render json: { friendship: @friendship, message: "Friendship created successfully." }, status: :created
@@ -50,5 +52,18 @@ class API::V1::FriendshipsController < ApplicationController
     def verify_jwt_token
       authenticate_user!
       head :unauthorized unless current_user
+    end
+
+    def notify_friendship(friend_id)
+      user = User.find(friend_id)
+      message = "#{current_user.handle} just added you as a friend!"
+      data = {type: 'friendship_created'}
+
+      ExpoPushNotificationService.send_notification(
+        user.expo_push_token,
+        message, 
+        data,
+        "You Have a New Friend!"
+      )
     end
 end
