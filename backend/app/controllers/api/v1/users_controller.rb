@@ -2,16 +2,21 @@ class API::V1::UsersController < ApplicationController
   include Authenticable
 
   respond_to :json
-  before_action :set_user, only: [:show, :update]  
+  before_action :set_user, only: [:show, :update, :update_token]  
   before_action :set_user_friendship, only: [:index_friendships, :create_friendship]
   before_action :verify_jwt_token, only: [:index_friendships, :create_friendship]
 
-  def index
-    @users = User.includes(:reviews, :address).all 
+  # def index
+  #   @users = User.includes(:reviews, :address).all 
+  # end
+
+  def index 
+    @users = User.all
+    render json: { users: @users }, status: :ok
   end
 
   def show
-  
+    render json: { user: @user.as_json }, status: :ok
   end
 
   def create
@@ -29,6 +34,17 @@ class API::V1::UsersController < ApplicationController
       render :show, status: :ok, location: api_v1_users_path(@user)
     else
       render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+
+  def update_token
+    # @user = current_user
+    # puts "USUARIO ACTUAL: #{current_user}"
+
+    if @user.update(expo_push_token: params[:expo_push_token])
+      render json: { message: 'Token updated successfully '}, status: :ok
+    else
+      render json: { error: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 

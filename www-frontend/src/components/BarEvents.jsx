@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { Box, Card, CardContent, CardMedia, Typography, List, ListItem, Divider } from '@mui/material';
 import barImage from '../assets/images/FondoBar.jpg';
@@ -7,12 +7,12 @@ import barImage from '../assets/images/FondoBar.jpg';
 const BarEvents = () => {
   const { bar_id } = useParams();
   const [{ data: barData, loading, error }] = useAxios({
-    url: `http://127.0.0.1:3001/api/v1/bars/${bar_id}`,
+    url: `http://127.0.0.1:3000/api/v1/bars/${bar_id}`,
     method: 'GET'
   });
 
   const [{ data: eventsData }] = useAxios({
-    url: `http://127.0.0.1:3001/api/v1/bars/${bar_id}/events`,
+    url: `http://127.0.0.1:3000/api/v1/bars/${bar_id}/events`,
     method: 'GET'
   });
 
@@ -20,43 +20,56 @@ const BarEvents = () => {
     <Box display="flex" flexDirection="column" minHeight="100vh">
       {/* Sección superior con el nombre del bar y la imagen de fondo */}
       {barData && (
-        <Box position="relative" width="100%" height={300} mb={2}>
+        <Box position="relative" width={300} height={350} mb={2}>
             <CardMedia
                 component="img"
                 sx={{ 
-                height: '100%', 
-                width: '100%', 
-                objectFit: 'cover',
-                objectPosition: 'center',
-                opacity: 0.5
+                  height: '100%', 
+                  width: '100%', 
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  opacity: 0.7
                 }}
                 image={barImage}
-                title={barData.bar.name}
+                title={barData.name}
             />
             <CardContent 
-            sx={{
-              position: 'absolute', 
-              top: 0, 
-              left: 0, 
-              height: '100%', 
-              width: '100%', 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              zIndex: 1
-            }}
+              sx={{
+                position: 'absolute', 
+                top: 0, 
+                left: 0, 
+                height: '100%', 
+                width: '100%', 
+                display: 'flex', 
+                flexDirection: 'column',
+                justifyContent: 'center', 
+                alignItems: 'flex-start',
+                paddingLeft: '2%',
+                zIndex: 1,
+                color: 'black',
+                textAlign: 'left'
+              }}
             >
-            <Typography variant="h3" component="div" sx={{ color: 'black', fontWeight: 'bold' }}>
-              {barData.bar.name}
+            <Typography variant="h2" component="div" sx={{ fontWeight: 'bold', color: 'black' }}>
+              {barData.name.toUpperCase()}
+            </Typography>
+            <Typography variant="h6" component="div" sx={{ color: 'black', fontWeight: 'bold'  }}>
+              {barData.address.line1}, {barData.address.line2}  
+            </Typography>
+            <Typography variant="h7" component="div" sx={{ color: 'black', fontWeight: 'bold' }}>
+              {barData.address.city}, {barData.address.country.name}  
             </Typography>
           </CardContent>
         </Box>
       )}
 
       {/* Lista de eventos */}
-      <Typography variant="h4" component="div" sx={{ marginLeft: 2, marginBottom: 2, color: 'black' }}>
-        Eventos:
-      </Typography>
+      <Box sx={{padding: 2, borderRadius: 2}}>
+        <Typography variant="h5" component="div" sx={{ color: 'black', fontWeight: 'bold', mb: 2 }}>
+          Events:
+        </Typography>
+
+      </Box>
       <Box flex="1">
         {loading && (
             <Typography variant="body1" margin="normal">
@@ -79,21 +92,21 @@ const BarEvents = () => {
                   year: 'numeric'
                 });
                 return(
-                <React.Fragment key={index}>
-                    <ListItem>
-                    <Card sx={{ width: '100%', backgroundColor: 'rgb(255, 244, 229)', borderRadius: 3 }}>
-                        <CardContent>
-                        <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
-                            {`Name: ${event.name}`}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {`Description: ${event.description}`}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {`Date: ${formattedDate}`}
-                        </Typography>
-                        </CardContent>
-                    </Card>
+                <React.Fragment key={event.id}>
+                    <ListItem button component={Link} to={`/events/${event.id}`}>
+                      <Card sx={{ width: '100%', backgroundColor: 'rgb(255, 244, 229)', borderRadius: 3 }}>
+                          <CardContent>
+                            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                                {event.name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{marginBottom: 2}}>
+                                {formattedDate}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                {event.description}
+                            </Typography>
+                          </CardContent>
+                      </Card>
                     </ListItem>
                     {index < eventsData.length - 1 && <Divider sx={{ my: 2 }} />}
                 </React.Fragment>
