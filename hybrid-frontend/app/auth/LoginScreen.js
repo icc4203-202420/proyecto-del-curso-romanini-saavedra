@@ -39,9 +39,6 @@ const LoginScreen = ({ navigation }) => {
 
       if (response.ok) {
         // Almacena el token y userData en SecureStore
-        console.log("Data response:", data);
-        console.log("Token:", data.status.data.token);
-
         await SecureStore.setItemAsync('token', data.status.data.token);
         await SecureStore.setItemAsync('userData', JSON.stringify(data.status.data.user.id));
 
@@ -52,7 +49,6 @@ const LoginScreen = ({ navigation }) => {
 
         // Actualiza el contexto de usuario como autenticado
         login();
-        console.log("Marcado como loggeado");
 
         await storeExpoToken(storedToken, storedUserData);
         
@@ -63,6 +59,8 @@ const LoginScreen = ({ navigation }) => {
           text1: 'Successful Login',
           text2: 'Welcome back!',
         });
+      } else if (response.status === 401) {
+        Alert.alert('Login Error', 'User or password incorrect');
       } else {
         Alert.alert('Error', data.error || 'Something went wrong');
       }
@@ -91,8 +89,6 @@ const LoginScreen = ({ navigation }) => {
       if (!response.ok) {
         throw new Error('Error updating Expo token');
       }
-
-      const data = await response.json();
     } catch (error) {
       console.error('Error storing Expo token:', error);
     }
