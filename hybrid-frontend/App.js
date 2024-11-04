@@ -107,10 +107,10 @@ export default function App() {
       if (navigationRef.isReady()) {
         switch (data.type) {
           case 'attendance':
-            const eventId = data.eventId;
-            console.log("EVENT ID DE NOTIFICACION:", eventId);
-            if (eventId) {
-              navigationRef.navigate('EventDetails', { eventId });
+            const event = data.event;
+            const bar = data.bar
+            if (event && bar) {
+              navigationRef.navigate('EventDetails', { event, bar });
             }
             break;
           
