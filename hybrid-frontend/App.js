@@ -107,16 +107,25 @@ export default function App() {
       if (navigationRef.isReady()) {
         switch (data.type) {
           case 'attendance':
-            const event = data.event;
-            const bar = data.bar
-            if (event && bar) {
-              navigationRef.navigate('EventDetails', { event, bar });
+            const attendance_event = data.event;
+            const attendance_bar = data.bar
+            if (attendance_event && attendance_bar) {
+              navigationRef.navigate('EventDetails', { event: attendance_event, bar: attendance_bar });
             }
             break;
           
           case 'tagged_image':
-            const pictureId = data.pictureId;
-            console.log("NOTIFICACION DE TAGGED USERS");
+            const tagged_image_event = data.event
+            const tagged_image_bar = data.bar 
+
+            if (tagged_image_event && tagged_image_bar) {
+              navigationRef.navigate('EventDetails', 
+                { 
+                  event: tagged_image_event, 
+                  bar: tagged_image_bar,
+                  fromNotification: true
+                });
+            }
             break;
   
           case 'video_generated':

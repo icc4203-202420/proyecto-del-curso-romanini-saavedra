@@ -108,7 +108,8 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
 
       await tagFriends(pictureId);
       
-      onNewImage(response.data);
+      onNewImage();
+      // onNewImage(response.data);
       setModalVisible(false);
       setSelectedImage(null);
       setDescription('');

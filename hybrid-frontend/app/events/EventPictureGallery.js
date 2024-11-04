@@ -98,7 +98,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
                     <ImageUploader 
                         userId={userId} 
                         eventId={event.id} 
-                        onNewImage={handleNewImage} 
+                        onNewImage={onNewImage} 
                         showSummaryButton={isEventEnded}
                         images={images}
                     />
