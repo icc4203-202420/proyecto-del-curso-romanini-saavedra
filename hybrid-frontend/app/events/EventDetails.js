@@ -80,8 +80,6 @@ const EventDetails = ({route}) => {
         const json = await response.json();
         const sortedImages = json.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
 
-        console.log("PICTURES:", sortedImages);
-
         setPicturesData(sortedImages)
       } catch (error) {
         console.error(error);
@@ -120,14 +118,23 @@ const EventDetails = ({route}) => {
                 <Text style={{color: 'black', fontSize: 15}}>End Date: {formatDate(event.end_date)}</Text>
             </View>
         ), 
-        photos: () => (
-          <EventPictureGallery 
-            initialImages={picturesData} 
-            userId={userData} 
-            event={event} 
-            onNewImage={handleNewImageUpload}
+        photos: () => {
+          if (!userData) {
+            return (
+              <Text style={{textAlign: 'center', marginTop: 20}}>
+                Please log in to view the photo gallery.
+              </Text>
+            )
+          }
+          return (
+            <EventPictureGallery
+              initialImages={picturesData}
+              userId={userData}
+              event={event}
+              onNewImage={handleNewImageUpload}
             />
-        ),
+          )
+        },
         people: () => <Attendees/>
     });
 
@@ -146,7 +153,7 @@ const EventDetails = ({route}) => {
                           style={styles.uploadButton} 
                           onPress={() => {
                             if (!userData) {
-                              Alert.alert('Please Log In', 'You must be logge in to confirm attendance to an event.');
+                              Alert.alert('Please Log In', 'You must be logged in to confirm attendance to an event.');
                             } else {
                               setModalVisible(true);
                             }

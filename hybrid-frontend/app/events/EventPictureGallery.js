@@ -85,12 +85,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
         )
     }
 
-    const handleSummaryPress = () => {
-        console.log("SE APRETO EL BOTON DE SUMMARY");
-    }
-
     const isEventEnded = new Date() > new Date(event.end_date);
-    console.log("EVENT ENDED?", isEventEnded)
 
     return (
         <View style={styles.container}>
