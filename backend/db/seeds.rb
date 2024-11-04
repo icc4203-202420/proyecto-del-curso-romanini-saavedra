@@ -175,7 +175,7 @@ if Rails.env.development?
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now,
       start_date: DateTime.now,
-      end_date: DateTime.now + 1.hours,
+      end_date: DateTime.now,
       bar_id: 1
     },
     {
@@ -183,7 +183,7 @@ if Rails.env.development?
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now,
       start_date: DateTime.now,
-      end_date: DateTime.now + 1.hours,
+      end_date: DateTime.now,
       bar_id: 2
     },
     {
@@ -191,7 +191,7 @@ if Rails.env.development?
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now,
       start_date: DateTime.now,
-      end_date: DateTime.now + 1.hours,
+      end_date: DateTime.now,
       bar_id: 3
     },
     {
@@ -199,7 +199,7 @@ if Rails.env.development?
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now,
       start_date: DateTime.now,
-      end_date: DateTime.now + 1.hours,
+      end_date: DateTime.now,
       bar_id: 4
     },
     {
@@ -207,7 +207,7 @@ if Rails.env.development?
       description: "Join us for a spectacular evening as we celebrate the grand opening of our bar!",
       date: DateTime.now,
       start_date: DateTime.now,
-      end_date: DateTime.now + 1.hours,
+      end_date: DateTime.now,
       bar_id: 5
     },
     {
@@ -215,31 +215,31 @@ if Rails.env.development?
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
       date: DateTime.now,
       start_date: DateTime.now,
-      end_date: DateTime.now + 1.hours,
+      end_date: DateTime.now,
       bar_id: 1
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
-      date: DateTime.now + 1.week,
-      start_date: DateTime.now + 1.week,
-      end_date: DateTime.now + 1.week + 4.hours,
+      date: DateTime.now,
+      start_date: DateTime.now,
+      end_date: DateTime.now,
       bar_id: 2
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
-      date: DateTime.now + 1.week,
-      start_date: DateTime.now + 1.week,
-      end_date: DateTime.now + 1.week + 4.hours,
+      date: DateTime.now,
+      start_date: DateTime.now,
+      end_date: DateTime.now,
       bar_id: 3
     },
     {
       name: "Happy Hour",
       description: "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.",
-      date: DateTime.now + 1.week,
-      start_date: DateTime.now + 1.week,
-      end_date: DateTime.now + 1.week + 4.hours,
+      date: DateTime.now,
+      start_date: DateTime.now,
+      end_date: DateTime.now,
       bar_id: 4
     },
     {

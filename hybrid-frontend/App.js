@@ -105,7 +105,7 @@ export default function App() {
     Notifications.setNotificationHandler({
       handleNotification: async () => ({
         shouldShowAlert: true,
-        shouldPlaySound: true,
+        shouldPlaySound: false,
         shouldSetBadge: true,
       }),
     });
@@ -113,30 +113,33 @@ export default function App() {
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const { data } = response.notification.request.content;
 
-      switch (data.type) {
-        case 'attendance':
-          const eventId = data.eventId;
-          console.log("EVENT ID DE NOTIFICACION:", eventId);
-          if (eventId && navigationRef.isReady()) {
-            navigationRef.navigate('EventDetails', { eventId });
-          }
-          break;
-        
-        case 'tagged_image':
-          const pictureId = data.pictureId;
-          console.log("NOTIFICACION DE TAGGED USERS");
-          break;
-
-        case 'video_generated':
-          const videoEvent = data.event;
-          if (videoEventId && navigationRef.isReady()) {
-            navigationRef.navigate('VideoPlayer', { event: videoEvent });
-          }
-          break;
-
-        default: 
-          console.log("Unkown Notificaction Type:", data.type);
+      if (navigationRef.isReady()) {
+        switch (data.type) {
+          case 'attendance':
+            const eventId = data.eventId;
+            console.log("EVENT ID DE NOTIFICACION:", eventId);
+            if (eventId) {
+              navigationRef.navigate('EventDetails', { eventId });
+            }
+            break;
+          
+          case 'tagged_image':
+            const pictureId = data.pictureId;
+            console.log("NOTIFICACION DE TAGGED USERS");
+            break;
+  
+          case 'video_generated':
+            const videoEvent = data.event;
+            if (videoEvent) {
+              navigationRef.navigate('VideoPlayer', { event: videoEvent });
+            }
+            break;
+  
+          default: 
+            console.log("Unkown Notificaction Type:", data.type);
+        }
       }
+
     });
 
     // testNotification();

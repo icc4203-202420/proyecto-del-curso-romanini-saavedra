@@ -46,7 +46,6 @@ const EventDetails = ({route}) => {
         {key: 'information', title: 'Information'},
         {key: 'photos', title: 'Photos'},
         {key: 'people', title: 'People'},
-        // {key: 'video', title: 'Video'}
     ]);
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -121,7 +120,6 @@ const EventDetails = ({route}) => {
                 <Text style={{color: 'black', fontSize: 15}}>End Date: {formatDate(event.end_date)}</Text>
             </View>
         ), 
-        // photos: () => <ImageUploader userId={userData} eventId={event.id}/>,
         photos: () => (
           <EventPictureGallery 
             initialImages={picturesData} 
@@ -130,9 +128,7 @@ const EventDetails = ({route}) => {
             onNewImage={handleNewImageUpload}
             />
         ),
-        people: () => <Attendees/>,
-        // video: () => <VideoPlayer eventId={event.id}/>
-        // video: () => <Text>Estamos en Video</Text>
+        people: () => <Attendees/>
     });
 
     return (

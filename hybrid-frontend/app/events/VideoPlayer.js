@@ -11,33 +11,31 @@ const VideoPlayer = ({ route }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Función para obtener la URL del video a partir del eventId
     const fetchVideoUri = async () => {
       try {
-        // Aquí puedes reemplazar la URL por la ruta de tu backend
         const response = await fetch(`${BACKEND_URL}/api/v1/events/${event.id}/video`);
         const data = await response.json();
-        
-        if (data.event.videoUri) {
-          setVideoUri(data.videoUri);
+
+        if (data.video_url) {
+          setVideoUri(data.video_url);
         } else {
-          setError('El video no está disponible en este momento.');
+          setError('Video not available at the moment.');
         }
       } catch (error) {
-        setError('Hubo un error al cargar el video. Por favor, intenta más tarde.');
+        setError('There was an error loading the video. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchVideoUri();
-  }, [eventId]);
+  }, [event.id]);
 
   if (loading) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Cargando video...</Text>
+        <Text>Loading video...</Text>
       </View>
     );
   }
@@ -61,7 +59,7 @@ const VideoPlayer = ({ route }) => {
           shouldPlay
         />
       ) : (
-        <Text style={styles.errorText}>Video no disponible</Text>
+        <Text style={styles.errorText}>Video not available</Text>
       )}
     </View>
   );
