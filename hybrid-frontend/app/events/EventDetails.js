@@ -35,7 +35,7 @@ const EventDetails = ({route}) => {
     const [routes] = useState([
         {key: 'information', title: 'Information'},
         {key: 'photos', title: 'Photos'},
-        {key: 'people', title: 'People'},
+        // {key: 'people', title: 'People'},
     ]);
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -100,23 +100,44 @@ const EventDetails = ({route}) => {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       const options = {
-        day: '2-digit',
+        day: 'numeric',
         month: 'long',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
       };
       
-      return date.toLocaleDateString('es-ES', options);
+      return date.toLocaleDateString('es-GB', options);
     }
 
     const renderScene = SceneMap({
         information: () => (
             <View style={styles.infoContainer}>
-                <Text style={{color:'black'}}>Name: {event.name}</Text>
-                <Text style={{color: 'black', fontSize: 15}}>Description: {event.description}</Text>
-                <Text style={{color: 'black', fontSize: 15}}>Start Date: {formatDate(event.start_date)}</Text>
-                <Text style={{color: 'black', fontSize: 15}}>End Date: {formatDate(event.end_date)}</Text>
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Name:</Text>
+                <Text style={styles.infoText}>{event.name}</Text>
+              </View>
+
+              <View style={styles.separator}/>
+
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Description:</Text>
+                <Text style={styles.infoText}>{event.description}</Text>
+              </View>
+
+              <View style={styles.separator}/>
+
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>Start Date:</Text>
+                <Text style={styles.infoText}>{formatDate(event.start_date)}</Text>
+              </View>
+
+              <View style={styles.separator}/>
+
+              <View style={styles.infoItem}>
+                <Text style={styles.infoLabel}>End Date:</Text>
+                <Text style={styles.infoText}>{formatDate(event.end_date)}</Text>
+              </View>
             </View>
         ), 
         photos: () => {
@@ -136,7 +157,7 @@ const EventDetails = ({route}) => {
             />
           )
         },
-        people: () => <Attendees/>
+        // people: () => <Attendees/>
     });
 
     return (
@@ -190,9 +211,34 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     infoContainer: {
-      padding: 16,
-      height: '100%',
-      left: 10
+      padding: 15,
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 5,
+      marginBottom: 15,
+    },
+    infoItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 5,
+    },
+    infoLabel: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: '#555',
+      width: 100, 
+    },
+    infoText: {
+      fontSize: 16,
+      color: '#333',
+      flex: 1,  
+    },
+    separator: {
+        height: 1,
+        backgroundColor: '#ddd',
+        marginVertical: 8,
     },
     tabViewContainer: {
       flex: 1

@@ -2,19 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { 
   View, 
   Text, 
-  TextInput, 
-  StatusBar, 
   StyleSheet,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 
 import { useNavigation } from '@react-navigation/native';
 import { BACKEND_URL } from '@env';
 
+const barBackground = require('../../assets/images/FondoBar.jpg');
 
 const Events = ({route}) => {
   const {bar} = route.params;
+  console.log("BAR:", bar)
   const [eventsData, setEventsData] = useState([]);
   const navigation = useNavigation();
 
@@ -37,14 +38,14 @@ const Events = ({route}) => {
     const date = new Date(dateString);
 
     const options = {
-      day: '2-digit',
+      day: 'numeric',
       month: 'long',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
     };
     
-    return date.toLocaleDateString('es-ES', options);
+    return date.toLocaleDateString('es-GB', options);
   }
 
   const renderEvent = ({item}) => {
@@ -54,11 +55,9 @@ const Events = ({route}) => {
       >
         <View style={styles.cardContainer}>
           <View style={styles.card}>
-            <Text>{item.name}</Text>
-            <Text>{item.description}</Text>
-            <Text>{formatDate(item.start_date)}</Text>
-            <Text>{formatDate(item.end_date)}</Text>
-
+            <Text style={{fontWeight: 'bold', fontSize: 24}}>{item.name}</Text>
+            <Text>Start: {formatDate(item.start_date)}</Text>
+            <Text>End: {formatDate(item.end_date)}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -68,6 +67,18 @@ const Events = ({route}) => {
 
   return (
     <View style={styles.container}>
+      <Image source={barBackground} style={styles.headerImage}/>
+      <View style={styles.overlayTextContainer}>
+        <Text style={styles.headerTitle}>{bar.name}</Text>
+        <View style={{flexDirection: 'column'}}>
+          <Text style={styles.headerSubtitle}>
+            {bar.address.line1}, {bar.address.line2}
+          </Text>
+          <Text style={styles.headerSubtitle}>
+            {bar.address.city}, {bar.address.country.name}
+          </Text>
+        </View>
+      </View>
       <FlatList
         data={eventsData}
         renderItem={renderEvent}
@@ -90,14 +101,15 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
   },
   cardContainer: {
-    marginBottom: 20,
+    marginTop: 25,
+    // marginBottom: 20,
     width: 300,
     alignItems: 'center',
   },
   card: {
     width: 300, 
     maxWidth: 600,
-    height: 170,
+    height: 140,
     backgroundColor: 'rgb(212, 160, 23)',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -111,6 +123,36 @@ const styles = StyleSheet.create({
     height: 100,
     objectFit: 'cover', 
     borderRadius: 50,
+  },
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 300,
+    flexDirection: 'column',
+  },
+  headerImage: {
+    width: '100%',
+    height: 300,
+    opacity: 0.3
+  },
+  headerTextContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  headerTitle: {
+    fontSize: 36,
+    fontWeight: 'bold',
+  },
+  headerSubtitle: {
+    fontSize: 18,
+    marginTop: 4,
+  },
+  overlayTextContainer: {
+    position: 'absolute',
+    bottom: 490,
+    left: 20,
+    right: 10,
+    flexDirection: 'column'
   },
   content: {
     flexDirection: 'column',
