@@ -29,6 +29,10 @@ module Backend
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    config.after_initialize do
+      ActiveStorage::Current.url_options = { host: 'localhost', port: 3000 } if Rails.env.development?
+    end
+
     config.action_dispatch.default_headers = {
       'X-Frame-Options' => 'ALLOW-FROM http://localhost:3001',
       'Content-Security-Policy' => "frame-ancestors 'self' http://localhost:3001"

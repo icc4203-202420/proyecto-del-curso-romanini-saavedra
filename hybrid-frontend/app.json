@@ -22,6 +22,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "459745f2-83d0-483f-bb28-f292e0fbd869"
+      }
+    },
+    "owner": "caromanini"
   }
 }
