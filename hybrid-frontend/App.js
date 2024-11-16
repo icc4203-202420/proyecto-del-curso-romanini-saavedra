@@ -16,6 +16,7 @@ import SignUpScreen from './app/auth/SignUpScreen';
 import Events from './app/events';
 import EventDetails from './app/events/EventDetails';
 import VideoPlayer from './app/events/VideoPlayer';
+import FeedScreen from './app/feed';
 import { useUser, UserProvider } from './app/context/UserContext';
 import { NotificationsProvider } from './app/context/NotificationsContext';
 import * as Notifications from 'expo-notifications';
@@ -29,6 +30,7 @@ function MainTabs() {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Feed" component={FeedScreen} />
       <Tab.Screen name="Bars" component={BarsScreen} />
       <Tab.Screen name="Beers" component={BeersScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
