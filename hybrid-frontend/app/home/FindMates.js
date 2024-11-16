@@ -42,7 +42,7 @@ export default function FindMatesScreen() {
     const token = await SecureStore.getItemAsync('token');
     const userId = await SecureStore.getItemAsync('userData');
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,7 +58,7 @@ export default function FindMatesScreen() {
   const fetchBars = async () => {
     try {
       const token = await SecureStore.getItemAsync('token');
-      const response = await fetch(`${BACKEND_URL}/api/v1/bars`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/bars`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -74,7 +74,7 @@ export default function FindMatesScreen() {
   const fetchEvents = async (barId) => {
     try {
       const token = await SecureStore.getItemAsync('token');
-      const response = await fetch(`${BACKEND_URL}/api/v1/bars/${barId}/events`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/bars/${barId}/events`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -96,7 +96,7 @@ export default function FindMatesScreen() {
         return;
       }
 
-      const response = await fetch(`${BACKEND_URL}/api/v1/users`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -134,7 +134,7 @@ export default function FindMatesScreen() {
       const token = await SecureStore.getItemAsync('token');
       const userId = await SecureStore.getItemAsync('userData');
 
-      const response = await fetch(`${BACKEND_URL}/api/v1/friendships`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/friendships`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

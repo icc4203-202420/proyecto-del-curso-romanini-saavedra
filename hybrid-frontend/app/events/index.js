@@ -15,13 +15,12 @@ const barBackground = require('../../assets/images/FondoBar.jpg');
 
 const Events = ({route}) => {
   const {bar} = route.params;
-  console.log("BAR:", bar)
   const [eventsData, setEventsData] = useState([]);
   const navigation = useNavigation();
 
   const getEventsData = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/bars/${bar.id}/events`)
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/bars/${bar.id}/events`)
       const json = await response.json();
 
       setEventsData(json)

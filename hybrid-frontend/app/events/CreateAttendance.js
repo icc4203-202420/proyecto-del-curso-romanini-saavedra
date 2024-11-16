@@ -25,7 +25,7 @@ const CreateAttendance = ({ userId, eventId, modalVisible, setModalVisible, onAt
         };
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/attendances`, {
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/attendances`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

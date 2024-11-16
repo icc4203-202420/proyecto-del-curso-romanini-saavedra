@@ -27,7 +27,7 @@ const DeleteAttendance = ({userId, eventId, filteredAttendances, cancelModalVisi
 
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/attendances/${attendanceID.id}`, {
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/attendances/${attendanceID.id}`, {
                 method: 'DELETE',
                 headers: {
                     Accept: 'application/json',

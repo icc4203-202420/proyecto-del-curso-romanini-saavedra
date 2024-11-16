@@ -27,7 +27,7 @@ const Bars = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/bars`);
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/bars`);
       const data = await response.json();
       setBars([...bars, ...data.bars]);
       setFilteredBars([...bars, ...data.bars]);

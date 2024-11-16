@@ -43,7 +43,7 @@ const BeerDetails = ({route}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [userData, setUserData] = useState(null);
 
-    console.log("USER DATA:", userData)
+    // console.log("USER DATA:", userData)
 
     const getUserData = async () => {
       try {
@@ -56,7 +56,7 @@ const BeerDetails = ({route}) => {
 
     const getBrand = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/brands/${beer.brand_id}`);
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/brands/${beer.brand_id}`);
             const json = await response.json();
 
             setBrandData(json.brand)
@@ -70,7 +70,7 @@ const BeerDetails = ({route}) => {
     const getBrewery = async () => {
         if (!brandData) return;
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/breweries/${brandData.brewery_id}`);
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/breweries/${brandData.brewery_id}`);
             const json = await response.json();
 
             setBreweryData(json.brewery);
@@ -83,7 +83,7 @@ const BeerDetails = ({route}) => {
 
     const getBeerData = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/beers/${beer.id}`);
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/beers/${beer.id}`);
             const json = await response.json();
 
             setBeerData(json.beer);

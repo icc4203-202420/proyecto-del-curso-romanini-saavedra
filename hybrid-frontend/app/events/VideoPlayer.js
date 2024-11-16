@@ -13,7 +13,7 @@ const VideoPlayer = ({ route }) => {
   useEffect(() => {
     const fetchVideoUri = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/api/v1/events/${event.id}/video`);
+        const response = await fetch(`http://${BACKEND_URL}/api/v1/events/${event.id}/video`);
         const data = await response.json();
 
         if (data.video_url) {

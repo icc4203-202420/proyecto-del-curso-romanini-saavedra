@@ -20,7 +20,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     const [taggedUsers, setTaggedUsers] = useState([]);
     const [friendships, setFriendships] = useState([]);
     const [isLoadingImage, setIsLoadingImage] = useState(true);
-    
+
     const handleNewImage = (response) => {
         const newImage = response.event_picture;
         
@@ -34,7 +34,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     useEffect(() => {
         const fetchTaggedUsers = async () => {
             try {
-                const response = await fetch(`${BACKEND_URL}/api/v1/tag_users`);
+                const response = await fetch(`http://${BACKEND_URL}/api/v1/tag_users`);
                 const data = await response.json();
                 setTaggedUsers(data.tag_users);
 
@@ -63,7 +63,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
 
     const fetchUsername = async (user_id) => {
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/users/${user_id}`);
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${user_id}`);
             const data = await response.json();
             setUsernames((prev) => ({ ...prev, [user_id]: data.user.handle }));
         } catch (error) {
@@ -75,7 +75,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
         const currentUserId = await SecureStore.getItemAsync('userData');
         const token = await SecureStore.getItemAsync('token');
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/users/${currentUserId}/friendships`, {
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${currentUserId}/friendships`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -89,7 +89,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
     }
 
     useEffect(() => {
-        getFriendships().then(() => console.log("Friendships:", friendships));
+        getFriendships();
     }, [])
 
     const handleAddUser = async (friendId) => {
@@ -97,7 +97,7 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
           const token = await SecureStore.getItemAsync('token');
           const userId = await SecureStore.getItemAsync('userData');
     
-          const response = await fetch(`${BACKEND_URL}/api/v1/friendships`, {
+          const response = await fetch(`http://${BACKEND_URL}/api/v1/friendships`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -129,6 +129,9 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
             username: usernames[tag.tagged_user_id]
         }));
 
+        // console.log("ITEM PARA IMAGE:", item)
+        // console.log("URL DE IMAGE:", item.image_url)
+
         return (
             <View style={styles.imageContainer}>
                 <View style={styles.header}>
@@ -153,10 +156,12 @@ const EventPictureGallery = ({ initialImages, userId, event, onNewImage }) => {
                                 friendship.friend_id === id
                             );
 
+                            const isCurrentUser = parseInt(id) === parseInt(userId);
+
                             return (
                                 <View key={id} style={styles.tagContainer}>
                                     <Text style={[styles.taggedText, isFriend(id) && styles.friendText]}>{username}</Text>
-                                    {!isFriend(id) && (
+                                    {!isFriend(id) && !isCurrentUser && (
                                         <Pressable onPress={() => handleAddUser(id)} style={styles.addButton}>
                                             <Text style={styles.addButtonText}>Add</Text>
                                         </Pressable>

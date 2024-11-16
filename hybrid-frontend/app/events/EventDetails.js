@@ -42,11 +42,14 @@ const EventDetails = ({route}) => {
     const [userData, setUserData] = useState(null);
     const [attendanceData, setAttendaceData] = useState([]);
     const [picturesData, setPicturesData] = useState([]);
+    const [attendanceConfirmed, setAttendanceConfirmed] = useState(false);
 
     const getUserData = async () => {
       try {
         const data = await SecureStore.getItemAsync('userData');
         setUserData(data);
+
+        // console.log("USER DATA:", userData)
       } catch (error) {
         console.error(error)
       }
@@ -54,9 +57,14 @@ const EventDetails = ({route}) => {
 
     const getAttendanceData = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/api/v1/attendances`);
+        const response = await fetch(`http://${BACKEND_URL}/api/v1/attendances`);
         const json = await response.json();
         const filteredAttendances = json.attendances.filter(attendance => attendance.event_id === event.id);
+
+        // console.log("ATTENDANCE DATA:", filteredAttendances)
+
+        const currentUserAttending = filteredAttendances.some(attendance => parseInt(attendance.user_id) === parseInt(userData))
+        setAttendanceConfirmed(currentUserAttending);
 
         setAttendaceData(filteredAttendances);
       } catch (error) {
@@ -66,7 +74,7 @@ const EventDetails = ({route}) => {
 
     const getPicturesData = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/api/v1/event_pictures?event_id=${event.id}`);
+        const response = await fetch(`http://${BACKEND_URL}/api/v1/event_pictures?event_id=${event.id}`);
         const json = await response.json();
         const sortedImages = json.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -83,13 +91,18 @@ const EventDetails = ({route}) => {
 
     useEffect(() => {
       getUserData();
-      getAttendanceData();
       getPicturesData();
 
       if (fromNotification) {
         setIndex(routes.findIndex(route => route.key === 'photos'));
       }
     }, []);
+
+    useEffect(() => {
+      if (userData) {
+        getAttendanceData();
+      }
+    }, [userData]);
 
     useEffect(() => {
       if (index === routes.findIndex(route => route.key === 'photos')) {
@@ -177,11 +190,14 @@ const EventDetails = ({route}) => {
                             if (!userData) {
                               Alert.alert('Please Log In', 'You must be logged in to confirm attendance to an event.');
                             } else {
+                              setAttendanceConfirmed(true);
                               setModalVisible(true);
                             }
                           }}
                         >
-                            <Text style={styles.buttonText}>CONFIRM ATTENDANCE</Text>
+                            <Text style={styles.buttonText}>
+                              {attendanceConfirmed ? 'ATTENDANCE CONFIRMED' : 'CONFIRM ATTENDANCE'}
+                            </Text>
                         </Pressable>
                     </View>
                 </View>
@@ -320,7 +336,7 @@ const styles = StyleSheet.create({
       top: 20
     },
     uploadButton: {
-      width: 175,
+      width: 180,
       height: 40,
       justifyContent: 'center',
       alignItems: 'center',

@@ -33,7 +33,7 @@ const Reviews = ({beerId, userId}) => {
     const getReviews = async () => {
         dispatch({ type: 'FETCH_REVIEWS_REQUEST' });
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/beers/${beerId}/reviews`);
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/beers/${beerId}/reviews`);
             const json = await response.json();
 
             const sortedReviews = await json.sort((a, b) => {
@@ -55,7 +55,7 @@ const Reviews = ({beerId, userId}) => {
 
         for (let userId of userIds) {
             try {
-                const response = await fetch(`${BACKEND_URL}/api/v1/users/${userId}`);
+                const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}`);
                 const userData = await response.json();
 
                 newUserNames[userId] = userData.user.handle; 

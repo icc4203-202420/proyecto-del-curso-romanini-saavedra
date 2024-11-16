@@ -26,7 +26,7 @@ const Beers = () => {
   const getUserData = async () => {
     try {
       const data = await SecureStore.getItemAsync('userData');
-      console.log("USER DATA EN BEER INDEX:", data) 
+      // console.log("USER DATA EN BEER INDEX:", data) 
       setUserData(data);
     } catch (error) {
       console.error(error)
@@ -37,7 +37,7 @@ const Beers = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/beers`);
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/beers`);
       const data = await response.json();
       setBeers([...beers, ...data.beers]);
       setFilteredBeers([...beers, ...data.beers]);

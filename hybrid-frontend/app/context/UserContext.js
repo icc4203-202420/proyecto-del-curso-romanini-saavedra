@@ -31,7 +31,7 @@ export const UserProvider = ({ children }) => {
       const storedUserData = await SecureStore.getItemAsync('userData');
       console.log("Token almacenado:", token);
 
-      const response = await fetch(`${BACKEND_URL}/api/v1/logout`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/logout`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,

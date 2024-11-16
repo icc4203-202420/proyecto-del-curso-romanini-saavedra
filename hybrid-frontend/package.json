@@ -11,15 +11,18 @@
   "dependencies": {
     "@expo/metro-runtime": "~4.0.0",
     "@expo/vector-icons": "^14.0.2",
+    "@rails/actioncable": "^8.0.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/slider": "4.5.5",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
+    "actioncable": "^5.2.8-1",
     "axios": "^1.7.7",
     "axios-hooks": "^5.0.2",
     "expo": "^52.0.0",
+    "expo-av": "~15.0.1",
     "expo-camera": "~16.0.5",
     "expo-constants": "~17.0.3",
     "expo-device": "~7.0.1",
@@ -35,6 +38,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-native": "0.76.2",
+    "react-native-actioncable": "github:cpunion/react-native-actioncable",
     "react-native-autocomplete-dropdown": "^4.0.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-elements": "^3.4.3",
@@ -48,8 +52,8 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.7.0",
     "react-native-web": "~0.19.13",
-    "yup": "^1.4.0",
-    "expo-av": "~15.0.1"
+    "ws": "^8.18.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"

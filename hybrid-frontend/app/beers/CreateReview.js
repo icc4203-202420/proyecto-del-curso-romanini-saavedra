@@ -46,7 +46,7 @@ const CreateReview = ({userId, beerId, modalVisible, setModalVisible, onReviewCr
 		};
 
         try {
-            const response = await fetch(`${BACKEND_URL}/api/v1/beers/${beerId}/reviews`, {
+            const response = await fetch(`http://${BACKEND_URL}/api/v1/beers/${beerId}/reviews`, {
                 method: 'POST',
                 headers: {
                   Accept: 'application/json',

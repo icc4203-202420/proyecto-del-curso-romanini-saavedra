@@ -37,7 +37,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
       const storedToken = await SecureStore.getItemAsync('token');
 		  const token = storedToken.replace(/"/g, '')
 
-      const response = await fetch(`${BACKEND_URL}/api/v1/users`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -98,7 +98,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
     formData.append('event_picture[event_id]', eventId);
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/v1/event_pictures`, formData, {
+      const response = await axios.post(`http://${BACKEND_URL}/api/v1/event_pictures`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -127,7 +127,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
         picture_id: parseInt(pictureId),
       }));
 
-      const response = await axios.post(`${BACKEND_URL}/api/v1/tag_users`, {
+      const response = await axios.post(`http://${BACKEND_URL}/api/v1/tag_users`, {
         tag_users: tagUsersArray
       });
     } catch (error) {
@@ -156,7 +156,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
   const handleGenerateSummary = async () => {
     setHasGeneratedSummary(true);
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/events/${eventId}/generate_summary`, {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/events/${eventId}/generate_summary`, {
         method: 'POST',
       });
 
