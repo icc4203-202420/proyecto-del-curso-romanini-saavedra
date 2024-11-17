@@ -31,7 +31,7 @@ const EventDetails = ({route}) => {
     const {bar} = route.params;
     const {fromNotification} = route.params;
 
-    const [index, setIndex] = useState(0);
+    const [index, setIndex] = useState(fromNotification ? 1 : 0);
     const [routes] = useState([
         {key: 'information', title: 'Information'},
         {key: 'photos', title: 'Photos'},
@@ -94,9 +94,12 @@ const EventDetails = ({route}) => {
       getPicturesData();
 
       if (fromNotification) {
-        setIndex(routes.findIndex(route => route.key === 'photos'));
+        const photosIndex = routes.findIndex((route) => route.key === 'photos');
+        if (photosIndex !== -1) {
+          setIndex(photosIndex);
+        }
       }
-    }, []);
+    }, [fromNotification, routes]);
 
     useEffect(() => {
       if (userData) {

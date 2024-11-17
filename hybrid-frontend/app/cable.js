@@ -36,5 +36,6 @@ export const disconnectWebSocket = () => {
   if (ws) {
     ws.close();
     ws = null;
+    console.log("WebSocket disconnected.");
   }
 };
