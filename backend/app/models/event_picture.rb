@@ -12,14 +12,22 @@ class EventPicture < ApplicationRecord
 
   private
   def broadcast_to_friends
+    bar = Bar.find(event.id)
+    address = Address.find(bar.address_id)
+    country = Country.find(address.country_id)
     user.friends.each do |friend|
       Rails.logger.info "BROADCASTING to feed for friend #{friend.id}: #{friend.inspect}"
 
       # Este es el mensaje que se manda hacia el canal de cada amigo
       ActionCable.server.broadcast("feed_#{friend.id}", {
+        type: "new_post",
         activity: "#{user.handle} uploaded a new picture to the event '#{event.name}'",
         user: user.handle,
-        event: event.name,
+        event: event,
+        bar: bar,
+        country_name: country.name,
+        description: description,
+        created_at: created_at,
         image_url: Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
       })
     end

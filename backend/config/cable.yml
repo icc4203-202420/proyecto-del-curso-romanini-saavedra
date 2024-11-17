@@ -1,5 +1,5 @@
 development:
-  url: <%= ENV.fetch("BACKEND_URL", "ws://localhost:3000/cable") %>
+  url: <%= ENV.fetch("BACKEND_URL") %>
   adapter: async
 
 test:
