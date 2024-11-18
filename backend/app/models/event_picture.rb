@@ -2,7 +2,7 @@ class EventPicture < ApplicationRecord
   belongs_to :event
   belongs_to :user
 
-  has_many :tag_users
+  has_many :tag_users, foreign_key: 'picture_id'
   has_one_attached :image
 
   after_create_commit :broadcast_to_friends

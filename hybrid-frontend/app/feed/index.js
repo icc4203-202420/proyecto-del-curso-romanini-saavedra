@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
@@ -7,11 +7,12 @@ import { ActionCable, Cable } from '@kesha-antonov/react-native-action-cable';
 
 const Feed = () => {
   const [feedData, setFeedData] = useState([]);
-  const [error, setError] = useState('');
   const [userId, setUserId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const isFocused = useIsFocused();
   const [friendshipsReviews, setFriendshipsReviews] = useState(null);
+  const [friendships, setFriendships] = useState([]);
+  const [eventPictures, setEventPictures] = useState([]);
 
   const navigation = useNavigation();
 
@@ -20,6 +21,7 @@ const Feed = () => {
 
   console.log("ESTAMOS EN FEED");
   console.log("IS CONNECTED:", isConnected);
+  console.log("isFocused:", isFocused)
 
   const getUserId = async () => {
     try {
@@ -30,38 +32,71 @@ const Feed = () => {
     }
   }
 
-  const fetchUserFriendsReviews = async () => {
-    const token = await SecureStore.getItemAsync('token');
-    const userId = await SecureStore.getItemAsync('userData');
-    setFriendshipsReviews(null);
-    try {
-      const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friends_reviews`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      console.log("response from fetchUserFriends: ", data);
-      const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      console.log("sorted version of response: ", sortedData);
-      setFriendshipsReviews(sortedData);
-    } catch (err) {
-      console.error("Error loading friendships:", err);
-    }
-  };
+  /*
+En esta funcion (onNewActivity) tengo que chequear como llega la data nueva
+Las nuevas fotos tienen esta estructura de data:
+{
+  "action": "received", 
+  "activity": "caromanini uploaded a new picture to the event 'Happy Hour 1'", 
+  "bar": 
+    {
+      "address_id": 24, 
+      "created_at": "2024-11-18T07:09:05.324Z", 
+      "id": 7, 
+      "latitude": -33.42628, 
+      "longitude": -70.56437, 
+      "name": "Bar La Providencia", 
+      "updated_at": "2024-11-18T07:09:05.324Z"
+    }, 
+  "country_name": "Chile", 
+  "created_at": "2024-11-18T08:01:22.244Z", 
+  "description": "Cerezas", 
+  "event": 
+    {
+      "bar_id": 1, 
+      "created_at": "2024-11-18T07:09:04.956Z", 
+      "date": "2024-11-18T07:09:04.824Z", 
+      "description": "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.", 
+      "end_date": "2024-11-18T07:09:04.824Z", 
+      "id": 7, 
+      "name": "Happy Hour 1", 
+      "start_date": "2024-11-18T07:09:04.824Z", 
+      "updated_at": "2024-11-18T07:09:04.956Z"
+    }, 
+  "image_url": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MywicHVyIjoiYmxvYl9pZCJ9fQ==--304c1e3a1aac12c2491e7f4e34887dd102efc074/image.jpg", 
+  "type": "new_post", 
+  "user": "caromanini"
+}
+
+
+Mi idea es modificar el atributo "type" que se manda desde el backend para que sea
+específico según el tipo de dato que se está mandando (foto o review).
+  - Foto => type: 'photo'
+  - Review => type: 'review'
+
+También creo que sería bueno modificar la estructura de esta data antes de guardarlo
+en el feed (guardar me refiero a setFeed(data)). La idea seria que tanto las fotos 
+como los reviews tengan la misma estructura que se establecio en el useEffect 
+que se encarga de toda la lógica de obtener la información de la api y eso. 
+
+De esta manera no se tiene que volver a estructurar los datos en ese useEffect.
+
+  */
 
   const onNewActivity = useCallback((data) => {
     console.log("New activity:", data.activity)
 
     setFeedData((prevFeed) => {
-      const isDuplicate = prevFeed.some((item) => {
-        console.log("ITEM en duplicate:", item);
-        return item.created_at === data.created_at
-      });
-      console.log("IS DUPLICATE:", isDuplicate)
+      const isDuplicate = prevFeed.some((item) => { item.created_at === data.created_at });
+      // console.log("IS DUPLICATE:", isDuplicate)
       if (isDuplicate) return prevFeed;
 
-      return [...prevFeed, data]
+      const newFeed = [data, ...prevFeed];
+
+      console.log("NEW FEED (esto es en onNewActivity):", newFeed)
+
+      return newFeed.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
     })
 
     // setFeedData((prevFeed) => [data, ...prevFeed]);
@@ -85,15 +120,10 @@ const Feed = () => {
     setIsConnected(false);
   }, []);
   
-  const getChannelName = useCallback(() => {
-    return `feed_${userId}`;
-  }, [userId])
+  const getChannelName = useCallback(() => { `feed_${userId}`}, [userId])
 
   const createChannel = useCallback(() => {
-    // const actionCable = ActionCable.createConsumer(`ws://${BACKEND_URL}/cable`);
-    // const cable = new Cable({});
     const channelName = getChannelName();
-
     const channel = cable.setChannel(
       channelName,
       actionCable.subscriptions.create({
@@ -108,13 +138,10 @@ const Feed = () => {
       .on('disconnected', handleDisconnected);
 
     return channel;
-  }, [BACKEND_URL, getChannelName, handleConnected, handleDisconnected, handleReceived, userId]);
+  }, [getChannelName, handleConnected, handleDisconnected, handleReceived, userId]);
 
   const removeChannel = useCallback(() => {
-    // const actionCable = ActionCable.createConsumer(`ws://${BACKEND_URL}/cable`);
-    // const cable = new Cable({});
     const channelName = getChannelName();
-
     const channel = cable.channel(channelName);
     if (channel) {
       channel
@@ -125,12 +152,70 @@ const Feed = () => {
       channel.unsubscribe();
       delete (cable.channels[channelName]);
     }
-  }, [BACKEND_URL, getChannelName, handleConnected, handleDisconnected, handleReceived]);
+  }, [getChannelName, handleConnected, handleDisconnected, handleReceived]);
   
   useEffect(() => {
     getUserId();
   }, []);
+  
+  const fetchFriendships = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    const userId = await SecureStore.getItemAsync('userData');
+    try {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json()
+      // console.log("Friendship data:", data);
+      setFriendships(data)
+      return data;
+    } catch (error) {
+      console.error("Error fetching friendship data:", error);
+      return [];
+    }
+  }
 
+  const fetchEventPictures = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    try {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/event_pictures`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json()
+      // console.log("Even Pictures data:", data);
+      setEventPictures(data)
+      return data;
+    } catch (error) {
+      console.error("Error fetching eventPictures data:", error);
+      return [];
+    }
+  }
+
+  const fetchUserFriendsReviews = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    const userId = await SecureStore.getItemAsync('userData');
+    setFriendshipsReviews(null);
+    try {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friends_reviews`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      // console.log("response from fetchUserFriends: ", data);
+      const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      // console.log("sorted version of response: ", sortedData);
+      setFriendshipsReviews(sortedData);
+      return sortedData;
+    } catch (err) {
+      console.error("Error loading friendships:", err);
+      return [];
+    }
+  };
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -144,7 +229,99 @@ const Feed = () => {
     }
   }, [isFocused, userId]);
 
+  const feedDataRef = useRef(feedData);
+
   useEffect(() => {
+    // console.log("SE ESTA EJECUTANDO LA FUNCION DE FETCH DE TODO!!!")
+    const fetchPicturesAndReviews = async () => {
+      try {
+        const userId = await SecureStore.getItemAsync('userData')
+        const token = await SecureStore.getItemAsync('token');
+        // console.log("USER ID:", userId)
+        if (userId) {
+          // console.log("Entramos a buscar las cosas para el fetch")
+          const eventPicturesData = await fetchEventPictures();
+          const friendshipsReviewsData = await fetchUserFriendsReviews();
+          const friendshipsData = await fetchFriendships();
+  
+          const filteredEventPictures = eventPicturesData.filter(picture => 
+            friendshipsData.some(friendship => 
+              parseInt(friendship.friend_id) === parseInt(picture.user_id)
+            )
+          );
+  
+          const nonDuplicatePictures = [];
+          const seenCreatedAtPictures = new Set();
+
+          filteredEventPictures.forEach(picture => {
+            if (!seenCreatedAtPictures.has(picture.created_at)) {
+              nonDuplicatePictures.push(picture);
+              seenCreatedAtPictures.add(picture.created_at);
+            }
+          })
+
+          const seenCreatedAtReviews = new Set();
+          const uniqueReviews = friendshipsReviewsData.filter(review => {
+            if (!seenCreatedAtReviews.has(review.created_at)) {
+              seenCreatedAtReviews.add(review.created_at);
+              return true;
+            }
+            return false;
+          });
+
+          console.log("UNIQUE REVIEWS:", uniqueReviews)
+
+          console.log("FILTERED IMAGES:", nonDuplicatePictures)
+
+          const combinedFeed = [
+            ...nonDuplicatePictures.map(picture => ({
+              id: picture.id,
+              type: 'photo',
+              activity: `Friend: ${picture.user.handle}`,
+              user: picture.user.handle,
+              event: picture.event,
+              bar: picture.bar,
+              country_name: picture.country.name,
+              description: picture.description,
+              created_at: picture.created_at,
+              image_url: picture.image_url,
+            })),
+            ...uniqueReviews.map(review =>({
+              type: 'review',
+              activity: `Friend: ${review.friend_handle}`,
+              user: review.friend_handle,
+              beer_name: review.beer_name,
+              rating: review.rating,
+              avg_rating: review.avg_rating,
+              comment: review.text,
+              created_at: review.created_at,
+            }))
+          ];
+
+          const sortedFeed = combinedFeed.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+
+          feedDataRef.current = sortedFeed;
+          setFeedData(feedDataRef.current)
+
+          // console.log("Images to display from backend:", filteredEventPictures)
+          // console.log("Feed Data:", feedData);
+          // console.log("Imagenes FINALES filtradas:", nonDuplicatePictures)
+
+          // feedDataRef.current = nonDuplicatePictures;
+          // setFeedData(feedDataRef.current);
+        }
+      } catch (error) {
+        console.error("Error fetching friendship and eventPicture data:", error)
+      }
+    }
+    if (isFocused) {
+      fetchPicturesAndReviews();  
+    }
+  }, [isFocused])
+
+
+  useEffect(() => {
+    console.log("Create channel use effect")
     if (isFocused && userId) {
       const channelName = getChannelName();
       if (!cable.channel(channelName)) {
@@ -161,25 +338,58 @@ const Feed = () => {
 
   const renderItem = ({item}) => {
     console.log("ITEM:", item)
+
+
+
+    if (item.type === 'photo'){
+      return (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EventDetails', {event: item.event, bar: item.bar, fromNotification: true})}
+        >
+          <View style={styles.activityCard}>
+            <Text style={styles.activityText}>{item.activity}</Text>
+            <Text style={styles.eventText}>Event: {item.event.name}</Text>
+            <Text style={styles.eventText}>Bar: {item.bar.name}, {item.country_name}</Text>
+            <Text style={styles.timestampText}>{new Date(item.created_at).toLocaleString()}</Text>
+            {item.image_url && (
+              <Image
+              // source={{ uri: `http://${BACKEND_URL}/${item.image_url}?t=${new Date().getTime()}`}}
+              source={{ uri: `${item.image_url}?t=${new Date().getTime()}`}}
+              resizeMode='contain'
+              style={styles.image}
+              />
+            )}
+            <Text style={styles.descriptionText}>{item.description}</Text>
+            {item.tagged_users && parseInt(item.tagged_users.length) > 0 && (
+              <View style={styles.taggedUsersContainer}>
+                <Text style={styles.taggedUsersLabel}>Tagged Users:</Text>
+                {item.tagged_users.map((user) => (
+                  <Text key={user.id} style={styles.taggedUser}>
+                    @{user.handle}
+                  </Text>
+                ))}
+              </View>
+            )}
+          </View>
+        </TouchableOpacity>
+      )
+    }
+
+
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('EventDetails', {event: item.event, bar: item.bar, fromNotification: true})}
-      >
-        <View style={styles.activityCard}>
-          <Text style={styles.activityText}>{item.activity}</Text>
-          <Text style={styles.eventText}>Event: {item.event.name}</Text>
-          <Text style={styles.eventText}>Bar: {item.bar.name}, {item.country_name}</Text>
-          <Text style={styles.timestampText}>{new Date(item.created_at).toLocaleString()}</Text>
-          {item.image_url && (
-            <Image
-            source={{ uri: `http://${BACKEND_URL}/${item.image_url}?t=${new Date().getTime()}`}}
-            resizeMode='contain'
-            style={styles.image}
-            />
-          )}
-          <Text style={styles.descriptionText}>{item.description}</Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('BeerDetails', {beer: item.beer_obj})}>
+          <View style={styles.reviewCard}>
+            <Text style={styles.friendHandle}>{item.activity}</Text>
+            <Text style={styles.reviewText}>Review: {item.text}</Text>
+            <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
+            <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
+            <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>
+            <Text style={styles.timestamp}>
+              Reviewed at: {new Date(item.created_at).toLocaleString()}
+            </Text>
+          </View>
+        </TouchableOpacity>
     )
   }
 
@@ -207,26 +417,18 @@ const Feed = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Activity Feed</Text>
-      {/* {!isConnected && (
-        <Text style={styles.error}>
-          {userId ? "Conectado al feed..." : "You need to be logged in to see a feed."}
-        </Text>
-      )} */}
-      
-
-      {/* {error && <Text style={styles.error}>{error}</Text>} */}
-
       <FlatList
         data={feedData}
         renderItem={renderItem}
         keyExtractor={(item) => item.created_at.toString()}
+        inverted
       />
 
-      <FlatList
+      {/* <FlatList
         data={friendshipsReviews}
         renderItem={renderReviewItem}
         keyExtractor={(item) => item.id.toString()}
-      />
+      /> */}
     </View>
   )
 }
@@ -310,6 +512,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#888',
     marginTop: 8,
+  },
+  taggedUsersContainer: {
+    marginTop: 10,
+    padding: 5,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+  },
+  taggedUsersLabel: {
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  taggedUser: {
+    color: '#007bff',
   },
 });
 

@@ -19,6 +19,7 @@ class Review < ApplicationRecord
 
       # Este es el mensaje que se manda hacia el canal de cada amigo
       ActionCable.server.broadcast("feed_#{friend.id}", {
+        type: "new_post",
         activity: "#{user.handle} uploaded a new review for a beer '#{beer.name}'",
         user: user.handle,
         beer: beer.name,

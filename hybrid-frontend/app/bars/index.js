@@ -15,6 +15,7 @@ import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 
 const Bars = () => {
+  console.log("ESTAMOS EN BARS")
   const navigation = useNavigation();
   const [searchKeywords, setSearchKeywords] = useState('');
   const [filteredBars, setFilteredBars] = useState([]);
