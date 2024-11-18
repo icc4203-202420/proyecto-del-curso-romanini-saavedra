@@ -6,7 +6,6 @@ class EventPicture < ApplicationRecord
   has_one_attached :image
 
   after_create_commit :broadcast_to_friends
-
   validates :event_id, presence: true
   validates :user_id, presence: true
 
@@ -15,6 +14,9 @@ class EventPicture < ApplicationRecord
     bar = Bar.find(event.id)
     address = Address.find(bar.address_id)
     country = Country.find(address.country_id)
+
+    tagged_users = tag_users.includes(:tagged_user)
+
     user.friends.each do |friend|
       Rails.logger.info "BROADCASTING to feed for friend #{friend.id}: #{friend.inspect}"
 
@@ -28,7 +30,13 @@ class EventPicture < ApplicationRecord
         country_name: country.name,
         description: description,
         created_at: created_at,
-        image_url: Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true)
+        image_url: Rails.application.routes.url_helpers.rails_blob_path(image, only_path: true),
+        tagged_users: tagged_users.map { |tag_user|
+          {
+            id: tag_user.tagged_user.id,
+            handle: tag_user.tagged_user.handle
+          }
+        }
       })
     end
   end

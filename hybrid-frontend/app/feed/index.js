@@ -32,66 +32,48 @@ const Feed = () => {
     }
   }
 
-  /*
-En esta funcion (onNewActivity) tengo que chequear como llega la data nueva
-Las nuevas fotos tienen esta estructura de data:
-{
-  "action": "received", 
-  "activity": "caromanini uploaded a new picture to the event 'Happy Hour 1'", 
-  "bar": 
-    {
-      "address_id": 24, 
-      "created_at": "2024-11-18T07:09:05.324Z", 
-      "id": 7, 
-      "latitude": -33.42628, 
-      "longitude": -70.56437, 
-      "name": "Bar La Providencia", 
-      "updated_at": "2024-11-18T07:09:05.324Z"
-    }, 
-  "country_name": "Chile", 
-  "created_at": "2024-11-18T08:01:22.244Z", 
-  "description": "Cerezas", 
-  "event": 
-    {
-      "bar_id": 1, 
-      "created_at": "2024-11-18T07:09:04.956Z", 
-      "date": "2024-11-18T07:09:04.824Z", 
-      "description": "Join us at our bar for an evening of fun with great drinks, delicious bites, and lively vibes.", 
-      "end_date": "2024-11-18T07:09:04.824Z", 
-      "id": 7, 
-      "name": "Happy Hour 1", 
-      "start_date": "2024-11-18T07:09:04.824Z", 
-      "updated_at": "2024-11-18T07:09:04.956Z"
-    }, 
-  "image_url": "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MywicHVyIjoiYmxvYl9pZCJ9fQ==--304c1e3a1aac12c2491e7f4e34887dd102efc074/image.jpg", 
-  "type": "new_post", 
-  "user": "caromanini"
-}
-
-
-Mi idea es modificar el atributo "type" que se manda desde el backend para que sea
-específico según el tipo de dato que se está mandando (foto o review).
-  - Foto => type: 'photo'
-  - Review => type: 'review'
-
-También creo que sería bueno modificar la estructura de esta data antes de guardarlo
-en el feed (guardar me refiero a setFeed(data)). La idea seria que tanto las fotos 
-como los reviews tengan la misma estructura que se establecio en el useEffect 
-que se encarga de toda la lógica de obtener la información de la api y eso. 
-
-De esta manera no se tiene que volver a estructurar los datos en ese useEffect.
-
-  */
-
   const onNewActivity = useCallback((data) => {
     console.log("New activity:", data.activity)
+
+    let newData;
+
+    if (data.type === "new_post") {
+      newData = {
+          type: 'photo',
+          activity: `Friend: ${data.user}`,
+          user: data.user,
+          event: data.event,
+          bar: data.bar,
+          country_name: data.country_name,
+          description: data.description,
+          created_at: data.created_at,
+          image_url: data.image_url,
+          tagged_users: data.tagged_users
+        }
+    } else {
+      newData ={
+          type: 'review',
+          activity: `Friend: ${data.user}`,
+          user: data.user,
+          event: data.event,
+          bar: data.bar,
+          country_name: data.country_name,
+          description: data.description,
+          created_at: data.created_at,
+          image_url: data.image_url
+        
+      }
+    }
+
+    console.log("NEW DATA EN onNewActivity:", newData);
+
 
     setFeedData((prevFeed) => {
       const isDuplicate = prevFeed.some((item) => { item.created_at === data.created_at });
       // console.log("IS DUPLICATE:", isDuplicate)
       if (isDuplicate) return prevFeed;
 
-      const newFeed = [data, ...prevFeed];
+      const newFeed = [newData, ...prevFeed];
 
       console.log("NEW FEED (esto es en onNewActivity):", newFeed)
 
@@ -105,9 +87,9 @@ De esta manera no se tiene que volver a estructurar los datos en ese useEffect.
   const handleReceived = useCallback((data) => {
     console.log("Full data received:", data)
 
-    if (data.type === 'new_post') {
+    if (data.type === 'new_post' || data.type === 'new_review') {
       onNewActivity(data);
-    }
+    } 
   }, [onNewActivity]);
 
   const handleConnected = useCallback(() => {
@@ -285,6 +267,7 @@ De esta manera no se tiene que volver a estructurar los datos en ese useEffect.
               description: picture.description,
               created_at: picture.created_at,
               image_url: picture.image_url,
+              tagged_users: picture.tagged_users
             })),
             ...uniqueReviews.map(review =>({
               type: 'review',
@@ -337,7 +320,7 @@ De esta manera no se tiene que volver a estructurar los datos en ese useEffect.
   }, [isFocused, userId, createChannel, removeChannel]);
 
   const renderItem = ({item}) => {
-    console.log("ITEM:", item)
+    // console.log("ITEM:", item)
 
 
 
@@ -381,7 +364,7 @@ De esta manera no se tiene que volver a estructurar los datos en ese useEffect.
           onPress={() => navigation.navigate('BeerDetails', {beer: item.beer_obj})}>
           <View style={styles.reviewCard}>
             <Text style={styles.friendHandle}>{item.activity}</Text>
-            <Text style={styles.reviewText}>Review: {item.text}</Text>
+            <Text style={styles.reviewText}>Review: {item.comment}</Text>
             <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
             <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
             <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>

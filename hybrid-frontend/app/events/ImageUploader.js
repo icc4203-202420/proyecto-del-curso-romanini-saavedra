@@ -97,6 +97,15 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
     formData.append('event_picture[user_id]', userId);
     formData.append('event_picture[event_id]', eventId);
 
+    taggedFriends.forEach((friendId) => {
+      formData.append('event_picture[tagged_users][]', friendId); 
+    });
+
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value)
+    })
+    
+
     try {
       const response = await axios.post(`http://${BACKEND_URL}/api/v1/event_pictures`, formData, {
         headers: {
@@ -106,7 +115,7 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
 
       const pictureId = response.data.event_picture.id; 
 
-      await tagFriends(pictureId);
+      // await tagFriends(pictureId);
       
       onNewImage();
       // onNewImage(response.data);
@@ -140,18 +149,6 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
       prev.includes(friendId) ? prev.filter((id) => id !== friendId) : [...prev, friendId]
     );
   };
-
-  // const handleGenerateSummary = async () => {
-  //   setIsGenerating(true);
-  //   try {
-  //     await fetch(`${BACKEND_URL}/events/${eventId}/generate_summary`, { method: 'POST' });
-  //     Alert.alert('Resumen en proceso', 'Se te notificará cuando el video esté listo.');
-  //   } catch (error) {
-  //     console.error(error);
-  //     Alert.alert('Error', 'No se pudo iniciar la generación del video.');
-  //     setIsGenerating(false);
-  //   }
-  // };
 
   const handleGenerateSummary = async () => {
     setHasGeneratedSummary(true);
