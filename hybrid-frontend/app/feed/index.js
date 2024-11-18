@@ -47,7 +47,8 @@ const Feed = () => {
           country_name: data.country_name,
           description: data.description,
           created_at: data.created_at,
-          image_url: data.image_url,
+          // image_url: data.image_url,
+          image_url: `http://${BACKEND_URL}${data.image_url}`,
           tagged_users: data.tagged_users
         }
     } else {
@@ -56,7 +57,7 @@ const Feed = () => {
           activity: `Friend: ${data.user}`,
           user: data.user,
           beer_name: data.beer.name,
-          beer_obj: beer,
+          beer_obj: data.beer,
           rating: data.rating,
           avg_rating: data.avg_rating,
           comment: data.comment,
@@ -320,6 +321,17 @@ const Feed = () => {
 
   const renderItem = ({item}) => {
     console.log("ITEM:", item)
+
+    /*
+  URL de la foto cuando recien se sube con WebSocket:
+  /rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--15b5b1d6fbe78da85c26b42bd1361b5b02e83c54/image.jpg
+
+  http://192.168.88.170:3000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MSwicHVyIjoiYmxvYl9pZCJ9fQ==--15b5b1d6fbe78da85c26b42bd1361b5b02e83c54/image.jpg
+
+
+    
+    
+    */ 
 
 
 
