@@ -10,7 +10,7 @@ Se solicita implementar a continuación las siguientes características específ
 
 1. [0.5] Implementar la sección _Feed_, la cual muestra en tiempo real la actividad de amistades y bares en los que el usuario haya escrito algo. Las publicaciones se ordenan desde la más reciente a la más antigua.
 2. [2.0] Cuando una amistad publique algo en un evento, la publicación debe aparecer en tiempo real en el feed del usuario. Al presionar en la publicación, se debe dirigir al usuario a la vista del evento.
-3. [2.0] Cuando una amistad evalúe una cerveza, se debe mostrar en el _Feed_ la puntuación, la cerveza y la amistad que hizo la evaluación. Al presionar en la publicación, se debe dirigir al usuario a la vista del bar.
+3. [2.0] Cuando una amistad evalúe una cerveza, se debe mostrar en el _Feed_ la puntuación, la cerveza y la amistad que hizo la evaluación. Al presionar en la publicación, se debe dirigir al usuario a la vista de alguno de los bares que la sirvan (queda a su criterio el elegir cual).
 4. [1.0] El _Feed_ debe contar con una opción para filtrar publicaciones, permitiendo elegir entre filtrar por alguna amistad, un bar, un país o una cerveza.
 5. [0.5] La conexión al servidor de websockets debe estar autentificada, por ningún motivo se puede permitir que un usuario no autentificado pueda acceder a la información en tiempo real.
 
