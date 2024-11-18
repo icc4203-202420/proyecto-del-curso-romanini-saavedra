@@ -3,12 +3,17 @@ class API::V1::EventPicturesController < ApplicationController
   before_action :set_event_picture, only: [:show, :destroy]
 
   def index
-    @event_pictures = EventPicture.where(event_id: params[:event_id])
+    if params[:event_id].present?
+      @event_pictures = EventPicture.where(event_id: params[:event_id])
+    else
+      @event_pictures = EventPicture.all
+    end
     render json: @event_pictures.map { |picture|
       {
         id: picture.id,
         user_id: picture.user_id,
         description: picture.description,
+        event_id: picture.event_id,
         created_at: picture.created_at,
         updated_at: picture.updated_at,
         image_url: url_for(picture.image)
