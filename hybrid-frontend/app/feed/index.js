@@ -7,14 +7,11 @@ import { ActionCable, Cable } from '@kesha-antonov/react-native-action-cable';
 
 const Feed = () => {
   const [feedData, setFeedData] = useState([]);
-  const [feedPosts, setFeedPosts] = useState([]);
-  const [error, setError] = useState('');
   const [userId, setUserId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const isFocused = useIsFocused();
   const [friendships, setFriendships] = useState([]);
   const [eventPictures, setEventPictures] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const navigation = useNavigation();
 
@@ -39,7 +36,7 @@ const Feed = () => {
 
     setFeedData((prevFeed) => {
       const isDuplicate = prevFeed.some((item) => { item.created_at === data.created_at });
-      console.log("IS DUPLICATE:", isDuplicate)
+      // console.log("IS DUPLICATE:", isDuplicate)
       if (isDuplicate) return prevFeed;
 
       const newFeed = [data, ...prevFeed];
@@ -115,7 +112,7 @@ const Feed = () => {
         }
       });
       const data = await response.json()
-      console.log("Friendship data:", data);
+      // console.log("Friendship data:", data);
       setFriendships(data)
       return data;
     } catch (error) {
@@ -133,7 +130,7 @@ const Feed = () => {
         }
       });
       const data = await response.json()
-      console.log("Even Pictures data:", data);
+      // console.log("Even Pictures data:", data);
       setEventPictures(data)
       return data;
     } catch (error) {
@@ -142,68 +139,16 @@ const Feed = () => {
     }
   }
 
-
-
-  // useEffect(() => {
-  //   if (isFocused && userId){
-  //     const fetchData = async () => {
-  //       const token = await SecureStore.getItemAsync('token');
-  //       try {
-  //         const friendshipsDataResponse = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
-  //           headers: {
-  //             'Authorization': `Bearer ${token}`
-  //           },
-  //         });
-  //         const friendshipsData = await friendshipsDataResponse.json()
-  //         setFriendships(friendshipsData);
-
-  //         console.log("Friendship data:", friendshipsData)
-
-  //         const eventPicturesResponse = await fetch(`http://${BACKEND_URL}/api/v1/event_pictures`, {
-  //           headers: {
-  //             'Authorization': `Bearer ${token}`
-  //           },
-  //         });
-  //         const eventPicturesData = await eventPicturesResponse.json()
-
-  //         const filteredEventPictures = eventPicturesData.filter(picture => {
-  //           return friendshipsData.some(friendship => 
-  //             parseInt(friendship.friend_id) === parseInt(picture.user_id)
-  //           );
-  //         });
-
-  //         setEventPictures(filteredEventPictures);
-
-  //         console.log("FILTERED EVENT PICTURES:", filteredEventPictures)
-
-  //         const nonDuplicatePictures = filteredEventPictures.filter((picture) => 
-  //           !feedData.some((item) => item.created_at === picture.created_at)
-  //         );
-
-  //         const combinedFeed = [
-  //           ...feedData,
-  //           ...nonDuplicatePictures,
-  //         ].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-  //         setFeedData(combinedFeed);
-  //       } catch (error) {
-  //         console.error('Error fetching data:', error)
-  //       }
-  //     }
-  //     fetchData();
-  //   }
-    
-  // }, [userId, isFocused, feedData])
-
   const feedDataRef = useRef(feedData);
 
   useEffect(() => {
-    console.log("SE ESTA EJECUTANDO LA FUNCION DE FETCH DE TODO!!!")
+    // console.log("SE ESTA EJECUTANDO LA FUNCION DE FETCH DE TODO!!!")
     const fetchPictures = async () => {
       try {
         const userId = await SecureStore.getItemAsync('userData')
-        console.log("USER ID:", userId)
+        // console.log("USER ID:", userId)
         if (userId) {
-          console.log("Entramos a buscar las cosas para el fetch")
+          // console.log("Entramos a buscar las cosas para el fetch")
           const eventPicturesData = await fetchEventPictures();
           const friendshipsData = await fetchFriendships();
   
@@ -223,10 +168,9 @@ const Feed = () => {
             }
           })
 
-          console.log("Images to display from backend:", filteredEventPictures)
-          console.log("Feed Data:", feedData);
-
-          console.log("Imagenes FINALES filtradas:", nonDuplicatePictures)
+          // console.log("Images to display from backend:", filteredEventPictures)
+          // console.log("Feed Data:", feedData);
+          // console.log("Imagenes FINALES filtradas:", nonDuplicatePictures)
 
           feedDataRef.current = nonDuplicatePictures;
           setFeedData(feedDataRef.current);
@@ -257,29 +201,15 @@ const Feed = () => {
     }
   }, [isFocused, userId, createChannel, removeChannel]);
 
-  // useEffect(() => {
-  //   console.log("Combined Feed useEffect.")
-  //   const combinedFeed = [
-  //     ...feedData, 
-  //     ...eventPictures,
-  //   ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-  //   // Comprobar si la combinación realmente cambia antes de actualizar el estado
-  //   if (parseInt(combinedFeed.length) !== parseInt(feedData.length)) {
-  //     setFeedData(combinedFeed);
-  //   }
-  // }, [eventPictures, feedData]);
-
   const renderItem = ({item}) => {
-    // console.log("ITEM:", item)
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate('EventDetails', {event: item.event, bar: item.bar, fromNotification: true})}
       >
         <View style={styles.activityCard}>
-          {/* <Text style={styles.activityText}>{item.activity}</Text>
-          <Text style={styles.eventText}>Event Id: {item.event.id}</Text>
-          <Text style={styles.eventText}>Bar: {item.bar.name}, {item.country_name}</Text> */}
+          <Text style={styles.activityText}>User: {item.user.handle}</Text>
+          <Text style={styles.eventText}>Event: {item.event.name}</Text>
+          <Text style={styles.eventText}>Bar: {item.bar.name}, {item.country.name}</Text>
           <Text style={styles.timestampText}>{new Date(item.created_at).toLocaleString()}</Text>
           {item.image_url && (
             <Image
@@ -290,6 +220,16 @@ const Feed = () => {
             />
           )}
           <Text style={styles.descriptionText}>{item.description}</Text>
+          {item.tagged_users && parseInt(item.tagged_users.length) > 0 && (
+            <View style={styles.taggedUsersContainer}>
+              <Text style={styles.taggedUsersLabel}>Tagged Users:</Text>
+              {item.tagged_users.map((user) => (
+                <Text key={user.id} style={styles.taggedUser}>
+                  @{user.handle}
+                </Text>
+              ))}
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     )
@@ -298,19 +238,6 @@ const Feed = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Activity Feed</Text>
-      {/* {isConnected ? (
-        <FlatList
-          data={feedData}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.created_at.toString()}
-        />
-      ) : (
-        <Text style={styles.error}>
-          {"You need to be logged in to see a feed."}
-        </Text>
-      )} */}
-      
-
       <FlatList
         data={feedData}
         renderItem={renderItem}
@@ -361,6 +288,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginTop: 4,
+  },
+  taggedUsersContainer: {
+    marginTop: 10,
+    padding: 5,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+  },
+  taggedUsersLabel: {
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  taggedUser: {
+    color: '#007bff',
   },
 });
 

@@ -12,11 +12,22 @@ class API::V1::EventPicturesController < ApplicationController
       {
         id: picture.id,
         user_id: picture.user_id,
+        user: {
+          handle: picture.user.handle
+        },
         description: picture.description,
-        event_id: picture.event_id,
+        event: picture.event,
+        bar: picture.event.bar,
+        country: picture.event.bar.address.country,
         created_at: picture.created_at,
         updated_at: picture.updated_at,
-        image_url: url_for(picture.image)
+        image_url: url_for(picture.image),
+        tagged_users: picture.tag_users.map { |tag_user|
+          {
+            id: tag_user.tagged_user.id,
+            handle: tag_user.tagged_user.handle
+          }
+      }
       }
     }
   end
