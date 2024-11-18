@@ -22,7 +22,7 @@ class Review < ApplicationRecord
         type: "new_review",
         activity: "#{user.handle} uploaded a new review for a beer '#{beer.name}'",
         user: user.handle,
-        beer: beer.name,
+        beer: beer,
         rating: rating,
         avg_rating: beer.avg_rating,
         created_at: created_at,

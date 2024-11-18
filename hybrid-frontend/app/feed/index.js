@@ -55,7 +55,8 @@ const Feed = () => {
           type: 'review',
           activity: `Friend: ${data.user}`,
           user: data.user,
-          beer_name: data.beer_name,
+          beer_name: data.beer.name,
+          beer_obj: beer,
           rating: data.rating,
           avg_rating: data.avg_rating,
           comment: data.comment,
@@ -275,6 +276,7 @@ const Feed = () => {
               avg_rating: review.avg_rating,
               comment: review.text,
               created_at: review.created_at,
+              beer_obj: review.beer_obj
             }))
           ];
 
@@ -317,7 +319,7 @@ const Feed = () => {
   }, [isFocused, userId, createChannel, removeChannel]);
 
   const renderItem = ({item}) => {
-    // console.log("ITEM:", item)
+    console.log("ITEM:", item)
 
 
 
@@ -354,7 +356,6 @@ const Feed = () => {
         </TouchableOpacity>
       )
     }
-
 
     return (
         <TouchableOpacity 
