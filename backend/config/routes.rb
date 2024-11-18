@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       resources :breweries, only: [:index, :show]
       resources :bars_beers, only: [:index]
       resources :reviews, only: [:index, :show, :create, :update, :destroy]
+      get 'users/:user_id/friends_reviews', to: 'reviews#friends_reviews'
       resources :friendships, only: [:index, :show, :create, :destroy]
       post 'verify-token', to: 'sessions#verify_token'
       devise_scope :user do

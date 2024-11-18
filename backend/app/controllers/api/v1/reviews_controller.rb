@@ -41,6 +41,29 @@ class API::V1::ReviewsController < ApplicationController
     head :no_content
   end
 
+  def friends_reviews
+    user = User.find(params[:user_id])
+    friend_ids = user.friendships.pluck(:friend_id)
+  
+    reviews = Review
+      .where(user_id: friend_ids)
+      .includes(:user, beer: [:reviews]) # Incluye relaciones asociadas para evitar consultas N+1
+  
+    render json: reviews.map { |review| 
+      {
+        id: review.id,
+        beer_obj: review.beer,
+        beer_name: review.beer.name,
+        avg_rating: review.beer.avg_rating,
+        friend_id: review.user.id,
+        friend_handle: review.user.handle,
+        rating: review.rating,
+        text: review.text,
+        created_at: review.created_at,
+      }
+    }, status: :ok
+  end
+
   private
 
   def set_review

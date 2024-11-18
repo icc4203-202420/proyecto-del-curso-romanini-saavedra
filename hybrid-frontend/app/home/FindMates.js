@@ -162,6 +162,39 @@ export default function FindMatesScreen() {
       setError('An error ocurred adding new friendship');
       console.error(err);
     }
+
+    try {
+      const token = await SecureStore.getItemAsync('token');
+      const userId = await SecureStore.getItemAsync('userData');
+
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/friendships`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          friendship: {
+            user_id: selectedUserId,
+            friend_id: userId,
+            bar_id: selectedBar.id,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        setError('Error adding friendship 2');
+        return;
+      }
+
+      const result = await response.json();
+      console.log('Amistad creada:', result);
+      setBarModalVisible(false);
+      Alert.alert('Success', 'User added successfully 2');
+    } catch (err) {
+      setError('An error ocurred adding new friendship 2');
+      console.error(err);
+    }
   };
 
   const renderUserItem = (user) => (

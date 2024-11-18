@@ -11,6 +11,7 @@ const Feed = () => {
   const [userId, setUserId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const isFocused = useIsFocused();
+  const [friendshipsReviews, setFriendshipsReviews] = useState(null);
 
   const navigation = useNavigation();
 
@@ -29,6 +30,26 @@ const Feed = () => {
     }
   }
 
+  const fetchUserFriendsReviews = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    const userId = await SecureStore.getItemAsync('userData');
+    setFriendshipsReviews(null);
+    try {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friends_reviews`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      console.log("response from fetchUserFriends: ", data);
+      const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      console.log("sorted version of response: ", sortedData);
+      setFriendshipsReviews(sortedData);
+    } catch (err) {
+      console.error("Error loading friendships:", err);
+    }
+  };
+
   const onNewActivity = useCallback((data) => {
     console.log("New activity:", data.activity)
 
@@ -42,8 +63,6 @@ const Feed = () => {
 
       return [...prevFeed, data]
     })
-
-
 
     // setFeedData((prevFeed) => [data, ...prevFeed]);
   }, [])
@@ -112,6 +131,19 @@ const Feed = () => {
     getUserId();
   }, []);
 
+
+useEffect(() => {
+  const fetchReviews = async () => {
+    if (userId) {
+      await fetchUserFriendsReviews();
+    }
+  };
+
+  if (isFocused) {
+    fetchReviews();
+  }
+}, [isFocused, userId]);
+
   useEffect(() => {
     if (isFocused && userId) {
       const channelName = getChannelName();
@@ -150,6 +182,27 @@ const Feed = () => {
       </TouchableOpacity>
     )
   }
+
+  const renderReviewItem = ({ item }) => {
+    const handleReviewPress = () => {
+      navigation.navigate('BeerDetails', { beer: item.beer_obj });
+    };
+
+    return (
+      <TouchableOpacity onPress={handleReviewPress}>
+        <View style={styles.reviewCard}>
+          <Text style={styles.friendHandle}>Friend: {item.friend_handle}</Text>
+          <Text style={styles.reviewText}>Review: {item.text}</Text>
+          <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
+          <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
+          <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>
+          <Text style={styles.timestamp}>
+            Reviewed at: {new Date(item.created_at).toLocaleString()}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
   
   return (
     <View style={styles.container}>
@@ -167,6 +220,12 @@ const Feed = () => {
         data={feedData}
         renderItem={renderItem}
         keyExtractor={(item) => item.created_at.toString()}
+      />
+
+      <FlatList
+        data={friendshipsReviews}
+        renderItem={renderReviewItem}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   )
@@ -212,6 +271,45 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999',
     marginTop: 4,
+  },
+  reviewCard: {
+    backgroundColor: '#f8f9fa',
+    padding: 16,
+    marginVertical: 8,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  friendHandle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  reviewText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 8,
+  },
+  beerName: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 4,
+  },
+  rating: {
+    fontSize: 14,
+    color: '#007bff',
+  },
+  avgRating: {
+    fontSize: 14,
+    color: '#28a745',
+    marginBottom: 4,
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 8,
   },
 });
 
