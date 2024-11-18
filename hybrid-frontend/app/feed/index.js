@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
@@ -7,6 +7,7 @@ import { ActionCable, Cable } from '@kesha-antonov/react-native-action-cable';
 
 const Feed = () => {
   const [feedData, setFeedData] = useState([]);
+  const [feedPosts, setFeedPosts] = useState([]);
   const [error, setError] = useState('');
   const [userId, setUserId] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -22,6 +23,7 @@ const Feed = () => {
 
   console.log("ESTAMOS EN FEED");
   console.log("IS CONNECTED:", isConnected);
+  console.log("isFocused:", isFocused)
 
   const getUserId = async () => {
     try {
@@ -103,55 +105,140 @@ const Feed = () => {
     getUserId();
   }, []);
 
-  useEffect(() => {
-    if (isFocused && userId){
-      const fetchData = async () => {
-        const token = await SecureStore.getItemAsync('token');
-        try {
-          const friendshipsDataResponse = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-          });
-          const friendshipsData = await friendshipsDataResponse.json()
-          setFriendships(friendshipsData);
-
-          console.log("Friendship data:", friendshipsData)
-
-          const eventPicturesResponse = await fetch(`http://${BACKEND_URL}/api/v1/event_pictures`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            },
-          });
-          const eventPicturesData = await eventPicturesResponse.json()
-
-          const filteredEventPictures = eventPicturesData.filter(picture => {
-            return friendshipsData.some(friendship => 
-              parseInt(friendship.friend_id) === parseInt(picture.user_id)
-            );
-          });
-
-          setEventPictures(filteredEventPictures);
-
-          console.log("FILTERED EVENT PICTURES:", filteredEventPictures)
-
-          const nonDuplicatePictures = filteredEventPictures.filter((picture) => 
-            !feedData.some((item) => item.created_at === picture.created_at)
-          );
-
-          const combinedFeed = [
-            ...feedData,
-            ...nonDuplicatePictures,
-          ].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-          setFeedData(combinedFeed);
-        } catch (error) {
-          console.error('Error fetching data:', error)
+  const fetchFriendships = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    const userId = await SecureStore.getItemAsync('userData');
+    try {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      }
-      fetchData();
+      });
+      const data = await response.json()
+      console.log("Friendship data:", data);
+      setFriendships(data)
+      return data;
+    } catch (error) {
+      console.error("Error fetching friendship data:", error);
+      return [];
     }
+  }
+
+  const fetchEventPictures = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    try {
+      const response = await fetch(`http://${BACKEND_URL}/api/v1/event_pictures`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json()
+      console.log("Even Pictures data:", data);
+      setEventPictures(data)
+      return data;
+    } catch (error) {
+      console.error("Error fetching eventPictures data:", error);
+      return [];
+    }
+  }
+
+
+
+  // useEffect(() => {
+  //   if (isFocused && userId){
+  //     const fetchData = async () => {
+  //       const token = await SecureStore.getItemAsync('token');
+  //       try {
+  //         const friendshipsDataResponse = await fetch(`http://${BACKEND_URL}/api/v1/users/${userId}/friendships`, {
+  //           headers: {
+  //             'Authorization': `Bearer ${token}`
+  //           },
+  //         });
+  //         const friendshipsData = await friendshipsDataResponse.json()
+  //         setFriendships(friendshipsData);
+
+  //         console.log("Friendship data:", friendshipsData)
+
+  //         const eventPicturesResponse = await fetch(`http://${BACKEND_URL}/api/v1/event_pictures`, {
+  //           headers: {
+  //             'Authorization': `Bearer ${token}`
+  //           },
+  //         });
+  //         const eventPicturesData = await eventPicturesResponse.json()
+
+  //         const filteredEventPictures = eventPicturesData.filter(picture => {
+  //           return friendshipsData.some(friendship => 
+  //             parseInt(friendship.friend_id) === parseInt(picture.user_id)
+  //           );
+  //         });
+
+  //         setEventPictures(filteredEventPictures);
+
+  //         console.log("FILTERED EVENT PICTURES:", filteredEventPictures)
+
+  //         const nonDuplicatePictures = filteredEventPictures.filter((picture) => 
+  //           !feedData.some((item) => item.created_at === picture.created_at)
+  //         );
+
+  //         const combinedFeed = [
+  //           ...feedData,
+  //           ...nonDuplicatePictures,
+  //         ].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  //         setFeedData(combinedFeed);
+  //       } catch (error) {
+  //         console.error('Error fetching data:', error)
+  //       }
+  //     }
+  //     fetchData();
+  //   }
     
-  }, [userId, isFocused, feedData])
+  // }, [userId, isFocused, feedData])
+
+  const feedDataRef = useRef(feedData);
+
+  useEffect(() => {
+    console.log("SE ESTA EJECUTANDO LA FUNCION DE FETCH DE TODO!!!")
+    const fetchPictures = async () => {
+      try {
+        const userId = await SecureStore.getItemAsync('userData')
+        console.log("USER ID:", userId)
+        if (userId) {
+          console.log("Entramos a buscar las cosas para el fetch")
+          const eventPicturesData = await fetchEventPictures();
+          const friendshipsData = await fetchFriendships();
+  
+          const filteredEventPictures = eventPicturesData.filter(picture => 
+            friendshipsData.some(friendship => 
+              parseInt(friendship.friend_id) === parseInt(picture.user_id)
+            )
+          );
+  
+          const nonDuplicatePictures = [];
+          const seenCreatedAt = new Set();
+
+          filteredEventPictures.forEach(picture => {
+            if (!seenCreatedAt.has(picture.created_at)) {
+              nonDuplicatePictures.push(picture);
+              seenCreatedAt.add(picture.created_at);
+            }
+          })
+
+          console.log("Images to display from backend:", filteredEventPictures)
+          console.log("Feed Data:", feedData);
+
+          console.log("Imagenes FINALES filtradas:", nonDuplicatePictures)
+
+          feedDataRef.current = nonDuplicatePictures;
+          setFeedData(feedDataRef.current);
+        }
+      } catch (error) {
+        console.error("Error fetching friendship and eventPicture data:", error)
+      }
+    }
+    if (isFocused) {
+      fetchPictures();  
+    }
+  }, [isFocused])
 
 
   useEffect(() => {
@@ -196,7 +283,8 @@ const Feed = () => {
           <Text style={styles.timestampText}>{new Date(item.created_at).toLocaleString()}</Text>
           {item.image_url && (
             <Image
-            source={{ uri: `http://${BACKEND_URL}/${item.image_url}?t=${new Date().getTime()}`}}
+            // source={{ uri: `http://${BACKEND_URL}/${item.image_url}?t=${new Date().getTime()}`}}
+            source={{ uri: `${item.image_url}?t=${new Date().getTime()}`}}
             resizeMode='contain'
             style={styles.image}
             />
@@ -221,7 +309,7 @@ const Feed = () => {
           {"You need to be logged in to see a feed."}
         </Text>
       )} */}
-      {console.log("FEED DATA:", feedData)}
+      
 
       <FlatList
         data={feedData}
