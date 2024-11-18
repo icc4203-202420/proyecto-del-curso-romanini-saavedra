@@ -132,17 +132,17 @@ const Feed = () => {
   }, []);
 
 
-useEffect(() => {
-  const fetchReviews = async () => {
-    if (userId) {
-      await fetchUserFriendsReviews();
-    }
-  };
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (userId) {
+        await fetchUserFriendsReviews();
+      }
+    };
 
-  if (isFocused) {
-    fetchReviews();
-  }
-}, [isFocused, userId]);
+    if (isFocused) {
+      fetchReviews();
+    }
+  }, [isFocused, userId]);
 
   useEffect(() => {
     if (isFocused && userId) {

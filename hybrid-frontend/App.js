@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Button, View } from 'react-native';
+import { Button, View, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 import BeersScreen from './app/beers';
 import BeerDetails from './app/beers/BeerDetails';
@@ -27,10 +27,33 @@ const Stack = createStackNavigator();
 const navigationRef = createNavigationContainerRef();
 
 function MainTabs() {
+  const { isAuthenticated } = useUser(); // Obtén el estado de autenticación
+
+  const handleFeedNavigation = (navigation) => {
+    if (isAuthenticated) {
+      navigation.navigate('Feed'); // Navega si está autenticado
+    } else {
+      Alert.alert(
+        'Please Log In',
+        'You must be logged in to access the feed.',
+        [{ text: 'OK', onPress: () => console.log('Alert closed') }]
+      );
+    }
+  };
+
   return (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen
+        name="Feed"
+        component={FeedScreen}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault(); // Previene la navegación predeterminada
+            handleFeedNavigation(navigation);
+          },
+        })}
+      />
       <Tab.Screen name="Bars" component={BarsScreen} />
       <Tab.Screen name="Beers" component={BeersScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
