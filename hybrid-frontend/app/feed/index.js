@@ -59,7 +59,7 @@ const Feed = () => {
           activity: `Friend: ${data.user}`,
           user: data.user,
           beer_name: data.beer.name,
-          beer_obj: beer,
+          bar_obj: data.bar,
           rating: data.rating,
           avg_rating: data.avg_rating,
           comment: data.comment,
@@ -207,9 +207,9 @@ const Feed = () => {
         },
       });
       const data = await response.json();
-      // console.log("response from fetchUserFriends: ", data);
+      console.log("response from fetchUserFriends: ", data);
       const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      // console.log("sorted version of response: ", sortedData);
+      console.log("sorted version of response: ", sortedData);
       setFriendshipsReviews(sortedData);
       return sortedData;
     } catch (err) {
@@ -243,6 +243,7 @@ const Feed = () => {
           // console.log("Entramos a buscar las cosas para el fetch")
           const eventPicturesData = await fetchEventPictures();
           const friendshipsReviewsData = await fetchUserFriendsReviews();
+          console.log("friendshipsReviewsData: ", friendshipsReviewsData);
           const friendshipsData = await fetchFriendships();
   
           const filteredEventPictures = eventPicturesData.filter(picture => 
@@ -297,7 +298,7 @@ const Feed = () => {
               avg_rating: review.avg_rating,
               comment: review.text,
               created_at: review.created_at,
-              beer_obj: review.beer_obj
+              bar_obj: review.bar_obj
             }))
           ];
 
@@ -380,7 +381,7 @@ const Feed = () => {
 
     return (
         <TouchableOpacity 
-          onPress={() => navigation.navigate('BeerDetails', {beer: item.beer_obj})}>
+          onPress={() => navigation.navigate('Events', {bar: item.bar_obj})}>
           <View style={styles.reviewCard}>
             <Text style={styles.friendHandle}>{item.activity}</Text>
             <Text style={styles.reviewText}>Review: {item.comment}</Text>
@@ -397,7 +398,7 @@ const Feed = () => {
 
   const renderReviewItem = ({ item }) => {
     const handleReviewPress = () => {
-      navigation.navigate('BeerDetails', { beer: item.beer_obj });
+      navigation.navigate('Events', {bar: item.bar_obj});
     };
 
     return (

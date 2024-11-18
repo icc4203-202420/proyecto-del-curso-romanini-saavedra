@@ -30,6 +30,7 @@ const Bars = () => {
     try {
       const response = await fetch(`http://${BACKEND_URL}/api/v1/bars`);
       const data = await response.json();
+      console.log("data from loadBars: ", data);
       setBars([...bars, ...data.bars]);
       setFilteredBars([...bars, ...data.bars]);
       setPage(page + 1);
