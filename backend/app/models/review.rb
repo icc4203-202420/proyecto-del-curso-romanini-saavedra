@@ -23,6 +23,10 @@ class Review < ApplicationRecord
         activity: "#{user.handle} uploaded a new review for a beer '#{beer.name}'",
         user: user.handle,
         beer: beer.name,
+        rating: rating,
+        avg_rating: beer.avg_rating,
+        created_at: created_at,
+        comment: text,
         review_url: Rails.application.routes.url_helpers.api_v1_beer_review_path(beer_id: beer.id, id: id, only_path: true)
       })
     end

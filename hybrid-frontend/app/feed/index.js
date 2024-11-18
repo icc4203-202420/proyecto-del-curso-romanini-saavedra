@@ -55,17 +55,14 @@ const Feed = () => {
           type: 'review',
           activity: `Friend: ${data.user}`,
           user: data.user,
-          event: data.event,
-          bar: data.bar,
-          country_name: data.country_name,
-          description: data.description,
-          created_at: data.created_at,
-          image_url: data.image_url
-        
+          beer_name: data.beer_name,
+          rating: data.rating,
+          avg_rating: data.avg_rating,
+          comment: data.comment,
+          created_at: data.created_at
       }
     }
-
-    console.log("NEW DATA EN onNewActivity:", newData);
+    // console.log("NEW DATA EN onNewActivity:", newData);
 
 
     setFeedData((prevFeed) => {
@@ -75,7 +72,7 @@ const Feed = () => {
 
       const newFeed = [newData, ...prevFeed];
 
-      console.log("NEW FEED (esto es en onNewActivity):", newFeed)
+      // console.log("NEW FEED (esto es en onNewActivity):", newFeed)
 
       return newFeed.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -404,14 +401,7 @@ const Feed = () => {
         data={feedData}
         renderItem={renderItem}
         keyExtractor={(item) => item.created_at.toString()}
-        inverted
       />
-
-      {/* <FlatList
-        data={friendshipsReviews}
-        renderItem={renderReviewItem}
-        keyExtractor={(item) => item.id.toString()}
-      /> */}
     </View>
   )
 }
