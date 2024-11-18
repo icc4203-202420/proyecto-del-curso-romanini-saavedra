@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, TextInput, Alert } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
@@ -380,32 +380,20 @@ const Feed = () => {
     }
 
     return (
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('Events', {bar: item.bar_obj})}>
-          <View style={styles.reviewCard}>
-            <Text style={styles.friendHandle}>{item.activity}</Text>
-            <Text style={styles.reviewText}>Review: {item.comment}</Text>
-            <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
-            <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
-            <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>
-            <Text style={styles.timestamp}>
-              Reviewed at: {new Date(item.created_at).toLocaleString()}
-            </Text>
-          </View>
-        </TouchableOpacity>
-    )
-  }
-
-  const renderReviewItem = ({ item }) => {
-    const handleReviewPress = () => {
-      navigation.navigate('Events', {bar: item.bar_obj});
-    };
-
-    return (
-      <TouchableOpacity onPress={handleReviewPress}>
+      <TouchableOpacity 
+        onPress={() => {
+          if (item.bar_obj) {
+            // Si bar_obj existe, navegar al evento
+            navigation.navigate('Events', { bar: item.bar_obj });
+          } else {
+            // Si bar_obj es null o undefined, mostrar una alerta
+            Alert.alert('No Bars Available', 'This beer is not sold at any bar.');
+          }
+        }}
+      >
         <View style={styles.reviewCard}>
-          <Text style={styles.friendHandle}>Friend: {item.friend_handle}</Text>
-          <Text style={styles.reviewText}>Review: {item.text}</Text>
+          <Text style={styles.friendHandle}>{item.activity}</Text>
+          <Text style={styles.reviewText}>Review: {item.comment}</Text>
           <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
           <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
           <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>
@@ -415,7 +403,7 @@ const Feed = () => {
         </View>
       </TouchableOpacity>
     );
-  };
+  }
 
   const applyFilter = () => {
     let filteredFeed = [...feedDataRef.current]; // Copia los datos originales
