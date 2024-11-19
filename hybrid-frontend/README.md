@@ -24,7 +24,12 @@ Dirección IPv4. . . . . . . . . . . . . . : 10.33.2.22
 
 4. Agregar un archivo .env en la carpeta "hybrid-frontend". En este archivo, hay que agregar lo siguiente:
 ```
-BACKEND_URL=http://{Dirección IPv4 Windows}:3000
+BACKEND_URL={Dirección IPv4 Windows}:3000
+```
+
+5. Agregar un archivo .env en la carpeta "backend". En este archivo, hay que agregar lo siguiente:
+```
+BACKEND_URL=ws://{Dirección IPv4 Windows}:3000/cable
 ```
 
 
