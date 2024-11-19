@@ -36,7 +36,7 @@ class GenerateEventVideoJob < ApplicationJob
     image_files = []
     images.each_with_index do |image, index|
       if image.image.attached?
-        image_url = Rails.application.routes.url_helpers.rails_blob_url(image.image, host: ENV['BACKEND_URL'] || 'localhost', port: 3000)
+        image_url = Rails.application.routes.url_helpers.rails_blob_url(image.image, host: ENV['BACKEND_URL_HTTP'] || 'localhost', port: 3000)
         file_path = Rails.root.join("tmp", "image_#{index}.jpg")
 
         OpenURI.open_uri(image_url) do |remote_file|

@@ -101,9 +101,9 @@ const ImageUploader = ({ userId, eventId, onNewImage, showSummaryButton }) => {
       formData.append('event_picture[tagged_users][]', friendId); 
     });
 
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value)
-    })
+    // formData.forEach((value, key) => {
+    //   console.log(`${key}:`, value)
+    // })
     
 
     try {
