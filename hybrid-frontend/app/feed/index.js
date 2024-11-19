@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Button, StatusBar, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, TextInput, Alert } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import { BACKEND_URL } from '@env';
 import { ActionCable, Cable } from '@kesha-antonov/react-native-action-cable';
+import { Picker } from '@react-native-picker/picker';
 
 const Feed = () => {
   const [feedData, setFeedData] = useState([]);
@@ -13,6 +14,8 @@ const Feed = () => {
   const [friendshipsReviews, setFriendshipsReviews] = useState(null);
   const [friendships, setFriendships] = useState([]);
   const [eventPictures, setEventPictures] = useState([]);
+  const [selectedFilter, setSelectedFilter] = useState('all'); // Default: mostrar todo
+  const [filterValue, setFilterValue] = useState('');
 
   const navigation = useNavigation();
 
@@ -57,7 +60,7 @@ const Feed = () => {
           activity: `Friend: ${data.user}`,
           user: data.user,
           beer_name: data.beer.name,
-          beer_obj: data.beer,
+          bar_obj: data.bar_obj,
           rating: data.rating,
           avg_rating: data.avg_rating,
           comment: data.comment,
@@ -65,6 +68,24 @@ const Feed = () => {
       }
     }
     // console.log("NEW DATA EN onNewActivity:", newData);
+
+    // Validar si pasa el filtro actual
+    const passesFilter = (() => {
+      switch (selectedFilter) {
+        case 'friend':
+          return newData.user?.toLowerCase().includes(filterValue.toLowerCase());
+        case 'bar':
+          return newData.bar?.name?.toLowerCase().includes(filterValue.toLowerCase());
+        case 'country':
+          return newData.country_name?.toLowerCase().includes(filterValue.toLowerCase());
+        case 'beer':
+          return newData.beer_name?.toLowerCase().includes(filterValue.toLowerCase());
+        default:
+          return true;
+      }
+    })();
+
+    if (!passesFilter) return; // Ignora si no cumple con el filtro actual
 
 
     setFeedData((prevFeed) => {
@@ -81,7 +102,7 @@ const Feed = () => {
     })
 
     // setFeedData((prevFeed) => [data, ...prevFeed]);
-  }, [])
+  }, [selectedFilter, filterValue]);
 
   const handleReceived = useCallback((data) => {
     console.log("Full data received:", data)
@@ -223,6 +244,7 @@ const Feed = () => {
           // console.log("Entramos a buscar las cosas para el fetch")
           const eventPicturesData = await fetchEventPictures();
           const friendshipsReviewsData = await fetchUserFriendsReviews();
+          // console.log("friendshipsReviewsData: ", friendshipsReviewsData);
           const friendshipsData = await fetchFriendships();
   
           const filteredEventPictures = eventPicturesData.filter(picture => 
@@ -250,9 +272,9 @@ const Feed = () => {
             return false;
           });
 
-          console.log("UNIQUE REVIEWS:", uniqueReviews)
+          // console.log("UNIQUE REVIEWS:", uniqueReviews)
 
-          console.log("FILTERED IMAGES:", nonDuplicatePictures)
+          // console.log("FILTERED IMAGES:", nonDuplicatePictures)
 
           const combinedFeed = [
             ...nonDuplicatePictures.map(picture => ({
@@ -277,9 +299,11 @@ const Feed = () => {
               avg_rating: review.avg_rating,
               comment: review.text,
               created_at: review.created_at,
-              beer_obj: review.beer_obj
+              bar_obj: review.bar_obj
             }))
           ];
+
+          // console.log("COMBINED FEED:", combinedFeed);
 
           const sortedFeed = combinedFeed.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -320,7 +344,7 @@ const Feed = () => {
   }, [isFocused, userId, createChannel, removeChannel]);
 
   const renderItem = ({item}) => {
-    console.log("ITEM:", item)
+    // console.log("ITEM:", item)
 
     /*
   URL de la foto cuando recien se sube con WebSocket:
@@ -370,32 +394,20 @@ const Feed = () => {
     }
 
     return (
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('BeerDetails', {beer: item.beer_obj})}>
-          <View style={styles.reviewCard}>
-            <Text style={styles.friendHandle}>{item.activity}</Text>
-            <Text style={styles.reviewText}>Review: {item.comment}</Text>
-            <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
-            <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
-            <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>
-            <Text style={styles.timestamp}>
-              Reviewed at: {new Date(item.created_at).toLocaleString()}
-            </Text>
-          </View>
-        </TouchableOpacity>
-    )
-  }
-
-  const renderReviewItem = ({ item }) => {
-    const handleReviewPress = () => {
-      navigation.navigate('BeerDetails', { beer: item.beer_obj });
-    };
-
-    return (
-      <TouchableOpacity onPress={handleReviewPress}>
+      <TouchableOpacity 
+        onPress={() => {
+          if (item.bar_obj) {
+            // Si bar_obj existe, navegar al evento
+            navigation.navigate('Events', { bar: item.bar_obj });
+          } else {
+            // Si bar_obj es null o undefined, mostrar una alerta
+            Alert.alert('No Bars Available', 'This beer is not sold at any bar.');
+          }
+        }}
+      >
         <View style={styles.reviewCard}>
-          <Text style={styles.friendHandle}>Friend: {item.friend_handle}</Text>
-          <Text style={styles.reviewText}>Review: {item.text}</Text>
+          <Text style={styles.friendHandle}>{item.activity}</Text>
+          <Text style={styles.reviewText}>Review: {item.comment}</Text>
           <Text style={styles.beerName}>Beer: {item.beer_name}</Text>
           <Text style={styles.rating}>Friend's Rating: {item.rating} / 5</Text>
           <Text style={styles.avgRating}>Avg Rating: {item.avg_rating} / 5</Text>
@@ -405,22 +417,77 @@ const Feed = () => {
         </View>
       </TouchableOpacity>
     );
+  }
+
+  const applyFilter = () => {
+    let filteredFeed = [...feedDataRef.current]; // Copia los datos originales
+  
+    switch (selectedFilter) {
+      case 'friend':
+        filteredFeed = filteredFeed.filter(item => item.user.toLowerCase().includes(filterValue.toLowerCase()));
+        break;
+      case 'bar':
+        filteredFeed = filteredFeed.filter(item => item.bar?.name.toLowerCase().includes(filterValue.toLowerCase()));
+        break;
+      case 'country':
+        filteredFeed = filteredFeed.filter(item => item.country_name?.toLowerCase().includes(filterValue.toLowerCase()));
+        break;
+      case 'beer':
+        filteredFeed = filteredFeed.filter(item => item.beer_name?.toLowerCase().includes(filterValue.toLowerCase()));
+        break;
+      default:
+        // "All" muestra todos los datos
+        filteredFeed = [...feedDataRef.current];
+    }
+  
+    setFeedData(filteredFeed); // Actualiza el estado con los datos filtrados
   };
   
   return (
     <View style={styles.container}>
+      {/* Filtros */}
+      <View style={styles.filterContainer}>
+        <Picker
+          selectedValue={selectedFilter}
+          onValueChange={(itemValue) => setSelectedFilter(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="All" value="all" />
+          <Picker.Item label="Friends" value="friend" />
+          <Picker.Item label="Bar" value="bar" />
+          <Picker.Item label="Country" value="country" />
+          <Picker.Item label="Beer" value="beer" />
+        </Picker>
+
+        {/* Input para el valor del filtro */}
+        {selectedFilter !== 'all' && (
+          <TextInput
+            placeholder={`Enter ${selectedFilter}`}
+            value={filterValue}
+            onChangeText={setFilterValue}
+            style={styles.filterInput}
+          />
+        )}
+      </View>
+
+      <Button title="Apply Filter" onPress={() => applyFilter()} style={styles.filterButton} />
+
       <Text style={styles.header}>Activity Feed</Text>
       <FlatList
         data={feedData}
         renderItem={renderItem}
         keyExtractor={(item) => item.created_at.toString()}
+        contentContainerStyle={styles.feedList}
+        ListFooterComponent={<View style={{ height: 20 }} />}
       />
+
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
   },
   header: {
@@ -512,6 +579,36 @@ const styles = StyleSheet.create({
   },
   taggedUser: {
     color: '#007bff',
+  },
+  filterContainer: {
+    marginBottom: 16,
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  picker: {
+    height: 50,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  filterInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  filterButton: {
+    marginTop: 8,
+  },
+  feedList: {
+    paddingBottom: 20,
   },
 });
 

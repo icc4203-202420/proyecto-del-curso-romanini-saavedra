@@ -18,6 +18,8 @@ const Events = ({route}) => {
   const [eventsData, setEventsData] = useState([]);
   const navigation = useNavigation();
 
+  console.log("bar recived in index events: ", bar);
+
   const getEventsData = async () => {
     try {
       const response = await fetch(`http://${BACKEND_URL}/api/v1/bars/${bar.id}/events`)

@@ -47,12 +47,28 @@ class API::V1::ReviewsController < ApplicationController
   
     reviews = Review
       .where(user_id: friend_ids)
-      .includes(:user, beer: [:reviews]) # Incluye relaciones asociadas para evitar consultas N+1
+      .includes(:user, beer: { bars: :address }) # Incluye las relaciones necesarias
   
-    render json: reviews.map { |review| 
+    render json: reviews.map { |review|
+      bar = review.beer.bars.first # Seleccionamos un bar donde se sirve la cerveza
+      bar_obj = nil
+      
+      if bar.present?
+        address = bar.address # Obtenemos la dirección del bar
+        bar_obj = {
+          id: bar.id,
+          name: bar.name,
+          address: {
+            line1: address.line1,
+            line2: address.line2,
+            city: address.city,
+            country: address.country.name # Asumiendo que el bar tiene una dirección asociada a un país
+          }
+        }
+      end
+  
       {
         id: review.id,
-        beer_obj: review.beer,
         beer_name: review.beer.name,
         avg_rating: review.beer.avg_rating,
         friend_id: review.user.id,
@@ -60,6 +76,7 @@ class API::V1::ReviewsController < ApplicationController
         rating: review.rating,
         text: review.text,
         created_at: review.created_at,
+        bar_obj: bar_obj # Si bar es nil, entonces bar_obj será nil
       }
     }, status: :ok
   end
