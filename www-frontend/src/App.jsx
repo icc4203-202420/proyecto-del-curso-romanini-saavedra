@@ -18,6 +18,7 @@ import Bars from './components/Bars';
 import Home from './components/Home';
 import Users from './components/Users';
 import BarEvents from './components/BarEvents';
+import Event from './components/Event';
 import CreateReview from './components/CreateReview';
 import LoginForm from './components/Login';
 import SignupForm from './components/Signup';
@@ -174,6 +175,7 @@ function App() {
           <Route path="/beers/:beer_id" element={<Beer/>}/>
           <Route path="/bars" element={<Bars/>}/>
           <Route path="/bars/:bar_id/events" element={<BarEvents />} />
+          <Route path="/events/:event_id" element={<Event/>}/>
           <Route path="/users" element={<Users />} />
           <Route path="/login" element={<LoginForm tokenHandler={handleJWT} />} />
           <Route path="/signup" element={<SignupForm tokenHandler={handleJWT} />} />
