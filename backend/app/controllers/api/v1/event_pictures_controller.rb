@@ -49,17 +49,31 @@ class API::V1::EventPicturesController < ApplicationController
         return
       end
 
+      tagged_users = []
       if event_picture_params[:tagged_users].present?
         tagged_users = event_picture_params[:tagged_users]
         
         tagged_users.each do |tagged_user_id|
-          TagUser.create!(
+          tag_user = TagUser.create!(
             user_id: @event_picture.user_id,
             tagged_user_id: tagged_user_id,
             picture_id: @event_picture.id
           )
+
+          notify_tagged_users({
+            "user_id" => @event_picture.user_id,
+            "tagged_user_id" => tag_user.tagged_user_id,
+            "picture_id" => tag_user.picture_id,
+            "event_id" => @event_picture.event_id
+          })
         end
       end
+
+      puts "\n\n\n\n\n\n\n\n\n\n\n"
+      puts "TAGGED USERS EN CREATE EVENT_PICTURES: #{tagged_users}"
+      puts "\n\n\n\n\n\n\n\n\n\n\n"
+
+      
   
       render json: { 
         event_picture: {
@@ -98,5 +112,32 @@ class API::V1::EventPicturesController < ApplicationController
 
   def event_picture_params
     params.require(:event_picture).permit(:user_id, :event_id, :description, :image, tagged_users: [])
+  end
+
+  def notify_tagged_users(tagged_user)
+    user = User.find(tagged_user["user_id"])
+    tagged_user_obj = User.find(tagged_user["tagged_user_id"])
+    event = Event.find(tagged_user["event_id"])
+    bar = Bar.find(event.bar_id)
+
+    return unless tagged_user_obj.expo_push_token
+
+    puts "TAGGED USER OBJ: #{tagged_user.inspect}"
+
+    message = "#{user.handle} tagged you in a picture"
+    # data = { pictureId: tagged_user["picture_id"], type: "tagged_image" }
+    data = { event: event, bar: bar, type: "tagged_image"}
+
+    begin
+      ExpoPushNotificationService.send_notification(
+        tagged_user_obj.expo_push_token,
+        message,
+        data,
+        "New Tag"
+      )
+    rescue => e
+      puts "Error sending notification to #{tagged_user_obj.handle}: #{e.message}"
+    end 
+
   end
 end
