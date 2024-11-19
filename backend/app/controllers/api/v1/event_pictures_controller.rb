@@ -68,12 +68,6 @@ class API::V1::EventPicturesController < ApplicationController
           })
         end
       end
-
-      puts "\n\n\n\n\n\n\n\n\n\n\n"
-      puts "TAGGED USERS EN CREATE EVENT_PICTURES: #{tagged_users}"
-      puts "\n\n\n\n\n\n\n\n\n\n\n"
-
-      
   
       render json: { 
         event_picture: {

@@ -190,9 +190,9 @@ export default function FindMatesScreen() {
       const result = await response.json();
       console.log('Amistad creada:', result);
       setBarModalVisible(false);
-      Alert.alert('Success', 'User added successfully 2');
+      Alert.alert('Success', 'User added successfully');
     } catch (err) {
-      setError('An error ocurred adding new friendship 2');
+      setError('An error ocurred adding new friendship');
       console.error(err);
     }
   };

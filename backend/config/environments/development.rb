@@ -56,7 +56,7 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
-  config.action_cable.url = ENV['BACKEND_URL']
+  config.action_cable.url = ENV['BACKEND_URL_WS']
   config.action_cable.allowed_request_origins = [/.*/]
 
   puts "ActionCable está usando la URL: #{config.action_cable.url}"
