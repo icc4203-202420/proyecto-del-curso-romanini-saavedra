@@ -59,7 +59,7 @@ const Feed = () => {
           activity: `Friend: ${data.user}`,
           user: data.user,
           beer_name: data.beer.name,
-          bar_obj: data.bar,
+          bar_obj: data.bar_obj,
           rating: data.rating,
           avg_rating: data.avg_rating,
           comment: data.comment,
@@ -207,9 +207,9 @@ const Feed = () => {
         },
       });
       const data = await response.json();
-      console.log("response from fetchUserFriends: ", data);
+      // console.log("response from fetchUserFriends: ", data);
       const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      console.log("sorted version of response: ", sortedData);
+      // console.log("sorted version of response: ", sortedData);
       setFriendshipsReviews(sortedData);
       return sortedData;
     } catch (err) {
@@ -243,7 +243,7 @@ const Feed = () => {
           // console.log("Entramos a buscar las cosas para el fetch")
           const eventPicturesData = await fetchEventPictures();
           const friendshipsReviewsData = await fetchUserFriendsReviews();
-          console.log("friendshipsReviewsData: ", friendshipsReviewsData);
+          // console.log("friendshipsReviewsData: ", friendshipsReviewsData);
           const friendshipsData = await fetchFriendships();
   
           const filteredEventPictures = eventPicturesData.filter(picture => 
@@ -271,9 +271,9 @@ const Feed = () => {
             return false;
           });
 
-          console.log("UNIQUE REVIEWS:", uniqueReviews)
+          // console.log("UNIQUE REVIEWS:", uniqueReviews)
 
-          console.log("FILTERED IMAGES:", nonDuplicatePictures)
+          // console.log("FILTERED IMAGES:", nonDuplicatePictures)
 
           const combinedFeed = [
             ...nonDuplicatePictures.map(picture => ({
@@ -301,6 +301,8 @@ const Feed = () => {
               bar_obj: review.bar_obj
             }))
           ];
+
+          // console.log("COMBINED FEED:", combinedFeed);
 
           const sortedFeed = combinedFeed.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
 
@@ -341,7 +343,7 @@ const Feed = () => {
   }, [isFocused, userId, createChannel, removeChannel]);
 
   const renderItem = ({item}) => {
-    console.log("ITEM:", item)
+    // console.log("ITEM:", item)
 
 
 

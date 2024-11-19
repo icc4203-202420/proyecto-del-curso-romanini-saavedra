@@ -17,11 +17,29 @@ class Review < ApplicationRecord
     user.friends.each do |friend|
       Rails.logger.info "BROADCASTING to feed for friend #{friend.id}: #{friend.inspect}"
 
+      bar = beer.bars.first
+      bar_obj = nil
+
+      if bar.present?
+        address = bar.address # Obtenemos la dirección del bar
+        bar_obj = {
+          id: bar.id,
+          name: bar.name,
+          address: {
+            line1: address.line1,
+            line2: address.line2,
+            city: address.city,
+            country: address.country.name # Asumiendo que el bar tiene una dirección asociada a un país
+          }
+        }
+      end
+
       # Este es el mensaje que se manda hacia el canal de cada amigo
       ActionCable.server.broadcast("feed_#{friend.id}", {
         type: "new_review",
         activity: "#{user.handle} uploaded a new review for a beer '#{beer.name}'",
         user: user.handle,
+        bar_obj: bar_obj,
         beer: beer,
         rating: rating,
         avg_rating: beer.avg_rating,
