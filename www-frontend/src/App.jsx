@@ -22,6 +22,7 @@ import Event from './components/Event';
 import CreateReview from './components/CreateReview';
 import LoginForm from './components/Login';
 import SignupForm from './components/Signup';
+import TagUsers from './components/TagUsers';
 import './App.css'
 
 function App() {
@@ -179,6 +180,7 @@ function App() {
           <Route path="/users" element={<Users />} />
           <Route path="/login" element={<LoginForm tokenHandler={handleJWT} />} />
           <Route path="/signup" element={<SignupForm tokenHandler={handleJWT} />} />
+          <Route path="/tag_users" element={<TagUsers />}/>
         </Routes>
       </UserContext.Provider>
     </>

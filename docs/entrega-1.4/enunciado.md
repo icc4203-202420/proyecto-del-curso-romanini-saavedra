@@ -31,7 +31,6 @@ Es importante que aparezcan los eventos con suficiente información que los desc
 
 **Requisito 8**
 
-
 Es importante que desde la vista de un evento se puedan listar las personas que asistirán. Quiénes sean amigos del usuario deben aparecer listados al comienzo y aparecer identificados como amigos. Deben aparecer con su nombre y/o _handle_ en el sistema. 
 
 

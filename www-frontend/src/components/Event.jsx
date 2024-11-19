@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams} from 'react-router-dom';
 import useAxios from 'axios-hooks';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Tabs, Tab, Button, Card, CardContent, Typography, Box } from '@mui/material'
@@ -8,6 +8,8 @@ import EventUsers from './EventUsers';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import axios from 'axios';
+import ImageUploader from './ImageUploader';
+import EventPictureGallery from './EventPictureGallery';
 
 const Event = () => {
     const {user, isAuthenticated} = useUser();
@@ -21,6 +23,24 @@ const Event = () => {
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackBarMessage, setSnackBarMessage] = useState('');
+
+    const [images, setImages] = useState([]);
+
+    const [openUploadDialog, setOpenUploadDialog] = useState(false);
+
+    const handleOpenUploadDialog = () => {
+        setOpenUploadDialog(true);
+    };
+
+    const handleCloseUploadDialog = () => {
+        setOpenUploadDialog(false);
+    }
+
+    const handleImageUpload = (newImage) => {
+        setImages((prevImages) => [...prevImages, newImage]);
+        handleCloseUploadDialog();
+        refetchEventPictureData();
+    }
 
     const handleTabChange = (event, newValue) => {
         if (!isAuthenticated && (newValue === 1 || newValue === 2)){
@@ -66,6 +86,12 @@ const Event = () => {
         method: 'GET',
         manual: !eventData 
       });
+
+    const [{ data: eventPictureData, loading: eventPictureDataLoading, error: eventPictureDataError }, refetchEventPictureData] = useAxios({
+        url: eventData ? `http://127.0.0.1:3001/api/v1/event_pictures?event_id=${eventData.event.id}` : null,
+        method: 'GET',
+        manual: !eventData
+    })
 
     const checkAttendanceStatus = () => {
         if (attendanceData && eventData && eventData.event) {
@@ -164,7 +190,7 @@ const Event = () => {
                     Error fetching event data.
                 </Typography>
             )}
-            {eventData && barData && (
+            {eventData && barData && eventPictureData && (
                 <Box
                     sx={{
                         maxWidth: 280,
@@ -274,9 +300,29 @@ const Event = () => {
                     )}
                     {tabIndex === 1 && (
                         <Box>
-                            <Typography>
-                                There are no photos for this event.
-                            </Typography>
+                            <Box sx={{display: 'flex', justifyContent: 'flex-start', marginBottom: 2}}>
+                                <Button variant="contained" onClick={handleOpenUploadDialog}>
+                                    Add Picture
+                                </Button>
+                            </Box>
+
+                            <EventPictureGallery eventId={eventData.event.id} eventPictureData={eventPictureData}/>
+
+                            <Dialog open={openUploadDialog} onClose={handleCloseUploadDialog} fullWidth maxWidth="sm">
+                                <DialogTitle textAlign='center'>Upload a Picture</DialogTitle>
+                                <DialogContent>
+                                    <ImageUploader 
+                                        eventId={eventData.event.id} 
+                                        userId={user.id}
+                                        onImageUpload={handleImageUpload}    
+                                    />
+                                </DialogContent>
+                                <DialogActions>
+                                    <Box sx={{ display: 'flex', justifyContent: 'flex-start', flexGrow: 1 }}>
+                                        <Button onClick={handleCloseUploadDialog}>Cancel</Button>
+                                    </Box>
+                                </DialogActions>
+                            </Dialog>
                         </Box>
                     )}
                     {tabIndex === 2 && (
