@@ -33,6 +33,7 @@ Es importante que aparezcan los eventos con suficiente información que los desc
 
 Es importante que desde la vista de un evento se puedan listar las personas que asistirán. Quiénes sean amigos del usuario deben aparecer listados al comienzo y aparecer identificados como amigos. Deben aparecer con su nombre y/o _handle_ en el sistema. 
 
+
 ## Sobre herramientas a utilizar
 
 En esta entrega pueden aplicarse todos los conocimientos vistos en clases, en los laboratorios, y en la lectura del libro The Road to React. Esto incluye el uso de módulos con hooks desarrollados por terceros, como el de use-local-storage-state, y axios-hooks.
@@ -62,3 +63,4 @@ Los ponderadores aplican al puntaje máximo del ítem. La nota en escala 1-7 se 
 El código con la implementación de la aplicación debe ser entregado en este repositorio. Para la evaluación, se debe realizar un pull request que incluya al ayudante de proyecto asignado.
 
 La fecha límite para la entrega 1.4 es lunes 16/9 a las 23:59 hrs.
+
